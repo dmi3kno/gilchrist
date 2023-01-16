@@ -36,10 +36,10 @@ gst_hex <- image_canvas_hex(fill_color = bg_col, border_color = br_col, border_s
         image_composite(plt, gravity="center", offset="-60+0") %>%
         image_composite(gst, gravity = "center", offset = "+25-100") %>%
         image_annotate("gilchrist", gravity = "center", location = "+0+520",
-                       size=200, font="Aller", color = rd_col, weight = 400) %>%
+                       size=200, font="Aller", color = rd1_col, weight = 400) %>%
         image_annotate("gilchrist", gravity = "center", location = "+5+525",
                  size=200, font="Aller", color = br_col, weight = 400) %>%
-        image_composite(image_canvas_hexborder(border_color = rd_col, border_size = 13), gravity = "center")   %>%
+        image_composite(image_canvas_hexborder(border_color = rd1_col, border_size = 13), gravity = "center")   %>%
         image_composite(image_canvas_hexborder(border_color = br_col, border_size = 8), gravity = "center")
 gst_hex %>%
   image_scale("30%")
