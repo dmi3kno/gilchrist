@@ -64,7 +64,7 @@ gst_ghcard <- image_canvas_ghcard(fill_color = bg_col) %>%
         image_composite(gst_hex_gh, gravity = "East", offset = "+100+0") %>%
         image_annotate("Gilchrist rules", gravity = "West", location = "+100+0",
                        color=br_col, size=80, font="Aller", weight = 500) %>%
-        image_annotate("Warrent G. Gilchrist (1932-2015)", gravity = "East", location = "+90+230",
+        image_annotate("Warren G. Gilchrist (1932-2015)", gravity = "East", location = "+90+230",
                        color=br_col, size=25, font="Aller", weight = 500) %>%
         image_compose(gh_logo, gravity="West", offset = "+100+70") %>%
         image_annotate("dmi3kno/gilchrist", gravity="West",
