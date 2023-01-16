@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# gilchrist
+# gilchrist <a href='https://dmi3kno.github.io/gilchrist'><img src='man/figures/logo.png' align="right" height="200" /></a>
 
 <!-- badges: start -->
 
@@ -10,8 +10,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 <!-- badges: end -->
 
 This package is made to honor the legacy and memory of Warren G.
-Gilchrist (1932-2015). See Davies (2016) for a short biography of this
-truly remarkable individual.
+Gilchrist (1932-2015)[^1].
 
 The goal of `{gilchrist}` is to implement Gilchrist QF transformation
 rules (Gilchrist 2000) in R in the form of pipeable function factories.
@@ -55,7 +54,7 @@ sqf_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x558d49ac1780>
+#> <bytecode: 0x55a4ab934480>
 #> <environment: namespace:gilchrist>
 
 qf_exp <- sqf_exp %>% 
@@ -153,3 +152,6 @@ Singapore: Springer Singapore.
 </div>
 
 </div>
+
+[^1]: See Davies (2016) for a short biography of this truly remarkable
+    individual

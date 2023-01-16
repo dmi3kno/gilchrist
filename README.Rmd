@@ -14,13 +14,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-# gilchrist
+# gilchrist <a href='https://dmi3kno.github.io/gilchrist'><img src='man/figures/logo.png' align="right" height="200" /></a>
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-This package is made to honor the legacy and memory of Warren G. Gilchrist (1932-2015). See @davies2016WarrenGilchrist19322015 for a short biography of this truly remarkable individual.
+This package is made to honor the legacy and memory of Warren G. Gilchrist (1932-2015)^[See @davies2016WarrenGilchrist19322015 for a short biography of this truly remarkable individual].
 
 The goal of `{gilchrist}` is to implement Gilchrist QF transformation rules [@gilchrist2000StatisticalModellingQuantile] in R in the form of pipeable function factories.
 
