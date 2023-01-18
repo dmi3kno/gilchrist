@@ -2,36 +2,41 @@
 % Please edit documentation in R/operations.R
 \name{qff_reflect}
 \alias{qff_reflect}
+\alias{qff_reciprocate}
 \alias{qff_add}
-\alias{qff_multiply}
 \alias{qff_mix}
 \alias{qff_imix}
-\alias{qff_reciprocate}
-\alias{qff_decorate}
+\alias{qff_multiply}
 \title{Gilchrist rules}
 \usage{
 qff_reflect(fun)
 
-qff_add(fun1, fun2)
-
-qff_multiply(fun1, fun2)
-
-qff_mix(fun1, fun2)
-
-qff_imix(fun1, fun2)
-
 qff_reciprocate(fun)
 
-qff_decorate(fun)
+qff_add(fun1, fun2)
+
+qff_mix(fun1, fun2, nm_wt = ".wt")
+
+qff_imix(fun1, fun2, nm_wt = ".wt")
+
+qff_multiply(fun1, fun2)
 }
 \arguments{
 \item{fun, fun1, fun2}{functions}
+
+\item{nm_wt}{character.  The name of the weight parameter (for mixing). The default name is \code{.wt}. The default value is 0.5}
 }
 \value{
 modified function
 }
 \description{
-Gilchrist rules
+Gilchrist rules for constructing valid quantile functions implemented as function factories. All functions take \eqn{Q_1(u)} (the QF of \eqn{X}). Some also take \eqn{Q_2(u)} (the QF of \eqn{Y})
+\code{qff_reflect()}: Reflection rule. Returns \eqn{-Q_1(1-u)} (the QF of \eqn{-X}).
+\code{qff_reciprocate()}: Reciprocal rule. Returns \eqn{1/Q_1(1-u)} (the QF of \eqn{1/X}).
+\code{qff_add()}: Addition rule. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{Q_1(u)+Q_2(u)} - a valid QF of the sum of \eqn{X} and \eqn{Y}.
+\code{qff_mix()}: Linear combination rule with weight parameter \code{.wt}. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{aQ_1(u)+(1-a)Q_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
+\code{qff_imix()}: Complimentary linear combination rule with weight parameter \code{.wt}. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{(1-a)Q_1(u)+aQ_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
+\code{qff_multiply()}:Multiplication rule for positive QFs.  Takes \eqn{Q_1(u), Q_2(u)>0} on all \eqn{[0,1]}. Returns \eqn{Q_1(u)Q_2(u)} - a product QF of \eqn{X} and \eqn{Y}.
 }
 \examples{
 qf_exp <- function(u)-log(1-u)

@@ -5,22 +5,34 @@
 \alias{qtr_exponentiate}
 \title{Q-transformations}
 \usage{
-qtr_power(fun)
+qtr_power(fun, nm_pow = ".pow")
 
-qtr_exponentiate(fun)
+qtr_exponentiate(fun, nm_base = ".base")
 }
 \arguments{
 \item{fun}{function}
+
+\item{nm_pow}{character.  The name of the power parameter. The default name is \code{.pow}. The default value is 1
+Should be a valid unique variable name other than "u"}
+
+\item{nm_base}{character.  The name of the base parameter. The default name is \code{.base}. The default value is \code{exp(1)} (Euler's constant).}
 }
 \value{
 modified function
 }
 \description{
-Q-transformations
+Some of the typical transformations of QFs, implementing a Q-transformation rule.
+\code{qtr_power()}: Raising of QF to a power. Returns \eqn{Q_1(1-u)^k}.
+\code{qtr_exponentiate()}: Exponentiating the QF. Returns \eqn{k^Q_1(1-u)}.
+Note that today p-transformations can be performed by applying Q-transformations to standard uniform distribution
 }
 \examples{
 qf_exp <- function(u)-log(1-u)
-qf_weibull <- qtr_power(qf_exp)
-qf_weibull(0.5,pow=1/5)
+qf_weibull <- qtr_power(qf_exp, "k")
+qf_weibull(0.5,k=1/5)
 qweibull(0.5, shape = 5)
+qf_norm <- qff_decorate(qnorm, nm_location="mu", nm_scale="sigma")
+qf_lognorm <- qtr_exponentiate(qf_norm)
+qf_lognorm(0.2, mu=2, sigma=0.1)
+qlnorm(0.2, 2, 0.1)
 }
