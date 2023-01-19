@@ -39,6 +39,7 @@ qtr_power <- function(fun, nm_pow=".pow"){
 qtr_exponentiate <- function(fun, nm_base=".base"){
   f <- function(u, .base=exp(1), ...)
     (.base)^fun(u,...)
+
   formals_ <- formals(f)
   body_ <- body(f)
   names(formals_)[names(formals_) == ".base"] <- nm_base

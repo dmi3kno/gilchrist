@@ -8,7 +8,7 @@
 #' `qff_mix()`: Linear combination rule with weight parameter `.wt`. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{aQ_1(u)+(1-a)Q_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
 #' `qff_imix()`: Complimentary linear combination rule with weight parameter `.wt`. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{(1-a)Q_1(u)+aQ_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
 #' `qff_multiply()`:Multiplication rule for positive QFs.  Takes \eqn{Q_1(u), Q_2(u)>0} on all \eqn{[0,1]}. Returns \eqn{Q_1(u)Q_2(u)} - a product QF of \eqn{X} and \eqn{Y}.
-#'
+#' `qff_shift()`: Addition rule with a constant shift (adding location parameter). Takes \eqn{Q_1(u)}. Returns \eqn{a+Q_1(u)}.
 #' @param fun,fun1,fun2 functions
 #'
 #' @return modified function
@@ -45,7 +45,8 @@ qff_add <- function(fun1, fun2){
 qff_mix <- function(fun1, fun2, nm_wt=".wt"){
    f <- function(u, .wt=0.5, ...){
     (.wt)*fun1(u, ...) + (1-.wt)*fun2(u, ...)
-  }
+   }
+
   formals_ <- formals(f)
   body_ <- body(f)
   names(formals_)[names(formals_) == ".wt"] <- nm_wt
@@ -58,6 +59,7 @@ qff_imix <- function(fun1, fun2, nm_wt=".wt"){
   f <- function(u, .wt=0.5, ...){
     (1-.wt)*fun1(u, ...) + (.wt)*fun2(u, ...)
   }
+
   formals_ <- formals(f)
   body_ <- body(f)
   names(formals_)[names(formals_) == ".wt"] <- nm_wt
@@ -74,6 +76,36 @@ qff_multiply <- function(fun1, fun2){
     #if f1 and f2 are positive for all u \in [0,1]
     f1*f2
   }
+}
+
+#' @param nm_shift character.  The name of the shift parameter. The default name is `.location`. The default value is 0
+#' @rdname rules
+#' @export
+qff_shift <- function(fun, nm_shift=".location"){
+  f <- function(u, .location=0, ...){
+    (.location)+fun(u, ...)
+  }
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".location"] <- nm_shift
+  body_ <- do.call(substitute, list(body_, list(.location = as.symbol(nm_shift))))
+  as.function(c(formals_, body_))
+}
+
+#' @param nm_scale character.  The name of the scale parameter. The default name is `.scale`. The default value is 1
+#' @rdname rules
+#' @export
+qff_scale <- function(fun, nm_scale=".scale"){
+  f <- function(u, .scale=1, ...){
+    (.scale)*fun(u, ...)
+  }
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".scale"] <- nm_scale
+  body_ <- do.call(substitute, list(body_, list(.scale = as.symbol(nm_scale))))
+  as.function(c(formals_, body_))
 }
 
 #' Decorate the basic QF with location and scale parameters
@@ -93,15 +125,9 @@ qff_multiply <- function(fun1, fun2){
 #' @rdname decorate
 #' @export
 qff_decorate <- function(fun, nm_location=".location", nm_scale=".scale"){
-  f <- function(u, .location=0, .scale=1, ...){
-    .location+.scale*fun(u, ...)
+  function(u, ...){
+    s_fun <- qff_scale(fun, nm_scale)
+    ss_fun <- qff_shift(s_fun, nm_location)
+    ss_fun(u,...)
   }
-
-  formals_ <- formals(f)
-  body_ <- body(f)
-  names(formals_)[names(formals_) == ".location"] <- nm_location
-  names(formals_)[names(formals_) == ".scale"] <- nm_scale
-  body_ <- do.call(substitute, list(body_, list(.location = as.symbol(nm_location),
-                                                .scale = as.symbol(nm_scale))))
-  as.function(c(formals_, body_))
 }

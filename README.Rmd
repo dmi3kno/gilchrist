@@ -31,6 +31,20 @@ You can install the development version of gilchrist like so:
 ``` r
 remotes::install_packages("dmi3kno/gilchrist")
 ```
+## Gilchrist's QF transformation rules
+
+@gilchrist2000StatisticalModellingQuantile list the following rules for creating new quantile functions out of existing ones.
+
+| Original QF  | Rule          | Resulting QF | Resulting variable |
+| ------------ | ------------- | ------------ | ------------------ |
+| $Q_Y(u)$     | Relection rule| $-Q(1-u)$ | QF of $-Y$ | 
+| $Q_Y(u)$ | Reciprocal rule  | $1/Q(1-u)$ | QF of $1/Y$ |
+| $Q_1(u),Q_2(u)$ | Addition rule  | $Q_1(u)+Q_2(u)$ | Valid QF |
+| $Q_1(u),Q_2(u)$ | Linear combination rule  | $aQ_1(u)+bQ_2(u)$ | Valid QF for a,b>0 |
+| $Q_1(u),Q_2(u)>0$ | Multiplication rule  | $Q_1(u)Q_2(u)$ | Valid QF if $Q_1(u),Q_2(u)>0$ |
+| $Q_Y(u)$ | Q-transformation  | $T(Q_Y(u))$ | QF of $T(Y)$, for non-decreasing $T$ |
+| $Q_Y(u)$ | p-transformation  | $Q_Y(H(u))$ | p-transformed $Q_Y(u)$, for non-decreasing $H$ |
+
 
 ## Example
 
@@ -48,58 +62,84 @@ In using and testing quantile function it is useful to have an equi-spaced grid 
 p_grd <- seq(0,1, by=0.2)
 ```
 
+### Exponential
+
 Start with standard exponential quantile function
 
-$$Q(u)=-\ln(1-u)$$
+$$S(u)=-\ln(1-u)$$
 
-and add location and scale parameters. We compare our hand-made exponential quantile function to the standard function in R. Note that `qexp` misses (defaults to 0) the location argument and reciprocates the scale.
+and add scale parameter. Now our Exponential quantile function looks like in [Wikipedia](https://en.wikipedia.org/wiki/Exponential_distribution).
+
+$$Q(u)=\frac{1}{\lambda}[-\ln(1-u)]$$
+
+In order to remember that our parameter should be reciprocated we call it "ilambda".
 
 ```{r logistic}
 sqf_exp
 
 qf_exp <- sqf_exp %>% 
-  qff_decorate()
+  qff_scale(nm_scale="ilambda")
+```
 
-qf_exp(p_grd, location=0, scale=10)
+We compare our hand-made exponential quantile function to the standard function in R. Note that `qexp` has a reciprocated scale.
+
+```{r}
+qf_exp(p_grd, ilambda=10)
 # compare to standard exponential quantile function. 
 qexp(p_grd, 1/10)
 ```
 
-Let's do a more challenging example. We will make a logistic distribution in `{gilchrist}`. Logistic distribution consists of exponential and reflected exponential distribution. This is how we do it.
+### Logistic
+
+Let's do a more challenging example. We will make a logistic distribution in `{gilchrist}`. Logistic distribution consists of exponential $-\ln(1-u)$ and reflected exponential $\ln(u)$ distributions. 
+
+$$Q(u)=\mu+s\ln\left(\frac{u}{1-u}\right)=\mu+s\left[\ln(u)-\ln(1-u)\right]$$
+This is how we do it.
 
 ```{r}
 qf_logistic <- sqf_exp %>% 
   qff_add(
     sqf_exp %>% qff_reflect()
   ) %>% 
-  qff_decorate()
+  qff_decorate("mu", "s")
 
-qf_logistic(p_grd, location=4, scale=2)
+qf_logistic(p_grd, mu=4, s=2)
 qlogis(p_grd, 4, 2)
 ```
 
-Can we add a little flatness to our newly made logistic distribution? Lets make Flattened Skew-Logistic Distribution described in @sharma2020QuantileBasedApproachSupervised.
+### Flattened Skew-Logistic
+
+Can we add a little flatness to our newly made logistic distribution and introduce the weights by the exponential components? Lets make Flattened Skew-Logistic Distribution described in @sharma2020QuantileBasedApproachSupervised.
+
+$$Q(u)=\chi+\beta[(1-\delta)\ln(u)-\delta(1-u)+ku]$$
+
+Note that the exponential distribution will gain a weight `delta` and the reflected exponential will gain a weight `1-delta`, because this is the order in which they are listed in `qff_mix`.
 
 ```{r}
 qf_fsld <- sqf_exp %>% 
   qff_mix(
-    sqf_exp %>% qff_reflect()
-  ) %>% 
-  qff_add(sqf_unif) %>% 
-  qff_decorate()
+    qff_reflect(sqf_exp),
+    nm_wt="delta") %>% 
+  qff_add(qff_scale(sqf_unif,"k")) %>% 
+  qff_decorate(nm_location="chi", nm_scale="beta")
 
-qf_fsld(p_grd, wt=0.21, location=4, scale=2)
+qf_fsld(p_grd, delta=0.21, chi=4, beta=2, k=1)
 qpd::qfsld(p_grd, bt=2, k=1, dlt=0.21, a=4)
 ```
 
-Last one for this short tutorial. We make Weibull distribution. Weibull distribution is a Q-transformed  exponential distribution. The transformation function is the the exponent $T(x)=x^a$.
+### Weibull
+
+Last one for this short tutorial. We make Weibull distribution. Weibull distribution is a Q-transformed  exponential distribution. The transformation function is the the exponent $T(x)=x^k$.
+
+$$Q(u)=\lambda[-\ln(1-u)]^{1/k}$$
+Again, to remember that the power should be reciprocated, let's call it "ik".
 
 ```{r}
 qf_weibull <- sqf_exp %>% 
-  qtr_power() %>% 
-  qff_decorate()
-qf_weibull(p_grd, location=0, scale=2, pow=1/4)
-qweibull(p_grd, shape=4, scale=2)
+  qtr_power("ik") %>% 
+  qff_scale("lambda")
+qf_weibull(p_grd, lambda=2, ik=1/4)
+qweibull(p_grd, scale=2,  shape=4)
 ```
 
 Therefore, you can compose new quantile functions following Gilchrist transformation rules.

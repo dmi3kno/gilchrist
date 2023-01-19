@@ -7,6 +7,8 @@
 \alias{qff_mix}
 \alias{qff_imix}
 \alias{qff_multiply}
+\alias{qff_shift}
+\alias{qff_scale}
 \title{Gilchrist rules}
 \usage{
 qff_reflect(fun)
@@ -20,11 +22,19 @@ qff_mix(fun1, fun2, nm_wt = ".wt")
 qff_imix(fun1, fun2, nm_wt = ".wt")
 
 qff_multiply(fun1, fun2)
+
+qff_shift(fun, nm_shift = ".location")
+
+qff_scale(fun, nm_scale = ".scale")
 }
 \arguments{
 \item{fun, fun1, fun2}{functions}
 
 \item{nm_wt}{character.  The name of the weight parameter (for mixing). The default name is \code{.wt}. The default value is 0.5}
+
+\item{nm_shift}{character.  The name of the shift parameter. The default name is \code{.location}. The default value is 0}
+
+\item{nm_scale}{character.  The name of the scale parameter. The default name is \code{.scale}. The default value is 1}
 }
 \value{
 modified function
@@ -37,6 +47,7 @@ Gilchrist rules for constructing valid quantile functions implemented as functio
 \code{qff_mix()}: Linear combination rule with weight parameter \code{.wt}. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{aQ_1(u)+(1-a)Q_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
 \code{qff_imix()}: Complimentary linear combination rule with weight parameter \code{.wt}. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{(1-a)Q_1(u)+aQ_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
 \code{qff_multiply()}:Multiplication rule for positive QFs.  Takes \eqn{Q_1(u), Q_2(u)>0} on all \eqn{[0,1]}. Returns \eqn{Q_1(u)Q_2(u)} - a product QF of \eqn{X} and \eqn{Y}.
+\code{qff_shift()}: Addition rule with a constant shift (adding location parameter). Takes \eqn{Q_1(u)}. Returns \eqn{a+Q_1(u)}.
 }
 \examples{
 qf_exp <- function(u)-log(1-u)
