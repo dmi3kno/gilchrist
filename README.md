@@ -55,29 +55,38 @@ equi-spaced grid of probabilities
 p_grd <- seq(0,1, by=0.2)
 ```
 
+`{gilchrist}` is a special package! It uses magrittr pipe to operate not
+on data, but on functions. It is a function factory engine!
+
 ### Exponential
 
-Start with standard exponential quantile function
+Start with standard exponential quantile function. Note that this “basic
+quantile function” has no parameters.
 
 $$S(u)=-\ln(1-u)$$
 
-and add scale parameter. Now our Exponential quantile function looks
-like in
-[Wikipedia](https://en.wikipedia.org/wiki/Exponential_distribution).
-
-$$Q(u)=\frac{1}{\lambda}[-\ln(1-u)]$$
-
-In order to remember that our parameter should be reciprocated we call
-it “ilambda”.
+The built-in equivalent in `{gilchrist}` is `sqf_exp()`. It is a regular
+R function, so we can inspect it.
 
 ``` r
 sqf_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x55e6d1d83118>
+#> <bytecode: 0x555c155898a8>
 #> <environment: namespace:gilchrist>
+```
 
+We will now add a scale parameter to our basic exponential QF to make it
+like in
+[Wikipedia](https://en.wikipedia.org/wiki/Exponential_distribution).
+
+$$Q(u)=\frac{1}{\lambda}[-\ln(1-u)]$$
+
+In order to remember that our scale parameter should be reciprocated we
+call it “ilambda”.
+
+``` r
 qf_exp <- sqf_exp %>% 
   qff_scale(nm_scale="ilambda")
 ```
@@ -92,6 +101,18 @@ qf_exp(p_grd, ilambda=10)
 qexp(p_grd, 1/10)
 #> [1]  0.000000  2.231436  5.108256  9.162907 16.094379       Inf
 ```
+
+`{gilchrist}` has several basic (parameterless) functions that you can
+modify.
+
+- `sqf_exp()`: Basic QF of exponential distribution
+- `sqf_unif()`: Basic QF of uniform distribution
+- `sqf_norm()`: Basic QF of normal distribution, a thinly wrapped
+  `qnorm(u,0,1)`.
+- `sqf_cauchy()`: Basic QF of Cauchy distribution.
+- `sqf_halftriang()`⁠: Basic QF of half-triangular distribution.
+- `sqf_halfcosine()`: Basic QF of half-cosine distribution
+- `sqf_sech()`: Basic QF of hyperbolic secant distribution.
 
 ### Logistic
 
@@ -122,7 +143,7 @@ Can we add a little flatness to our newly made logistic distribution and
 introduce the weights by the exponential components? Lets make Flattened
 Skew-Logistic Distribution described in Sharma and Chakrabarty (2020).
 
-$$Q(u)=\chi+\beta[(1-\delta)\ln(u)-\delta\ln(1-u)+ku]$$
+$$Q(u)=\alpha+\beta[(1-\delta)\ln(u)-\delta\ln(1-u)+ku]$$
 
 Note that the exponential distribution will gain a weight `delta` and
 the reflected exponential will gain a weight `1-delta`, because this is
@@ -134,9 +155,9 @@ qf_fsld <- sqf_exp %>%
     qff_reflect(sqf_exp),
     nm_wt="delta") %>% 
   qff_add(qff_scale(sqf_unif,"k")) %>% 
-  qff_decorate(nm_location="chi", nm_scale="beta")
+  qff_decorate(nm_location="alpha", nm_scale="beta")
 
-qf_fsld(p_grd, delta=0.21, chi=4, beta=2, k=1)
+qf_fsld(p_grd, delta=0.21, alpha=4, beta=2, k=1)
 #> [1]     -Inf 1.950808 3.566807 4.777738 5.923397      Inf
 qpd::qfsld(p_grd, bt=2, k=1, dlt=0.21, a=4)
 #> [1]     -Inf 1.950808 3.566807 4.777738 5.923397      Inf
