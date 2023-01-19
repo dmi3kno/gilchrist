@@ -75,7 +75,7 @@ sqf_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x55d632de6118>
+#> <bytecode: 0x55e6d1d83118>
 #> <environment: namespace:gilchrist>
 
 qf_exp <- sqf_exp %>% 
@@ -122,7 +122,7 @@ Can we add a little flatness to our newly made logistic distribution and
 introduce the weights by the exponential components? Lets make Flattened
 Skew-Logistic Distribution described in Sharma and Chakrabarty (2020).
 
-$$Q(u)=\chi+\beta[(1-\delta)\ln(u)-\delta(1-u)+ku]$$
+$$Q(u)=\chi+\beta[(1-\delta)\ln(u)-\delta\ln(1-u)+ku]$$
 
 Note that the exponential distribution will gain a weight `delta` and
 the reflected exponential will gain a weight `1-delta`, because this is

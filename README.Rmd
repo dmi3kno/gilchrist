@@ -111,7 +111,7 @@ qlogis(p_grd, 4, 2)
 
 Can we add a little flatness to our newly made logistic distribution and introduce the weights by the exponential components? Lets make Flattened Skew-Logistic Distribution described in @sharma2020QuantileBasedApproachSupervised.
 
-$$Q(u)=\chi+\beta[(1-\delta)\ln(u)-\delta(1-u)+ku]$$
+$$Q(u)=\chi+\beta[(1-\delta)\ln(u)-\delta\ln(1-u)+ku]$$
 
 Note that the exponential distribution will gain a weight `delta` and the reflected exponential will gain a weight `1-delta`, because this is the order in which they are listed in `qff_mix`.
 
