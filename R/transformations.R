@@ -3,6 +3,8 @@
 #' Some of the typical transformations of QFs, implementing a Q-transformation rule.
 #'    `qtr_power()`: Raising of QF to a power. Returns \eqn{Q_1(u)^k}.
 #'    `qtr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
+#'    `qtr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
+#'
 #' Note that today p-transformations can be performed by applying Q-transformations to standard uniform distribution
 #' @param fun function
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
@@ -45,6 +47,17 @@ qtr_exponentiate <- function(fun, nm_base=".base"){
   names(formals_)[names(formals_) == ".base"] <- nm_base
   body_ <- do.call(substitute, list(body_, list(.base = as.symbol(nm_base))))
   as.function(c(formals_, body_))
+}
+
+#' @param .fun function without arguments(or with all default arguments) to be applied as Q-transformation
+#' @rdname transformations
+#' @export
+#' @examples
+#' qtr_fun(sqf_exp,log1p)
+qtr_fun <- function(fun, .fun){
+  f <- function(u, .base=exp(1), ...)
+    .fun(fun(u,...))
+  f
 }
 
 

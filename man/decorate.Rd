@@ -4,12 +4,12 @@
 \alias{qff_decorate}
 \title{Decorate the basic QF with location and scale parameters}
 \usage{
-qff_decorate(fun, nm_shift = ".location", nm_scale = ".scale")
+qff_decorate(fun, nm_location = ".location", nm_scale = ".scale")
 }
 \arguments{
 \item{fun}{function to be decorated}
 
-\item{nm_shift}{character. The name of the location parameter. Default name \code{.location}. Default value is 0.}
+\item{nm_location}{character. The name of the location parameter. Default name \code{.location}. Default value is 0.}
 
 \item{nm_scale}{character. The name of the scale parameter. Default name \code{.scale}. Default value is 1.}
 }
