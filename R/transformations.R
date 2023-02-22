@@ -1,8 +1,8 @@
 #' Q-transformations
 #' @description
 #' Some of the typical transformations of QFs, implementing a Q-transformation rule.
-#'    `qtr_power()`: Raising of QF to a power. Returns \eqn{Q_1(1-u)^k}.
-#'    `qtr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(1-u)}.
+#'    `qtr_power()`: Raising of QF to a power. Returns \eqn{Q_1(u)^k}.
+#'    `qtr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
 #' Note that today p-transformations can be performed by applying Q-transformations to standard uniform distribution
 #' @param fun function
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
