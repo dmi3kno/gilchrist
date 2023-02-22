@@ -2,9 +2,12 @@
 % Please edit documentation in R/operations.R
 \name{qff_decorate}
 \alias{qff_decorate}
+\alias{qff_idecorate}
 \title{Decorate the basic QF with location and scale parameters}
 \usage{
 qff_decorate(fun, nm_location = ".location", nm_scale = ".scale")
+
+qff_idecorate(fun, nm_location = ".location", nm_scale = ".scale")
 }
 \arguments{
 \item{fun}{function to be decorated}
@@ -17,7 +20,7 @@ qff_decorate(fun, nm_location = ".location", nm_scale = ".scale")
 modified function with location and scale parameter. The parameter names specified by the user.
 }
 \description{
-Add location (\code{.location}) and scale (\code{.scale}) parameters
+Add location (\code{.location}) and scale (\code{.scale}) parameters (or the inverse scale for \code{qff_idecorate()})
 Note! The parameter names can be changed by passing the names
 }
 \examples{

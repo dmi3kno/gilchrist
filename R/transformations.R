@@ -2,6 +2,7 @@
 #' @description
 #' Some of the typical transformations of QFs, implementing a Q-transformation rule.
 #'    `qtr_power()`: Raising of QF to a power. Returns \eqn{Q_1(u)^k}.
+#'    `qtr_ipower()`: Raising of QF to an inverse power. Returns \eqn{Q_1(u)^{1/k}}.
 #'    `qtr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
 #'    `qtr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 #'
@@ -9,7 +10,6 @@
 #' @param fun function
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
 #' Should be a valid unique variable name other than "u"
-#'
 #' @return modified function
 #' @rdname transformations
 #' @export
@@ -21,6 +21,19 @@
 qtr_power <- function(fun, nm_pow=".pow"){
   f <- function(u, .pow=1, ...)
     fun(u,...)^(.pow)
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".pow"] <- nm_pow
+  body_ <- do.call(substitute, list(body_, list(.pow = as.symbol(nm_pow))))
+  as.function(c(formals_, body_))
+}
+
+#' @rdname transformations
+#' @export
+qtr_ipower <- function(fun, nm_pow=".pow"){
+  f <- function(u, .pow=1, ...)
+    fun(u,...)^(1/.pow)
 
   formals_ <- formals(f)
   body_ <- body(f)
@@ -49,13 +62,14 @@ qtr_exponentiate <- function(fun, nm_base=".base"){
   as.function(c(formals_, body_))
 }
 
+
 #' @param .fun function without arguments(or with all default arguments) to be applied as Q-transformation
 #' @rdname transformations
 #' @export
 #' @examples
 #' qtr_fun(sqf_exp,log1p)
 qtr_fun <- function(fun, .fun){
-  f <- function(u, .base=exp(1), ...)
+  f <- function(u, ...)
     .fun(fun(u,...))
   f
 }

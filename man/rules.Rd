@@ -5,10 +5,11 @@
 \alias{qff_reciprocate}
 \alias{qff_add}
 \alias{qff_mix}
-\alias{qff_imix}
+\alias{qff_cmix}
 \alias{qff_multiply}
 \alias{qff_shift}
 \alias{qff_scale}
+\alias{qff_iscale}
 \title{Gilchrist rules}
 \usage{
 qff_reflect(fun)
@@ -19,13 +20,15 @@ qff_add(fun1, fun2)
 
 qff_mix(fun1, fun2, nm_wt = ".wt")
 
-qff_imix(fun1, fun2, nm_wt = ".wt")
+qff_cmix(fun1, fun2, nm_wt = ".wt")
 
 qff_multiply(fun1, fun2)
 
 qff_shift(fun, nm_shift = ".location")
 
 qff_scale(fun, nm_scale = ".scale")
+
+qff_iscale(fun, nm_scale = ".scale")
 }
 \arguments{
 \item{fun, fun1, fun2}{functions}
@@ -45,9 +48,11 @@ Gilchrist rules for constructing valid quantile functions implemented as functio
 \code{qff_reciprocate()}: Reciprocal rule. Returns \eqn{1/Q_1(1-u)} (the QF of \eqn{1/X}).
 \code{qff_add()}: Addition rule. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{Q_1(u)+Q_2(u)} - a valid QF of the sum of \eqn{X} and \eqn{Y}.
 \code{qff_mix()}: Linear combination rule with weight parameter \code{.wt}. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{aQ_1(u)+(1-a)Q_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
-\code{qff_imix()}: Complimentary linear combination rule with weight parameter \code{.wt}. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{(1-a)Q_1(u)+aQ_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
+\code{qff_cmix()}: Complimentary linear combination rule with weight parameter \code{.wt}. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{(1-a)Q_1(u)+aQ_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
 \code{qff_multiply()}:Multiplication rule for positive QFs.  Takes \eqn{Q_1(u), Q_2(u)>0} on all \eqn{[0,1]}. Returns \eqn{Q_1(u)Q_2(u)} - a product QF of \eqn{X} and \eqn{Y}.
 \code{qff_shift()}: Addition rule with a constant shift (adding location parameter). Takes \eqn{Q_1(u)}. Returns \eqn{a+Q_1(u)}.
+\code{qff_scale()}: Multiplication rule with a constant scale (multiplying by the scale parameter). Takes \eqn{Q_1(u)}. Returns \eqn{sQ_1(u)}.
+\code{qff_iscale()}: Multiplication rule with a constant inverse scale (multiplying by the reciprocated scale parameter). Takes \eqn{Q_1(u)}. Returns \eqn{frac{Q_1(u)}{s}}.
 }
 \examples{
 qf_exp <- function(u)-log(1-u)
