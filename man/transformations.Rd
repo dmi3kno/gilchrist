@@ -2,14 +2,11 @@
 % Please edit documentation in R/transformations.R
 \name{qtr_power}
 \alias{qtr_power}
-\alias{qtr_ipower}
 \alias{qtr_exponentiate}
 \alias{qtr_fun}
 \title{Q-transformations}
 \usage{
-qtr_power(fun, nm_pow = ".pow")
-
-qtr_ipower(fun, nm_pow = ".pow")
+qtr_power(fun, nm_pow = ".pow", .negate = FALSE, .invert = FALSE)
 
 qtr_exponentiate(fun, nm_base = ".base")
 
@@ -20,6 +17,10 @@ qtr_fun(fun, .fun)
 
 \item{nm_pow}{character.  The name of the power parameter. The default name is \code{.pow}. The default value is 1
 Should be a valid unique variable name other than "u"}
+
+\item{.negate}{logical. Should the power parameter be negated (multiplied by -1) before applying. Default FALSE}
+
+\item{.invert}{logical. Should the power parameter be inverted (1/.pow) before applying. Default FALSE}
 
 \item{nm_base}{character.  The name of the base parameter. The default name is \code{.base}. The default value is \code{exp(1)} (Euler's constant).}
 

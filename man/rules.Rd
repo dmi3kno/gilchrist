@@ -9,7 +9,6 @@
 \alias{qff_multiply}
 \alias{qff_shift}
 \alias{qff_scale}
-\alias{qff_iscale}
 \title{Gilchrist rules}
 \usage{
 qff_reflect(fun)
@@ -26,9 +25,7 @@ qff_multiply(fun1, fun2)
 
 qff_shift(fun, nm_shift = ".location")
 
-qff_scale(fun, nm_scale = ".scale")
-
-qff_iscale(fun, nm_scale = ".scale")
+qff_scale(fun, nm_scale = ".scale", .negate = FALSE, .invert = FALSE)
 }
 \arguments{
 \item{fun, fun1, fun2}{functions}
@@ -38,6 +35,10 @@ qff_iscale(fun, nm_scale = ".scale")
 \item{nm_shift}{character.  The name of the shift parameter. The default name is \code{.location}. The default value is 0}
 
 \item{nm_scale}{character.  The name of the scale parameter. The default name is \code{.scale}. The default value is 1}
+
+\item{.negate}{logical. Should the scale parameter be negated (multiplied by -1) before applying. Default FALSE}
+
+\item{.invert}{logical. Should the scale parameter be inverted (1/.scale) before applying. Default FALSE}
 }
 \value{
 modified function

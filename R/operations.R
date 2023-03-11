@@ -96,25 +96,15 @@ qff_shift <- function(fun, nm_shift=".location"){
 }
 
 #' @param nm_scale character.  The name of the scale parameter. The default name is `.scale`. The default value is 1
+#' @param .negate logical. Should the scale parameter be negated (multiplied by -1) before applying. Default FALSE
+#' @param .invert logical. Should the scale parameter be inverted (1/.scale) before applying. Default FALSE
 #' @rdname rules
 #' @export
-qff_scale <- function(fun, nm_scale=".scale"){
+qff_scale <- function(fun, nm_scale=".scale", .negate=FALSE, .invert=FALSE){
   f <- function(u, .scale=1, ...){
+    if(.negate) .scale <- (-1)*.scale
+    if(.invert) .scale <- 1/.scale
     (.scale)*fun(u, ...)
-  }
-
-  formals_ <- formals(f)
-  body_ <- body(f)
-  names(formals_)[names(formals_) == ".scale"] <- nm_scale
-  body_ <- do.call(substitute, list(body_, list(.scale = as.symbol(nm_scale))))
-  as.function(c(formals_, body_))
-}
-
-#' @rdname rules
-#' @export
-qff_iscale <- function(fun, nm_scale=".scale"){
-  f <- function(u, .scale=1, ...){
-    (1/.scale)*fun(u, ...)
   }
 
   formals_ <- formals(f)
@@ -132,6 +122,7 @@ qff_iscale <- function(fun, nm_scale=".scale"){
 #' @param fun function to be decorated
 #' @param nm_location character. The name of the location parameter. Default name `.location`. Default value is 0.
 #' @param nm_scale character. The name of the scale parameter. Default name `.scale`. Default value is 1.
+#' @param .invert logical. Should the scale parameter be inverted (1/.scale) before applying. Default FALSE
 #'
 #' @return modified function with location and scale parameter. The parameter names specified by the user.
 #'
@@ -140,20 +131,11 @@ qff_iscale <- function(fun, nm_scale=".scale"){
 
 #' @rdname decorate
 #' @export
-qff_decorate <- function(fun, nm_location=".location", nm_scale=".scale"){
+qff_decorate <- function(fun, nm_location=".location", nm_scale=".scale", .invert=FALSE){
   function(u, ...){
-    s_fun <- qff_scale(fun, nm_scale)
+    s_fun <- qff_scale(fun, nm_scale, .invert=.invert)
     ss_fun <- qff_shift(s_fun, nm_location)
     ss_fun(u,...)
   }
 }
 
-#' @rdname decorate
-#' @export
-qff_idecorate <- function(fun, nm_location=".location", nm_scale=".scale"){
-  function(u, ...){
-    s_fun <- qff_iscale(fun, nm_scale)
-    ss_fun <- qff_shift(s_fun, nm_location)
-    ss_fun(u,...)
-  }
-}
