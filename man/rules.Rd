@@ -8,6 +8,8 @@
 \alias{qff_cmix}
 \alias{qff_multiply}
 \alias{qff_shift}
+\alias{qff_shiftby}
+\alias{qff_scaleby}
 \alias{qff_scale}
 \title{Gilchrist rules}
 \usage{
@@ -25,6 +27,10 @@ qff_multiply(fun1, fun2)
 
 qff_shift(fun, nm_shift = ".location")
 
+qff_shiftby(fun, x = 0)
+
+qff_scaleby(fun, x = 1)
+
 qff_scale(fun, nm_scale = ".scale", .invert = FALSE)
 }
 \arguments{
@@ -33,6 +39,8 @@ qff_scale(fun, nm_scale = ".scale", .invert = FALSE)
 \item{nm_wt}{character.  The name of the weight parameter (for mixing). The default name is \code{.wt}. The default value is 0.5}
 
 \item{nm_shift}{character.  The name of the shift parameter. The default name is \code{.location}. The default value is 0}
+
+\item{x}{numeric. Fixed value to shift/scale the QF by}
 
 \item{nm_scale}{character.  The name of the scale parameter. The default name is \code{.scale}. The default value is 1}
 
