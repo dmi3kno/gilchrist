@@ -10,7 +10,6 @@
 #' `qff_multiply()`:Multiplication rule for positive QFs.  Takes \eqn{Q_1(u), Q_2(u)>0} on all \eqn{[0,1]}. Returns \eqn{Q_1(u)Q_2(u)} - a product QF of \eqn{X} and \eqn{Y}.
 #' `qff_shift()`: Addition rule with a constant shift (adding location parameter). Takes \eqn{Q_1(u)}. Returns \eqn{a+Q_1(u)}.
 #' `qff_scale()`: Multiplication rule with a constant scale (multiplying by the scale parameter). Takes \eqn{Q_1(u)}. Returns \eqn{sQ_1(u)}.
-#' `qff_iscale()`: Multiplication rule with a constant inverse scale (multiplying by the reciprocated scale parameter). Takes \eqn{Q_1(u)}. Returns \eqn{frac{Q_1(u)}{s}}.
 #' @param fun,fun1,fun2 functions
 #'
 #' @return modified function
@@ -96,13 +95,11 @@ qff_shift <- function(fun, nm_shift=".location"){
 }
 
 #' @param nm_scale character.  The name of the scale parameter. The default name is `.scale`. The default value is 1
-#' @param .negate logical. Should the scale parameter be negated (multiplied by -1) before applying. Default FALSE
 #' @param .invert logical. Should the scale parameter be inverted (1/.scale) before applying. Default FALSE
 #' @rdname rules
 #' @export
-qff_scale <- function(fun, nm_scale=".scale", .negate=FALSE, .invert=FALSE){
+qff_scale <- function(fun, nm_scale=".scale", .invert=FALSE){
   f <- function(u, .scale=1, ...){
-    if(.negate) .scale <- (-1)*.scale
     if(.invert) .scale <- 1/.scale
     (.scale)*fun(u, ...)
   }

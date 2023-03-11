@@ -25,7 +25,7 @@ qff_multiply(fun1, fun2)
 
 qff_shift(fun, nm_shift = ".location")
 
-qff_scale(fun, nm_scale = ".scale", .negate = FALSE, .invert = FALSE)
+qff_scale(fun, nm_scale = ".scale", .invert = FALSE)
 }
 \arguments{
 \item{fun, fun1, fun2}{functions}
@@ -35,8 +35,6 @@ qff_scale(fun, nm_scale = ".scale", .negate = FALSE, .invert = FALSE)
 \item{nm_shift}{character.  The name of the shift parameter. The default name is \code{.location}. The default value is 0}
 
 \item{nm_scale}{character.  The name of the scale parameter. The default name is \code{.scale}. The default value is 1}
-
-\item{.negate}{logical. Should the scale parameter be negated (multiplied by -1) before applying. Default FALSE}
 
 \item{.invert}{logical. Should the scale parameter be inverted (1/.scale) before applying. Default FALSE}
 }
@@ -53,7 +51,6 @@ Gilchrist rules for constructing valid quantile functions implemented as functio
 \code{qff_multiply()}:Multiplication rule for positive QFs.  Takes \eqn{Q_1(u), Q_2(u)>0} on all \eqn{[0,1]}. Returns \eqn{Q_1(u)Q_2(u)} - a product QF of \eqn{X} and \eqn{Y}.
 \code{qff_shift()}: Addition rule with a constant shift (adding location parameter). Takes \eqn{Q_1(u)}. Returns \eqn{a+Q_1(u)}.
 \code{qff_scale()}: Multiplication rule with a constant scale (multiplying by the scale parameter). Takes \eqn{Q_1(u)}. Returns \eqn{sQ_1(u)}.
-\code{qff_iscale()}: Multiplication rule with a constant inverse scale (multiplying by the reciprocated scale parameter). Takes \eqn{Q_1(u)}. Returns \eqn{frac{Q_1(u)}{s}}.
 }
 \examples{
 qf_exp <- function(u)-log(1-u)
