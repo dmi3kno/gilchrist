@@ -52,7 +52,7 @@ In using and testing quantile function it is useful to have an
 equi-spaced grid of probabilities
 
 ``` r
-p_grd <- seq(0,1, by=0.2)
+p_grd <- seq(0,1, length.out=7)
 ```
 
 `{gilchrist}` is a special package! It uses magrittr pipe to operate not
@@ -73,7 +73,7 @@ s_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x55e891d7ccf8>
+#> <bytecode: 0x55a4822e3180>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -88,31 +88,31 @@ call it “ilambda”.
 
 ``` r
 qf_exp <- s_exp %>% 
-  qff_scale(nm_scale="ilambda")
+  qff_scale(nm_scale="lambda",.invert = TRUE)
 ```
 
 We compare our hand-made exponential quantile function to the standard
 function in R. Note that `qexp` has a reciprocated scale.
 
 ``` r
-qf_exp(p_grd, ilambda=10)
-#> [1]  0.000000  2.231436  5.108256  9.162907 16.094379       Inf
+qf_exp(p_grd, lambda=1/10)
+#> [1]  0.000000  1.823216  4.054651  6.931472 10.986123 17.917595       Inf
 # compare to standard exponential quantile function. 
 qexp(p_grd, 1/10)
-#> [1]  0.000000  2.231436  5.108256  9.162907 16.094379       Inf
+#> [1]  0.000000  1.823216  4.054651  6.931472 10.986123 17.917595       Inf
 ```
 
 `{gilchrist}` has several basic (parameterless) functions that you can
 modify.
 
-- `sqf_exp()`: Basic QF of exponential distribution
-- `sqf_unif()`: Basic QF of uniform distribution
-- `sqf_norm()`: Basic QF of normal distribution, a thinly wrapped
+- `s_exp()`: Basic QF of exponential distribution
+- `s_unif()`: Basic QF of uniform distribution
+- `s_norm()`: Basic QF of normal distribution, a thinly wrapped
   `qnorm(u,0,1)`.
-- `sqf_cauchy()`: Basic QF of Cauchy distribution.
-- `sqf_halftriang()`⁠: Basic QF of half-triangular distribution.
-- `sqf_halfcosine()`: Basic QF of half-cosine distribution
-- `sqf_sech()`: Basic QF of hyperbolic secant distribution.
+- `s_cauchy()`: Basic QF of Cauchy distribution.
+- `s_halftriang()`⁠: Basic QF of half-triangular distribution.
+- `s_halfcosine()`: Basic QF of half-cosine distribution
+- `s_sech()`: Basic QF of hyperbolic secant distribution.
 
 ### Logistic
 
@@ -122,7 +122,8 @@ exponential $-\ln(1-u)$ and reflected exponential $\ln(u)$
 distributions.
 
 $$Q(u)=\mu+s\ln\left(\frac{u}{1-u}\right)=\mu+s\left[\ln(u)-\ln(1-u)\right]$$
-This is how we do it.
+This is how we do it. Note that in the resulting quantile function, the
+arguments have to always be named.
 
 ``` r
 qf_logistic <- s_exp %>% 
@@ -132,9 +133,9 @@ qf_logistic <- s_exp %>%
   qff_decorate("mu", "s")
 
 qf_logistic(p_grd, mu=4, s=2)
-#> [1]     -Inf 1.227411 3.189070 4.810930 6.772589      Inf
+#> [1]      -Inf 0.7811242 2.6137056 4.0000000 5.3862944 7.2188758       Inf
 qlogis(p_grd, 4, 2)
-#> [1]     -Inf 1.227411 3.189070 4.810930 6.772589      Inf
+#> [1]      -Inf 0.7811242 2.6137056 4.0000000 5.3862944 7.2188758       Inf
 ```
 
 ### Flattened Skew-Logistic
@@ -158,9 +159,9 @@ qf_fsld <- s_exp %>%
   qff_decorate(nm_location="alpha", nm_scale="beta")
 
 qf_fsld(p_grd, delta=0.21, alpha=4, beta=2, k=1)
-#> [1]     -Inf 1.950808 3.566807 4.777738 5.923397      Inf
+#> [1]     -Inf 1.578928 3.101155 4.195949 5.154116 6.131138      Inf
 qpd::qfsld(p_grd, bt=2, k=1, dlt=0.21, a=4)
-#> [1]     -Inf 1.950808 3.566807 4.777738 5.923397      Inf
+#> [1]     -Inf 1.578928 3.101155 4.195949 5.154116 6.131138      Inf
 ```
 
 ### Weibull
@@ -174,16 +175,169 @@ should be reciprocated, let’s call it “ik”.
 
 ``` r
 qf_weibull <- s_exp %>% 
-  qtr_power("ik") %>% 
+  qtr_power("k", .invert = TRUE) %>% 
   qff_scale("lambda")
-qf_weibull(p_grd, lambda=2, ik=1/4)
-#> [1] 0.000000 1.374599 1.690823 1.956763 2.252675      Inf
+qf_weibull(p_grd, lambda=2, k=4)
+#> [1] 0.000000 1.306891 1.595947 1.824889 2.047581 2.313928      Inf
 qweibull(p_grd, scale=2,  shape=4)
-#> [1] 0.000000 1.374599 1.690823 1.956763 2.252675      Inf
+#> [1] 0.000000 1.306891 1.595947 1.824889 2.047581 2.313928      Inf
 ```
 
 Therefore, you can compose new quantile functions following Gilchrist
 transformation rules.
+
+## Function factories
+
+The package implements several basic operations which can be performed
+with quantile functions. First five of them implement Gilchrist’s rules:
+
+### Reflection
+
+A quantile function factory `qff_reflect` implement the “reflection
+rule”. Here’s an example of reflected exponential distribution.
+
+``` r
+qrexp <- s_exp %>% 
+  qff_reflect()
+qrexp(p_grd) %>% plot(p_grd,., type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+
+### Reciprocation
+
+A quantile function factory `qff_reciprocate` implement the
+“reciprocatal rule”. Here’s an example of reciprocated uniform
+distribution.
+
+``` r
+qrecunif <- s_unif %>% 
+  qff_reciprocate()
+qrecunif(p_grd) %>% plot(p_grd,., type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+
+### Addition
+
+A quantile function factory `qff_add` implement the “addition rule”.
+Here’s an example of sum of exponential and reflected exponential
+distributions.
+
+``` r
+qlogistic <- s_exp %>% 
+  qff_add(
+    s_exp %>% qff_reflect()
+  )
+qlogistic(p_grd) %>% plot(p_grd,., type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+
+### Linear combination
+
+A quantile function factory `qff_mix` implement the “linear combination
+rule” with a particular values of $a$ and $b$ adding up to 1. Here’s an
+example of sum of skew-logistic distribution implemented as a weighted
+mix of exponential and reflected exponential distributions. Note that
+the first function (in this case `s_exp`) gets the weight $\delta$ and
+the second (reflected `s_exp`) gets the weight $1-\delta$.
+
+``` r
+qskewlogis <- s_exp %>% 
+  qff_mix(
+    s_exp %>% qff_reflect(),
+    nm_wt="delta"
+  )
+qskewlogis(p_grd, delta=0.9) %>% plot(p_grd,., type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
+
+The twin function `qff_cmix` swaps the weights: $1-\delta$ to the first
+function and $\delta$ to the second function.
+
+### Multiplication
+
+A quantile function factory `qff_multiply` implement the “multiplication
+rule” for positive quantile functions. Here’s an example of multiplied
+half-cosine and exponential distributions
+
+``` r
+qhcsexp <- s_halfcosine %>% 
+  qff_multiply(s_exp)
+
+qhcsexp(p_grd) %>% plot(p_grd,., type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
+
+### Shift and scale
+
+The quantile function factory `qff_shift` implement the “addition rule”
+but for parameters. It allows to add a location parameter to any part of
+the QF. Here’s for example shifted exponential distribution (starting at
+2).
+
+``` r
+q_shiftedexp <- s_exp %>% qff_shift("mu")
+q_shiftedexp(p_grd, mu=2) %>% plot(p_grd,., type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
+
+The quantile function factory `qff_scale` implement the “multiplication
+rule” but for parameters: it can add a scale parameter to the QF,
+provided it is positive. The scale can be inverted, if necessary (as the
+case is with exponential distribution)
+
+``` r
+qexp1 <- s_exp %>% 
+  qff_scale("lambda", .invert = TRUE)
+qexp1(p_grd, lambda=2) %>% plot(p_grd,., type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
+
+Finally, `qff_decorate` adds both location and scale to a quantile
+function.
+
+## Transformations
+
+`gilchrist` also implements several popular Q-transformations and
+p-transformations.
+
+### Power
+
+Raising the quantile function to power results in a valid distribution
+only if the power is positive. Here’s Weibull, which is powered
+exponential.
+
+``` r
+qweibull1 <- s_exp %>% 
+  qtr_power("k", .invert = TRUE) %>% 
+  qff_scale("lambda")
+qweibull1(p_grd, lambda=2, k=3) %>% plot(p_grd,., type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
+
+The analogous function exists for p-transforming the quantile function,
+i.e. raising the depth $u$ to the power $.pow$ (or its inverse).
+
+### Exponentiation
+
+Raising the parameter to the power of quantile function.
+
+### Function
+
+Applying arbitrary function (without parameters) to the quantile
+function `qff_fun` or the depth `ptr_fun`.
+
+### Shift/scale/power by a constant
+
+The transformations where the shift, scale or power is a constant rather
+than a parameter.
 
 ## References
 

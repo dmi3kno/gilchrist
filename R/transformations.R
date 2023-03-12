@@ -2,7 +2,6 @@
 #' @description
 #' Some of the typical transformations of QFs, implementing a Q-transformation rule.
 #'    `qtr_power()`: Raising of QF to a power. Returns \eqn{Q_1(u)^k}.
-#'    `qtr_ipower()`: Raising of QF to an inverse power. Returns \eqn{Q_1(u)^{1/k}}.
 #'    `qtr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
 #'    `qtr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 #'

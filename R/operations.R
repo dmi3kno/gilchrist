@@ -26,6 +26,7 @@ qff_reflect <- function(fun){
     -fun(1-u, ...)
   }
 }
+
 #' @rdname rules
 #' @export
 qff_reciprocate <- function(fun){
@@ -33,6 +34,7 @@ qff_reciprocate <- function(fun){
     1/fun(1-u,...)
   }
 }
+
 #' @rdname rules
 #' @export
 qff_add <- function(fun1, fun2){
@@ -40,6 +42,7 @@ qff_add <- function(fun1, fun2){
     fun1(u, ...) + fun2(u, ...)
   }
 }
+
 #' @param nm_wt character.  The name of the weight parameter (for mixing). The default name is `.wt`. The default value is 0.5
 #' @rdname rules
 #' @export
@@ -54,6 +57,7 @@ qff_mix <- function(fun1, fun2, nm_wt=".wt"){
   body_ <- do.call(substitute, list(body_, list(.wt = as.symbol(nm_wt))))
   as.function(c(formals_, body_))
 }
+
 #' @rdname rules
 #' @export
 qff_cmix <- function(fun1, fun2, nm_wt=".wt"){
@@ -67,13 +71,14 @@ qff_cmix <- function(fun1, fun2, nm_wt=".wt"){
   body_ <- do.call(substitute, list(body_, list(.wt = as.symbol(nm_wt))))
   as.function(c(formals_, body_))
 }
+
 #' @rdname rules
 #' @export
 qff_multiply <- function(fun1, fun2){
   function(u,...){
     f1 <- fun1(u,...)
     f2 <- fun2(u,...)
-    stopifnot(all(f1>0), all(f2>0))
+    stopifnot(all(f1>=0), all(f2>=0))
     #if f1 and f2 are positive for all u \in [0,1]
     f1*f2
   }
