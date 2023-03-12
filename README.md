@@ -69,11 +69,11 @@ The built-in equivalent in `{gilchrist}` is `sqf_exp()`. It is a regular
 R function, so we can inspect it.
 
 ``` r
-sqf_exp
+s_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x555c155898a8>
+#> <bytecode: 0x55e891d7ccf8>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -87,7 +87,7 @@ In order to remember that our scale parameter should be reciprocated we
 call it “ilambda”.
 
 ``` r
-qf_exp <- sqf_exp %>% 
+qf_exp <- s_exp %>% 
   qff_scale(nm_scale="ilambda")
 ```
 
@@ -125,9 +125,9 @@ $$Q(u)=\mu+s\ln\left(\frac{u}{1-u}\right)=\mu+s\left[\ln(u)-\ln(1-u)\right]$$
 This is how we do it.
 
 ``` r
-qf_logistic <- sqf_exp %>% 
+qf_logistic <- s_exp %>% 
   qff_add(
-    sqf_exp %>% qff_reflect()
+    s_exp %>% qff_reflect()
   ) %>% 
   qff_decorate("mu", "s")
 
@@ -150,11 +150,11 @@ the reflected exponential will gain a weight `1-delta`, because this is
 the order in which they are listed in `qff_mix`.
 
 ``` r
-qf_fsld <- sqf_exp %>% 
+qf_fsld <- s_exp %>% 
   qff_mix(
-    qff_reflect(sqf_exp),
+    qff_reflect(s_exp),
     nm_wt="delta") %>% 
-  qff_add(qff_scale(sqf_unif,"k")) %>% 
+  qff_add(qff_scale(s_unif,"k")) %>% 
   qff_decorate(nm_location="alpha", nm_scale="beta")
 
 qf_fsld(p_grd, delta=0.21, alpha=4, beta=2, k=1)
@@ -173,7 +173,7 @@ $$Q(u)=\lambda[-\ln(1-u)]^{1/k}$$ Again, to remember that the power
 should be reciprocated, let’s call it “ik”.
 
 ``` r
-qf_weibull <- sqf_exp %>% 
+qf_weibull <- s_exp %>% 
   qtr_power("ik") %>% 
   qff_scale("lambda")
 qf_weibull(p_grd, lambda=2, ik=1/4)

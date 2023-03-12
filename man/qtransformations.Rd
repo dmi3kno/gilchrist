@@ -11,7 +11,7 @@
 \usage{
 qtr_power(fun, nm_pow = ".pow", .invert = FALSE)
 
-qtr_exponentiate(fun, nm_base = ".base")
+qtr_exponentiate(fun, nm_base = ".base", .invert = FALSE)
 
 qtr_fun(fun, .fun)
 
