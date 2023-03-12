@@ -94,23 +94,6 @@ qff_shift <- function(fun, nm_shift=".location"){
   as.function(c(formals_, body_))
 }
 
-#' @param x numeric. Fixed value to shift/scale the QF by
-#' @rdname rules
-#' @export
-qff_shiftby <- function(fun, x=0){
-  function(u, ...){
-    x+fun(u, ...)
-  }
-}
-
-#' @rdname rules
-#' @export
-qff_scaleby <- function(fun, x=1){
-  function(u, ...){
-    x*fun(u, ...)
-  }
-}
-
 #' @param nm_scale character.  The name of the scale parameter. The default name is `.scale`. The default value is 1
 #' @param .invert logical. Should the scale parameter be inverted (1/.scale) before applying. Default FALSE
 #' @rdname rules

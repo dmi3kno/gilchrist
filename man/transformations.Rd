@@ -4,13 +4,22 @@
 \alias{qtr_power}
 \alias{qtr_exponentiate}
 \alias{qtr_fun}
+\alias{qtr_shiftby}
+\alias{qtr_scaleby}
+\alias{qtr_powerby}
 \title{Q-transformations}
 \usage{
-qtr_power(fun, nm_pow = ".pow", .negate = FALSE, .invert = FALSE)
+qtr_power(fun, nm_pow = ".pow", .invert = FALSE)
 
 qtr_exponentiate(fun, nm_base = ".base")
 
 qtr_fun(fun, .fun)
+
+qtr_shiftby(fun, x = 0)
+
+qtr_scaleby(fun, x = 1)
+
+qtr_powerby(fun, x = 1)
 }
 \arguments{
 \item{fun}{function}
@@ -18,13 +27,13 @@ qtr_fun(fun, .fun)
 \item{nm_pow}{character.  The name of the power parameter. The default name is \code{.pow}. The default value is 1
 Should be a valid unique variable name other than "u"}
 
-\item{.negate}{logical. Should the power parameter be negated (multiplied by -1) before applying. Default FALSE}
-
 \item{.invert}{logical. Should the power parameter be inverted (1/.pow) before applying. Default FALSE}
 
 \item{nm_base}{character.  The name of the base parameter. The default name is \code{.base}. The default value is \code{exp(1)} (Euler's constant).}
 
 \item{.fun}{function without arguments(or with all default arguments) to be applied as Q-transformation}
+
+\item{x}{numeric. Fixed value to shift/scale/power the QF by}
 }
 \value{
 modified function

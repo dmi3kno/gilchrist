@@ -10,7 +10,6 @@
 #' @param fun function
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
 #' Should be a valid unique variable name other than "u"
-#' @param .negate logical. Should the power parameter be negated (multiplied by -1) before applying. Default FALSE
 #' @param .invert logical. Should the power parameter be inverted (1/.pow) before applying. Default FALSE
 #' @return modified function
 #' @rdname transformations
@@ -20,9 +19,8 @@
 #' qf_weibull <- qtr_power(qf_exp, "k")
 #' qf_weibull(0.5,k=1/5)
 #' qweibull(0.5, shape = 5)
-qtr_power <- function(fun, nm_pow=".pow", .negate=FALSE, .invert=FALSE){
+qtr_power <- function(fun, nm_pow=".pow", .invert=FALSE){
   f <- function(u, .pow=1, ...){
-    if(.negate) .pow <- (-1)*.pow
     if(.invert) .pow <- 1/.pow
     fun(u,...)^(.pow)
   }
@@ -67,4 +65,29 @@ qtr_fun <- function(fun, .fun){
   f
 }
 
+
+#' @param x numeric. Fixed value to shift/scale/power the QF by
+#' @rdname transformations
+#' @export
+qtr_shiftby <- function(fun, x=0){
+  function(u, ...){
+    x+fun(u, ...)
+  }
+}
+
+#' @rdname transformations
+#' @export
+qtr_scaleby <- function(fun, x=1){
+  function(u, ...){
+    x*fun(u, ...)
+  }
+}
+
+#' @rdname transformations
+#' @export
+qtr_powerby <- function(fun, x=1){
+  function(u, ...){
+    fun(u, ...)^x
+  }
+}
 
