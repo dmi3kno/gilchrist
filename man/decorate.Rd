@@ -28,5 +28,5 @@ Add location (\code{.location}) and scale (\code{.scale}) parameters (or the inv
 Note! The parameter names can be changed by passing the names
 }
 \examples{
-qff_decorate(sf_exp)
+qff_decorate(s_exp)
 }

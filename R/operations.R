@@ -124,7 +124,7 @@ qff_scale <- function(fun, nm_scale=".scale", .invert=FALSE){
 #' @return modified function with location and scale parameter. The parameter names specified by the user.
 #'
 #' @examples
-#' qff_decorate(sf_exp)
+#' qff_decorate(s_exp)
 
 #' @rdname decorate
 #' @export
