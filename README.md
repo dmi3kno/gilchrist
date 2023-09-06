@@ -52,7 +52,7 @@ In using and testing quantile function it is useful to have an
 equi-spaced grid of probabilities
 
 ``` r
-p_grd <- seq(0,1, length.out=7)
+p_grd <- ppoints(10)
 ```
 
 `{gilchrist}` is a special package! It uses magrittr pipe to operate not
@@ -73,7 +73,7 @@ s_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x55a4822e3180>
+#> <bytecode: 0x556f8f4de9c8>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -96,10 +96,12 @@ function in R. Note that `qexp` has a reciprocated scale.
 
 ``` r
 qf_exp(p_grd, lambda=1/10)
-#> [1]  0.000000  1.823216  4.054651  6.931472 10.986123 17.917595       Inf
+#>  [1]  0.6291383  1.7261274  2.9584538  4.3642733  6.0005676  7.9580133
+#>  [7] 10.3942342 13.6219681 18.4176989 27.9728133
 # compare to standard exponential quantile function. 
 qexp(p_grd, 1/10)
-#> [1]  0.000000  1.823216  4.054651  6.931472 10.986123 17.917595       Inf
+#>  [1]  0.6291383  1.7261274  2.9584538  4.3642733  6.0005676  7.9580133
+#>  [7] 10.3942342 13.6219681 18.4176989 27.9728133
 ```
 
 `{gilchrist}` has several basic (parameterless) functions that you can
@@ -133,9 +135,11 @@ qf_logistic <- s_exp %>%
   qff_decorate("mu", "s")
 
 qf_logistic(p_grd, mu=4, s=2)
-#> [1]      -Inf 0.7811242 2.6137056 4.0000000 5.3862944 7.2188758       Inf
+#>  [1] -1.4687350  0.6616857  1.8672971  2.7940078  3.6085108  4.3914892
+#>  [7]  5.2059922  6.1327029  7.3383143  9.4687350
 qlogis(p_grd, 4, 2)
-#> [1]      -Inf 0.7811242 2.6137056 4.0000000 5.3862944 7.2188758       Inf
+#>  [1] -1.4687350  0.6616857  1.8672971  2.7940078  3.6085108  4.3914892
+#>  [7]  5.2059922  6.1327029  7.3383143  9.4687350
 ```
 
 ### Flattened Skew-Logistic
@@ -159,9 +163,11 @@ qf_fsld <- s_exp %>%
   qff_decorate(nm_location="alpha", nm_scale="beta")
 
 qf_fsld(p_grd, delta=0.21, alpha=4, beta=2, k=1)
-#> [1]     -Inf 1.578928 3.101155 4.195949 5.154116 6.131138      Inf
+#>  [1] -0.2713295  1.4795741  2.4841792  3.2483276  3.8970968  4.4837079
+#>  [7]  5.0396856  5.5924918  6.1837420  6.9535031
 qpd::qfsld(p_grd, bt=2, k=1, dlt=0.21, a=4)
-#> [1]     -Inf 1.578928 3.101155 4.195949 5.154116 6.131138      Inf
+#>  [1] -0.2713295  1.4795741  2.4841792  3.2483276  3.8970968  4.4837079
+#>  [7]  5.0396856  5.5924918  6.1837420  6.9535031
 ```
 
 ### Weibull
@@ -178,9 +184,11 @@ qf_weibull <- s_exp %>%
   qtr_power("k", .invert = TRUE) %>% 
   qff_scale("lambda")
 qf_weibull(p_grd, lambda=2, k=4)
-#> [1] 0.000000 1.306891 1.595947 1.824889 2.047581 2.313928      Inf
+#>  [1] 1.001651 1.289134 1.475014 1.625579 1.760265 1.888997 2.019427 2.160678
+#>  [9] 2.329908 2.586509
 qweibull(p_grd, scale=2,  shape=4)
-#> [1] 0.000000 1.306891 1.595947 1.824889 2.047581 2.313928      Inf
+#>  [1] 1.001651 1.289134 1.475014 1.625579 1.760265 1.888997 2.019427 2.160678
+#>  [9] 2.329908 2.586509
 ```
 
 Therefore, you can compose new quantile functions following Gilchrist
@@ -334,18 +342,105 @@ Raising the parameter to the power of quantile function.
 Applying arbitrary function (without parameters) to the quantile
 function `qff_fun` or the depth `ptr_fun`.
 
+Lets create a U-shaped Chen distribution described in Chen (2000). The
+quantile function of Chen ditribution is
+
+$$
+Q(u)=\left[\ln\left(1-\frac{\ln(1-u)}{\lambda}\right)\right]^{1/\beta}
+$$
+
+``` r
+qchen <- s_exp %>% 
+  qff_scale("lambda", .invert = TRUE) %>% 
+  qtr_fun(log1p) %>% 
+  qtr_power("beta", .invert = TRUE)
+```
+
 ### Shift/scale/power by a constant
 
 The transformations where the shift, scale or power is a constant rather
 than a parameter.
 
+### Kavya-Manoharan (KM) p-transformation
+
+The p-transformation proposed in Kavya and Manoharan (2021)
+
+$$
+T(y)=-\ln\left(1-y\frac{e-1}{e}\right)
+$$
+
+The authors apply this p-transformation to Weibuill distribution
+
+``` r
+qf_KMweibull <- s_exp %>% 
+  qtr_power("k", .invert = TRUE) %>% 
+  qff_scale("lambda") %>% 
+  ptr_KM()
+
+qf_KMweibull(p_grd, lambda=3, k=4)%>%
+  plot(p_grd,., type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
+
+### $\varepsilon$-transformation
+
+Unit transformation described by Bakouch et al. (2023).
+
+$$
+T(x)=\frac{(1+x)^{1/\beta}-1}{(1+x)^{1/\beta}+1}
+$$
+
+In particular they present the unit exponential QF as
+
+``` r
+q_uexp <- function(u, lambda, beta){
+  nm <- (1+qexp(u, lambda))^(1/beta)-1
+  den <- (1+qexp(u, lambda))^(1/beta)+1 
+  nm/den
+}
+
+pgrd <- ppoints(10)
+
+quexp <- s_exp %>%
+  qff_scale("lambda", .invert=TRUE) %>%
+  qtr_epsilon("beta")
+
+all.equal(
+ quexp(pgrd, lambda=4, beta=3),
+ q_uexp(pgrd, 4, 3)
+ )
+#> [1] TRUE
+```
+
+Let’s create somewhat more complex unit distribution
+
 ## References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
+<div id="ref-bakouch2023UnitExponentialProbability" class="csl-entry">
+
+Bakouch, Hassan, Tassaddaq Hussain, Marina Tošić, Vladica Stojanović,
+and Najla Qarmalah. 2023. “Unit Exponential Probability Distribution:
+Characterization and Applications in Environmental and Engineering Data
+Modelling.” Preprint. Computer Science and Mathematics.
+<https://doi.org/10.20944/preprints202308.0778.v1>.
+
+</div>
+
+<div id="ref-chen2000NewTwoparameterLifetime" class="csl-entry">
+
+Chen, Zhenmin. 2000. “A New Two-Parameter Lifetime Distribution with
+Bathtub Shape or Increasing Failure Rate Function.” *Statistics &
+Probability Letters* 49 (2): 155–61.
+<https://doi.org/10.1016/S0167-7152(00)00044-4>.
+
+</div>
+
 <div id="ref-davies2016WarrenGilchrist19322015" class="csl-entry">
 
-Davies, Neville. 2016. “Warren g. Gilchrist, 1932-2015.” *Journal of the
+Davies, Neville. 2016. “Warren G. Gilchrist, 1932-2015.” *Journal of the
 Royal Statistical Society. Series A (Statistics in Society)* 179 (3):
 872–74. <https://doi.org/10.1111/rssa.12243>.
 
@@ -356,6 +451,15 @@ class="csl-entry">
 
 Gilchrist, Warren. 2000. *Statistical Modelling with Quantile
 Functions*. Boca Raton: Chapman & Hall/CRC.
+
+</div>
+
+<div id="ref-kavya2021ParsimoniousModelsLifetimes" class="csl-entry">
+
+Kavya, P., and M. Manoharan. 2021. “Some Parsimonious Models for
+Lifetimes and Applications.” *Journal of Statistical Computation and
+Simulation* 91 (18): 3693–3708.
+<https://doi.org/10.1080/00949655.2021.1946064>.
 
 </div>
 

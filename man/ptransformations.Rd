@@ -7,6 +7,7 @@
 \alias{ptr_shiftby}
 \alias{ptr_scaleby}
 \alias{ptr_powerby}
+\alias{ptr_KM}
 \title{p-transformations}
 \usage{
 ptr_power(fun, nm_pow = ".pow", .invert = FALSE)
@@ -20,6 +21,8 @@ ptr_shiftby(fun, x = 0)
 ptr_scaleby(fun, x = 1)
 
 ptr_powerby(fun, x = 1)
+
+ptr_KM(fun)
 }
 \arguments{
 \item{fun}{function}
@@ -44,6 +47,7 @@ Some of the typical transformations of QFs, implementing a Q-transformation rule
 \code{ptr_ipower()}: Raising of QF to an inverse power. Returns \eqn{Q_1(u)^{1/k}}.
 \code{ptr_exponentiate()}: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
 \code{ptr_fun()}: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
+\code{ptr_KM()}: Kavya-Manoharan (KM) transformation \eqn{-\ln(1-u\frac{e-1}{e})}
 }
 \examples{
 qf_exp <- function(u)-log(1-u)

@@ -59,7 +59,7 @@ library(magrittr)
 In using and testing quantile function it is useful to have an equi-spaced grid of probabilities
 
 ```{r}
-p_grd <- seq(0,1, length.out=7)
+p_grd <- ppoints(10)
 ```
 
 `{gilchrist}` is a special package! It uses magrittr pipe to operate not on data, but on functions. It is a function factory engine!
@@ -266,9 +266,78 @@ Raising the parameter to the power of quantile function.
 
 Applying arbitrary function (without parameters) to the quantile function `qff_fun` or the depth `ptr_fun`.
 
+Lets create a U-shaped Chen distribution described in @chen2000NewTwoparameterLifetime. The quantile function of Chen ditribution is
+
+$$
+Q(u)=\left[\ln\left(1-\frac{\ln(1-u)}{\lambda}\right)\right]^{1/\beta}
+$$
+
+
+```{r}
+qchen <- s_exp %>% 
+  qff_scale("lambda", .invert = TRUE) %>% 
+  qtr_fun(log1p) %>% 
+  qtr_power("beta", .invert = TRUE)
+```
+
+
 ### Shift/scale/power by a constant
 
 The transformations where the shift, scale or power is a constant rather than a parameter.
+
+### Kavya-Manoharan (KM) p-transformation
+
+The p-transformation proposed in @kavya2021ParsimoniousModelsLifetimes
+
+$$
+T(y)=-\ln\left(1-y\frac{e-1}{e}\right)
+$$
+
+The authors apply this p-transformation to Weibuill distribution
+
+```{r}
+qf_KMweibull <- s_exp %>% 
+  qtr_power("k", .invert = TRUE) %>% 
+  qff_scale("lambda") %>% 
+  ptr_KM()
+
+qf_KMweibull(p_grd, lambda=3, k=4)%>%
+  plot(p_grd,., type="l")
+```
+
+
+
+### $\varepsilon$-transformation
+
+Unit transformation described by @bakouch2023UnitExponentialProbability.
+
+$$
+T(x)=\frac{(1+x)^{1/\beta}-1}{(1+x)^{1/\beta}+1}
+$$
+
+In particular they present the unit exponential QF as
+
+```{r}
+q_uexp <- function(u, lambda, beta){
+  nm <- (1+qexp(u, lambda))^(1/beta)-1
+  den <- (1+qexp(u, lambda))^(1/beta)+1 
+  nm/den
+}
+
+pgrd <- ppoints(10)
+
+quexp <- s_exp %>%
+  qff_scale("lambda", .invert=TRUE) %>%
+  qtr_epsilon("beta")
+
+all.equal(
+ quexp(pgrd, lambda=4, beta=3),
+ q_uexp(pgrd, 4, 3)
+ )
+```
+
+Let's create somewhat more complex unit distribution
+
 
 
 

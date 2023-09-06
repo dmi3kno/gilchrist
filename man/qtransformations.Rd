@@ -2,6 +2,7 @@
 % Please edit documentation in R/transformations.R
 \name{qtr_power}
 \alias{qtr_power}
+\alias{qtr_epsilon}
 \alias{qtr_exponentiate}
 \alias{qtr_fun}
 \alias{qtr_shiftby}
@@ -10,6 +11,8 @@
 \title{Q-transformations}
 \usage{
 qtr_power(fun, nm_pow = ".pow", .invert = FALSE)
+
+qtr_epsilon(fun, nm_pow = ".pow")
 
 qtr_exponentiate(fun, nm_base = ".base", .invert = FALSE)
 
@@ -41,9 +44,9 @@ modified function
 \description{
 Some of the typical transformations of QFs, implementing a Q-transformation rule.
 \code{qtr_power()}: Raising of QF to a power. Returns \eqn{Q_1(u)^k}.
-\code{qtr_ipower()}: Raising of QF to an inverse power. Returns \eqn{Q_1(u)^{1/k}}.
 \code{qtr_exponentiate()}: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
 \code{qtr_fun()}: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
+\code{qtr_epsilon()}: unit-Q-transform using inverse epsilon function \eqn{\frac{(1+Q_1(u))^{1/\beta}-1}{(1+Q_1(u))^{1/\beta}+1}}.
 
 Note that today p-transformations can be performed by applying Q-transformations to standard uniform distribution
 }

@@ -4,6 +4,7 @@
 #'    `qtr_power()`: Raising of QF to a power. Returns \eqn{Q_1(u)^k}.
 #'    `qtr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
 #'    `qtr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
+#'    `qtr_epsilon()`: unit-Q-transform using inverse epsilon function \eqn{\frac{(1+Q_1(u))^{1/\beta}-1}{(1+Q_1(u))^{1/\beta}+1}}.
 #'
 #' Note that today p-transformations can be performed by applying Q-transformations to standard uniform distribution
 #' @param fun function
@@ -31,6 +32,23 @@ qtr_power <- function(fun, nm_pow=".pow", .invert=FALSE){
   as.function(c(formals_, body_))
 }
 
+#' @rdname qtransformations
+#' @export
+#' @examples
+qtr_epsilon <- function(fun, nm_pow=".pow"){
+  f <- function(u, .pow=1, ...){
+    x <- fun(u,...)
+    ((1+x)^(1/.pow)-1)/
+      ((1+x)^(1/.pow)+1)
+  }
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".pow"] <- nm_pow
+  body_ <- do.call(substitute, list(body_, list(.pow = as.symbol(nm_pow))))
+  as.function(c(formals_, body_))
+}
+
 #' p-transformations
 #' @description
 #' Some of the typical transformations of QFs, implementing a Q-transformation rule.
@@ -38,6 +56,7 @@ qtr_power <- function(fun, nm_pow=".pow", .invert=FALSE){
 #'    `ptr_ipower()`: Raising of QF to an inverse power. Returns \eqn{Q_1(u)^{1/k}}.
 #'    `ptr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
 #'    `ptr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
+#'    `ptr_KM()`: Kavya-Manoharan (KM) transformation \eqn{-\ln(1-u\frac{e-1}{e})}
 #'
 #' @param fun function
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
@@ -177,3 +196,12 @@ ptr_powerby <- function(fun, x=1){
   }
 }
 
+# Kavya-Manoharan (KM) p-transformation
+#' @rdname ptransformations
+#' @export
+ptr_KM <- function(fun){
+  function(u, ...){
+    em1e <- expm1(1)/exp(1)
+    fun(-log(1-u*em1e), ...)
+  }
+}
