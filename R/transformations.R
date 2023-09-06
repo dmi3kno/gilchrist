@@ -57,6 +57,7 @@ qtr_epsilon <- function(fun, nm_pow=".pow"){
 #'    `ptr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
 #'    `ptr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 #'    `ptr_KM()`: Kavya-Manoharan (KM) transformation \eqn{-\ln(1-u\frac{e-1}{e})}
+#'    `ptr_DUS()`: Dinesh-Umesh-Sunjay (DUS) transformation \eqn{\ln(1-u+eu)}.
 #'
 #' @param fun function
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
@@ -203,5 +204,13 @@ ptr_KM <- function(fun){
   function(u, ...){
     em1e <- expm1(1)/exp(1)
     fun(-log(1-u*em1e), ...)
+  }
+}
+# Dinesh-Umesh-Sanjay (DUS) p-transformation
+#' @rdname ptransformations
+#' @export
+ptr_DUS <- function(fun){
+  function(u, ...){
+    fun(log(1-u+exp(1)*u), ...)
   }
 }

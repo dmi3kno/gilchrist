@@ -330,7 +330,7 @@ qf_KMweibull(p_grd, lambda=3, k=4)%>%
 
 ### $\varepsilon$-transformation
 
-Unit transformation described by @bakouch2023UnitExponentialProbability.
+Unit transformation described by @bakouch2023UnitExponentialProbability for positive distributions.
 
 $$
 T(x)=\frac{(1+x)^{1/\beta}-1}{(1+x)^{1/\beta}+1}
@@ -339,26 +339,44 @@ $$
 In particular they present the unit exponential QF as
 
 ```{r}
-q_uexp <- function(u, lambda, beta){
-  nm <- (1+qexp(u, lambda))^(1/beta)-1
-  den <- (1+qexp(u, lambda))^(1/beta)+1 
-  nm/den
-}
-
-pgrd <- ppoints(10)
-
 quexp <- s_exp %>%
   qff_scale("lambda", .invert=TRUE) %>%
   qtr_epsilon("beta")
-
-all.equal(
- quexp(pgrd, lambda=4, beta=3),
- q_uexp(pgrd, 4, 3)
- )
 ```
 
-Let's create somewhat more complex unit distribution
+We could transform another semi-bounded distribution, like Pareto
 
+```{r}
+# for positive alpha
+qupareto <- s_unif %>%
+  qff_reciprocate() %>%
+  qtr_power("alpha", .invert = TRUE) %>%
+  qtr_epsilon("beta")
+  
+qs <- qupareto(p_grd, 3, 0.1)
+plot(p_grd, qs, type="l")
+
+```
+
+Finally, we can apply the DUS-transformation proposed by @kumar2015MethodProposingNew
+
+$$
+T(x)=\ln(1-x+ex)
+$$
+
+The authors used it to transform exponential distribution
+
+```{r}
+qDUSexp <- s_exp %>%
+  qff_scale("lambda", .invert = TRUE) %>%
+  ptr_DUS()
+
+qs <- qDUSexp(p_grd, lambda=0.5)
+plot(p_grd, qs, type="l")
+lines(p_grd, qexp(p_grd, 0.5), col=2)
+
+
+```
 
 
 

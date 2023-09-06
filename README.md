@@ -73,7 +73,7 @@ s_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x562f609feb28>
+#> <bytecode: 0x55e3d2090de8>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -407,7 +407,8 @@ qf_KMweibull(p_grd, lambda=3, k=4)%>%
 
 ### $\varepsilon$-transformation
 
-Unit transformation described by Bakouch et al. (2023).
+Unit transformation described by Bakouch et al. (2023) for positive
+distributions.
 
 $$
 T(x)=\frac{(1+x)^{1/\beta}-1}{(1+x)^{1/\beta}+1}
@@ -416,26 +417,46 @@ $$
 In particular they present the unit exponential QF as
 
 ``` r
-q_uexp <- function(u, lambda, beta){
-  nm <- (1+qexp(u, lambda))^(1/beta)-1
-  den <- (1+qexp(u, lambda))^(1/beta)+1 
-  nm/den
-}
-
-pgrd <- ppoints(10)
-
 quexp <- s_exp %>%
   qff_scale("lambda", .invert=TRUE) %>%
   qtr_epsilon("beta")
-
-all.equal(
- quexp(pgrd, lambda=4, beta=3),
- q_uexp(pgrd, 4, 3)
- )
-#> [1] TRUE
 ```
 
-Let’s create somewhat more complex unit distribution
+We could transform another semi-bounded distribution, like Pareto
+
+``` r
+# for positive alpha
+qupareto <- s_unif %>%
+  qff_reciprocate() %>%
+  qtr_power("alpha", .invert = TRUE) %>%
+  qtr_epsilon("beta")
+  
+qs <- qupareto(p_grd, 3, 0.1)
+plot(p_grd, qs, type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" />
+
+Finally, we can apply the DUS-transformation proposed by Kumar, Singh,
+and Singh (2015)
+
+$$
+T(x)=\ln(1-x+ex)
+$$
+
+The authors used it to transform exponential distribution
+
+``` r
+qDUSexp <- s_exp %>%
+  qff_scale("lambda", .invert = TRUE) %>%
+  ptr_DUS()
+
+qs <- qDUSexp(p_grd, lambda=0.5)
+plot(p_grd, qs, type="l")
+lines(p_grd, qexp(p_grd, 0.5), col=2)
+```
+
+<img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
 
 ## References
 
@@ -482,6 +503,14 @@ Kavya, P., and M. Manoharan. 2021. “Some Parsimonious Models for
 Lifetimes and Applications.” *Journal of Statistical Computation and
 Simulation* 91 (18): 3693–3708.
 <https://doi.org/10.1080/00949655.2021.1946064>.
+
+</div>
+
+<div id="ref-kumar2015MethodProposingNew" class="csl-entry">
+
+Kumar, Dinesh, Umesh Singh, and Sanjay Kumar Singh. 2015. “A Method of
+Proposing New Distribution and Its Application to Bladder Cancer
+Patients Data.” *J. Stat. Appl. Pro. Lett* 2 (3): 235–45.
 
 </div>
 
