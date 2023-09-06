@@ -73,7 +73,7 @@ s_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x556f8f4de9c8>
+#> <bytecode: 0x562f609feb28>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -333,6 +333,28 @@ qweibull1(p_grd, lambda=2, k=3) %>% plot(p_grd,., type="l")
 The analogous function exists for p-transforming the quantile function,
 i.e. raising the depth $u$ to the power $.pow$ (or its inverse).
 
+Let’s create Kumaraswamy distribution
+
+$$
+Q(u)=(1-(1-u)^{1/b})^{1/a}
+$$
+
+``` r
+qkumar1 <- s_unif %>%
+  qff_reflect() %>%
+  qtr_scaleby(-1) %>%
+  qtr_power("b", .invert = TRUE) %>%
+  qtr_scaleby(-1) %>%
+  qtr_shiftby(1) %>%
+  qtr_power("a", .invert = TRUE)
+
+all.equal(
+ extraDistr::qkumar(p_grd, 4,5),
+  qkumar1(p_grd, a=4, b=5)
+)
+#> [1] TRUE
+```
+
 ### Exponentiation
 
 Raising the parameter to the power of quantile function.
@@ -381,7 +403,7 @@ qf_KMweibull(p_grd, lambda=3, k=4)%>%
   plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
 
 ### $\varepsilon$-transformation
 
