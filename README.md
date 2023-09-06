@@ -73,7 +73,7 @@ s_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x55e3d2090de8>
+#> <bytecode: 0x5652d97b9490>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -458,6 +458,21 @@ lines(p_grd, qexp(p_grd, 0.5), col=2)
 
 <img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
 
+## Other examples
+
+Interesting “bathtube-shaped” distribution Muhammad (2023)
+
+``` r
+qmuhammad <- s_unif %>% 
+  qff_reciprocate() %>% 
+  qff_reflect() %>% 
+  qtr_shiftby(1) %>% 
+  qff_scale("beta",.invert = TRUE) %>% 
+  qtr_fun(exp) %>% 
+  qff_scale("theta") %>% 
+  ptr_power("alpha", .invert = TRUE)
+```
+
 ## References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
@@ -511,6 +526,15 @@ Simulation* 91 (18): 3693–3708.
 Kumar, Dinesh, Umesh Singh, and Sanjay Kumar Singh. 2015. “A Method of
 Proposing New Distribution and Its Application to Bladder Cancer
 Patients Data.” *J. Stat. Appl. Pro. Lett* 2 (3): 235–45.
+
+</div>
+
+<div id="ref-muhammad2023NewThreeparameterModel" class="csl-entry">
+
+Muhammad, Mustapha. 2023. “A New Three-Parameter Model with Support on a
+Bounded Domain: Properties and Quantile Regression Model.” *Journal of
+Computational Mathematics and Data Science* 6 (January): 100077.
+<https://doi.org/10.1016/j.jcmds.2023.100077>.
 
 </div>
 

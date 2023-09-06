@@ -378,7 +378,20 @@ lines(p_grd, qexp(p_grd, 0.5), col=2)
 
 ```
 
+## Other examples
 
+Interesting "bathtube-shaped" distribution @muhammad2023NewThreeparameterModel
+
+```{r}
+qmuhammad <- s_unif %>% 
+  qff_reciprocate() %>% 
+  qff_reflect() %>% 
+  qtr_shiftby(1) %>% 
+  qff_scale("beta",.invert = TRUE) %>% 
+  qtr_fun(exp) %>% 
+  qff_scale("theta") %>% 
+  ptr_power("alpha", .invert = TRUE)
+```
 
 ## References
 
