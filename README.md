@@ -73,7 +73,7 @@ s_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x5652d97b9490>
+#> <bytecode: 0x55d91e090d58>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -460,7 +460,11 @@ lines(p_grd, qexp(p_grd, 0.5), col=2)
 
 ## Other examples
 
-Interesting “bathtube-shaped” distribution Muhammad (2023)
+Interesting “bathtube-shaped” distribution proposed by Muhammad (2023)
+
+$$
+Q(u)=\theta\exp\left[\frac{1}{\beta}(1-u^{-\frac{1}{\alpha}})\right]
+$$
 
 ``` r
 qmuhammad <- s_unif %>% 
@@ -471,7 +475,31 @@ qmuhammad <- s_unif %>%
   qtr_fun(exp) %>% 
   qff_scale("theta") %>% 
   ptr_power("alpha", .invert = TRUE)
+
+qmuhammad(runif(1e3), theta=2, beta=7, alpha=0.7) %>% hist(50)
 ```
+
+<img src="man/figures/README-unnamed-chunk-22-1.png" width="100%" />
+
+Fréchet is Reciprocate transform of Weibull. Weibull is power transform
+of Exponential.
+
+$$
+Q(u)=m+s(-\ln u)^{-1/\alpha}
+$$
+
+``` r
+qfrechet <- s_exp %>%
+  qtr_power("alpha", .invert = TRUE) %>%
+  qff_reciprocate() %>%
+  qff_decorate("m", "s")
+
+qfrechet(p_grd, m=0, s=1, alpha=5)%>%plot(p_grd, ., type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-23-1.png" width="100%" />
+
+What other cool transformations do you know? Please let me know!
 
 ## References
 
