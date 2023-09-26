@@ -51,13 +51,15 @@ qtr_epsilon <- function(fun, nm_pow=".pow"){
 
 #' p-transformations
 #' @description
-#' Some of the typical transformations of QFs, implementing a Q-transformation rule.
-#'    `ptr_power()`: Raising of QF to a power. Returns \eqn{Q_1(u)^k}.
-#'    `ptr_ipower()`: Raising of QF to an inverse power. Returns \eqn{Q_1(u)^{1/k}}.
-#'    `ptr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
-#'    `ptr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
-#'    `ptr_KM()`: Kavya-Manoharan (KM) transformation \eqn{-\ln(1-u\frac{e-1}{e})}
-#'    `ptr_DUS()`: Dinesh-Umesh-Sunjay (DUS) transformation \eqn{\ln(1-u+eu)}.
+#' Some of the typical transformations of QFs, implementing a p-transformation rule.
+#'
+#'    - `ptr_power()`: Raising of QF to a power. Returns \eqn{Q_1(u)^k}.
+#'    - `ptr_ipower()`: Raising of QF to an inverse power. Returns \eqn{Q_1(u)^{1/k}}.
+#'    - `ptr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
+#'    - `ptr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
+#'    - `ptr_KM()`: Kavya-Manoharan (KM) transformation \eqn{-\ln(1-u\frac{e-1}{e})}
+#'    - `ptr_DUS()`: Dinesh-Umesh-Sunjay (DUS) transformation \eqn{\ln(1-u+eu)}.
+#'    - `ptr_modi()`: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta})}
 #'
 #' @param fun function
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
@@ -212,5 +214,14 @@ ptr_KM <- function(fun){
 ptr_DUS <- function(fun){
   function(u, ...){
     fun(log(1-u+exp(1)*u), ...)
+  }
+}
+
+# Modi p-transformation
+#' @rdname ptransformations
+#' @export
+ptr_modi <- function(fun){
+  function(u, alpha, beta, ...){
+    fun(u*alpha^beta/(1-u+alpha^beta), ...)
   }
 }

@@ -378,6 +378,28 @@ lines(p_grd, qexp(p_grd, 0.5), col=2)
 
 ```
 
+
+### Modi-transformation
+
+Modi-transformed exponentiated exponential distribution
+
+```{r}
+qmodiexpexp <- s_exp %>%
+  qff_scale("lambda", .invert = TRUE) %>%
+  ptr_power("delta", .invert = TRUE) %>%
+  ptr_modi()
+  
+
+
+qmodiexpexp1 <- function(u, lambda, alpha, beta, delta){
+  1/lambda*(-log(1-(u*alpha^beta/(1-u+alpha^beta))^(1/delta)))
+}
+
+qmodiexpexp(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
+qmodiexpexp1(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
+
+```
+
 ## Other examples
 
 Interesting "bathtube-shaped" distribution proposed by @muhammad2023NewThreeparameterModel

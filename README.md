@@ -73,7 +73,7 @@ s_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x55d91e090d58>
+#> <bytecode: 0x55e2ecba53f0>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -458,6 +458,30 @@ lines(p_grd, qexp(p_grd, 0.5), col=2)
 
 <img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
 
+### Modi-transformation
+
+Modi-transformed exponentiated exponential distribution
+
+``` r
+qmodiexpexp <- s_exp %>%
+  qff_scale("lambda", .invert = TRUE) %>%
+  ptr_power("delta", .invert = TRUE) %>%
+  ptr_modi()
+  
+
+
+qmodiexpexp1 <- function(u, lambda, alpha, beta, delta){
+  1/lambda*(-log(1-(u*alpha^beta/(1-u+alpha^beta))^(1/delta)))
+}
+
+qmodiexpexp(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
+#>  [1] 0.2336856 0.3191756 0.3854007 0.4479244 0.5126411 0.5842906 0.6690102
+#>  [8] 0.7777162 0.9365660 1.2520741
+qmodiexpexp1(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
+#>  [1] 0.2336856 0.3191756 0.3854007 0.4479244 0.5126411 0.5842906 0.6690102
+#>  [8] 0.7777162 0.9365660 1.2520741
+```
+
 ## Other examples
 
 Interesting “bathtube-shaped” distribution proposed by Muhammad (2023)
@@ -479,7 +503,7 @@ qmuhammad <- s_unif %>%
 qmuhammad(runif(1e3), theta=2, beta=7, alpha=0.7) %>% hist(50)
 ```
 
-<img src="man/figures/README-unnamed-chunk-22-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-23-1.png" width="100%" />
 
 Fréchet is Reciprocate transform of Weibull. Weibull is power transform
 of Exponential.
@@ -497,7 +521,7 @@ qfrechet <- s_exp %>%
 qfrechet(p_grd, m=0, s=1, alpha=5)%>%plot(p_grd, ., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-23-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-24-1.png" width="100%" />
 
 What other cool transformations do you know? Please let me know!
 

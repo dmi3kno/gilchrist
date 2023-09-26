@@ -9,6 +9,7 @@
 \alias{ptr_powerby}
 \alias{ptr_KM}
 \alias{ptr_DUS}
+\alias{ptr_modi}
 \title{p-transformations}
 \usage{
 ptr_power(fun, nm_pow = ".pow", .invert = FALSE)
@@ -26,6 +27,8 @@ ptr_powerby(fun, x = 1)
 ptr_KM(fun)
 
 ptr_DUS(fun)
+
+ptr_modi(fun)
 }
 \arguments{
 \item{fun}{function}
@@ -45,13 +48,16 @@ Should be a valid unique variable name other than "u"}
 modified function
 }
 \description{
-Some of the typical transformations of QFs, implementing a Q-transformation rule.
-\code{ptr_power()}: Raising of QF to a power. Returns \eqn{Q_1(u)^k}.
-\code{ptr_ipower()}: Raising of QF to an inverse power. Returns \eqn{Q_1(u)^{1/k}}.
-\code{ptr_exponentiate()}: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
-\code{ptr_fun()}: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
-\code{ptr_KM()}: Kavya-Manoharan (KM) transformation \eqn{-\ln(1-u\frac{e-1}{e})}
-\code{ptr_DUS()}: Dinesh-Umesh-Sunjay (DUS) transformation \eqn{\ln(1-u+eu)}.
+Some of the typical transformations of QFs, implementing a p-transformation rule.
+\itemize{
+\item \code{ptr_power()}: Raising of QF to a power. Returns \eqn{Q_1(u)^k}.
+\item \code{ptr_ipower()}: Raising of QF to an inverse power. Returns \eqn{Q_1(u)^{1/k}}.
+\item \code{ptr_exponentiate()}: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
+\item \code{ptr_fun()}: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
+\item \code{ptr_KM()}: Kavya-Manoharan (KM) transformation \eqn{-\ln(1-u\frac{e-1}{e})}
+\item \code{ptr_DUS()}: Dinesh-Umesh-Sunjay (DUS) transformation \eqn{\ln(1-u+eu)}.
+\item \code{ptr_modi()}: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta})}
+}
 }
 \examples{
 qf_exp <- function(u)-log(1-u)
