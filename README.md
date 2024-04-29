@@ -73,7 +73,7 @@ s_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x55e2ecba53f0>
+#> <bytecode: 0x6383ef0d6b30>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -177,11 +177,11 @@ distribution is a Q-transformed exponential distribution. The
 transformation function is the the exponent $T(x)=x^k$.
 
 $$Q(u)=\lambda[-\ln(1-u)]^{1/k}$$ Again, to remember that the power
-should be reciprocated, let’s call it “ik”.
+should be reciprocated, which comes by default.
 
 ``` r
 qf_weibull <- s_exp %>% 
-  qtr_power("k", .invert = TRUE) %>% 
+  qtr_lexp1("k") %>% 
   qff_scale("lambda")
 qf_weibull(p_grd, lambda=2, k=4)
 #>  [1] 1.001651 1.289134 1.475014 1.625579 1.760265 1.888997 2.019427 2.160678
@@ -323,7 +323,7 @@ exponential.
 
 ``` r
 qweibull1 <- s_exp %>% 
-  qtr_power("k", .invert = TRUE) %>% 
+  qtr_lexp1("k") %>% 
   qff_scale("lambda")
 qweibull1(p_grd, lambda=2, k=3) %>% plot(p_grd,., type="l")
 ```
@@ -343,10 +343,10 @@ $$
 qkumar1 <- s_unif %>%
   qff_reflect() %>%
   qtr_scaleby(-1) %>%
-  qtr_power("b", .invert = TRUE) %>%
+  qtr_lexp1("b") %>%
   qtr_scaleby(-1) %>%
   qtr_shiftby(1) %>%
-  qtr_power("a", .invert = TRUE)
+  qtr_lexp1("a")
 
 all.equal(
  extraDistr::qkumar(p_grd, 4,5),
@@ -373,9 +373,9 @@ $$
 
 ``` r
 qchen <- s_exp %>% 
-  qff_scale("lambda", .invert = TRUE) %>% 
+  qff_scale("lambda") %>% 
   qtr_fun(log1p) %>% 
-  qtr_power("beta", .invert = TRUE)
+  qtr_lexp1("beta")
 ```
 
 ### Shift/scale/power by a constant
@@ -395,7 +395,7 @@ The authors apply this p-transformation to Weibuill distribution
 
 ``` r
 qf_KMweibull <- s_exp %>% 
-  qtr_power("k", .invert = TRUE) %>% 
+  qtr_lexp1("k") %>% 
   qff_scale("lambda") %>% 
   ptr_KM()
 
@@ -428,7 +428,7 @@ We could transform another semi-bounded distribution, like Pareto
 # for positive alpha
 qupareto <- s_unif %>%
   qff_reciprocate() %>%
-  qtr_power("alpha", .invert = TRUE) %>%
+  qtr_lexp1("alpha") %>%
   qtr_epsilon("beta")
   
 qs <- qupareto(p_grd, 3, 0.1)
@@ -464,8 +464,8 @@ Modi-transformed exponentiated exponential distribution
 
 ``` r
 qmodiexpexp <- s_exp %>%
-  qff_scale("lambda", .invert = TRUE) %>%
-  ptr_power("delta", .invert = TRUE) %>%
+  qff_scale("lambda") %>%
+  ptr_lexp1("delta") %>%
   ptr_modi()
   
 
@@ -475,8 +475,8 @@ qmodiexpexp1 <- function(u, lambda, alpha, beta, delta){
 }
 
 qmodiexpexp(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
-#>  [1] 0.2336856 0.3191756 0.3854007 0.4479244 0.5126411 0.5842906 0.6690102
-#>  [8] 0.7777162 0.9365660 1.2520741
+#>  [1]  2.103170  2.872580  3.468606  4.031320  4.613770  5.258616  6.021092
+#>  [8]  6.999446  8.429094 11.268667
 qmodiexpexp1(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
 #>  [1] 0.2336856 0.3191756 0.3854007 0.4479244 0.5126411 0.5842906 0.6690102
 #>  [8] 0.7777162 0.9365660 1.2520741
@@ -495,10 +495,10 @@ qmuhammad <- s_unif %>%
   qff_reciprocate() %>% 
   qff_reflect() %>% 
   qtr_shiftby(1) %>% 
-  qff_scale("beta",.invert = TRUE) %>% 
+  qff_scale("beta") %>% 
   qtr_fun(exp) %>% 
   qff_scale("theta") %>% 
-  ptr_power("alpha", .invert = TRUE)
+  ptr_lexp1("alpha")
 
 qmuhammad(runif(1e3), theta=2, beta=7, alpha=0.7) %>% hist(50)
 ```
@@ -514,7 +514,7 @@ $$
 
 ``` r
 qfrechet <- s_exp %>%
-  qtr_power("alpha", .invert = TRUE) %>%
+  qtr_lexp1("alpha") %>%
   qff_reciprocate() %>%
   qff_decorate("m", "s")
 

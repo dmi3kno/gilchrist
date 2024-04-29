@@ -1,8 +1,8 @@
 #' Q-transformations
 #' @description
 #' Some of the typical transformations of QFs, implementing a Q-transformation rule.
-#'    `qtr_power()`: Raising of QF to a power. Returns \eqn{Q_1(u)^k}.
-#'    `qtr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
+#'    `qtr_lexp1()`: Raising of QF to a power using Lehman Type I exponentiation. Returns \eqn{Q_1(u)^{1/k}}.
+#'    `qtr_exponentiate()`: Exponentiating the QF. Returns \eqn{{1/k}^Q_1(u)}.
 #'    `qtr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 #'    `qtr_epsilon()`: unit-Q-transform using inverse epsilon function \eqn{\frac{(1+Q_1(u))^{1/\beta}-1}{(1+Q_1(u))^{1/\beta}+1}}.
 #'
@@ -10,16 +10,16 @@
 #' @param fun function
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
 #' Should be a valid unique variable name other than "u"
-#' @param .invert logical. Should the power parameter be inverted (1/.pow) before applying. Default FALSE
+#' @param .invert logical. Should the power parameter be inverted (1/.pow) before applying. Default TRUE
 #' @return modified function
 #' @rdname qtransformations
 #' @export
 #' @examples
 #' qf_exp <- function(u)-log(1-u)
-#' qf_weibull <- qtr_power(qf_exp, "k")
-#' qf_weibull(0.5,k=1/5)
+#' qf_weibull <- qtr_lexp1(qf_exp, "k")
+#' qf_weibull(0.5, k = 1/5)
 #' qweibull(0.5, shape = 5)
-qtr_power <- function(fun, nm_pow=".pow", .invert=FALSE){
+qtr_lexp1 <- function(fun, nm_pow=".pow", .invert=TRUE){
   f <- function(u, .pow=1, ...){
     if(.invert) .pow <- 1/.pow
     fun(u,...)^(.pow)
@@ -53,8 +53,8 @@ qtr_epsilon <- function(fun, nm_pow=".pow"){
 #' @description
 #' Some of the typical transformations of QFs, implementing a p-transformation rule.
 #'
-#'    - `ptr_power()`: Raising of QF to a power. Returns \eqn{Q_1(u)^k}.
-#'    - `ptr_ipower()`: Raising of QF to an inverse power. Returns \eqn{Q_1(u)^{1/k}}.
+#'    - `ptr_lexp1()`: Raising of QF to an inverse power. Returns \eqn{u^{1/k}}.
+#'    - `ptr_lexp2()`: Raising of QF to an inverse power. Returns \eqn{1-(1-u)^{1/k}}.
 #'    - `ptr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
 #'    - `ptr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 #'    - `ptr_KM()`: Kavya-Manoharan (KM) transformation \eqn{-\ln(1-u\frac{e-1}{e})}
@@ -64,19 +64,35 @@ qtr_epsilon <- function(fun, nm_pow=".pow"){
 #' @param fun function
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
 #' Should be a valid unique variable name other than "u"
-#' @param .invert logical. Should the power parameter be inverted (1/.pow) before applying. Default FALSE
+#' @param .invert logical. Should the power parameter be inverted (1/.pow) before applying. Default TRUE
 #' @return modified function
 #' @rdname ptransformations
 #' @export
 #' @examples
 #' qf_exp <- function(u)-log(1-u)
-#' qf_weibull <- qtr_power(qf_exp, "k")
+#' qf_weibull <- qtr_lexp1(qf_exp, "k")
 #' qf_weibull(0.5,k=1/5)
 #' qweibull(0.5, shape = 5)
-ptr_power <- function(fun, nm_pow=".pow", .invert=FALSE){
+ptr_lexp1 <- function(fun, nm_pow=".pow", .invert=TRUE){
   f <- function(u, .pow=1, ...){
     if(.invert) .pow <- 1/.pow
     fun(u^(.pow),...)
+  }
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".pow"] <- nm_pow
+  body_ <- do.call(substitute, list(body_, list(.pow = as.symbol(nm_pow))))
+  as.function(c(formals_, body_))
+}
+
+
+#' @rdname ptransformations
+#' @export
+ptr_lexp2 <- function(fun, nm_pow=".pow", .invert=TRUE){
+  f <- function(u, .pow=1, ...){
+    if(.invert) .pow <- 1/.pow
+    fun(1-(1-u)^(.pow),...)
   }
 
   formals_ <- formals(f)
@@ -95,7 +111,7 @@ ptr_power <- function(fun, nm_pow=".pow", .invert=FALSE){
 #' qf_lognorm <- qtr_exponentiate(qf_norm)
 #' qf_lognorm(0.2, mu=2, sigma=0.1)
 #' qlnorm(0.2, 2, 0.1)
-qtr_exponentiate <- function(fun, nm_base=".base", .invert=FALSE){
+qtr_exponentiate <- function(fun, nm_base=".base", .invert=TRUE){
   f <- function(u, .base=exp(1), ...){
     if(.invert) .base <- 1/.base
     (.base)^fun(u,...)
@@ -112,7 +128,7 @@ qtr_exponentiate <- function(fun, nm_base=".base", .invert=FALSE){
 # Should be a valid unique variable name other than "u"
 #' @rdname ptransformations
 #' @export
-ptr_exponentiate <- function(fun, nm_base=".base", .invert=FALSE){
+ptr_exponentiate <- function(fun, nm_base=".base", .invert=TRUE){
   f <- function(u, .base=exp(1), ...){
    if(.invert) .base <- 1/.base
    fun((.base)^u,...)
