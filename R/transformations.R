@@ -1,8 +1,8 @@
 #' Q-transformations
 #' @description
 #' Some of the typical transformations of QFs, implementing a Q-transformation rule.
-#'    `qtr_lexp1()`: Raising of QF to a power using Lehman Type I exponentiation. Returns \eqn{Q_1(u)^{1/k}}.
-#'    `qtr_exponentiate()`: Exponentiating the QF. Returns \eqn{{1/k}^Q_1(u)}.
+#'    `qtr_lehmann1()`: Raising of QF to a power using Lehman Type I inverse exponentiation. Returns \eqn{Q_1(u)^{1/k}}.
+#'    `qtr_exp()`: Exponentiating the QF. Returns \eqn{k^{Q_1(u)}}. Default \eqn{k=e} Euler's constant
 #'    `qtr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 #'    `qtr_epsilon()`: unit-Q-transform using inverse epsilon function \eqn{\frac{(1+Q_1(u))^{1/\beta}-1}{(1+Q_1(u))^{1/\beta}+1}}.
 #'
@@ -16,10 +16,10 @@
 #' @export
 #' @examples
 #' qf_exp <- function(u)-log(1-u)
-#' qf_weibull <- qtr_lexp1(qf_exp, "k")
+#' qf_weibull <- qtr_lehmann1(qf_exp, "k")
 #' qf_weibull(0.5, k = 1/5)
 #' qweibull(0.5, shape = 5)
-qtr_lexp1 <- function(fun, nm_pow=".pow", .invert=TRUE){
+qtr_lehmann1 <- function(fun, nm_pow=".pow", .invert=TRUE){
   f <- function(u, .pow=1, ...){
     if(.invert) .pow <- 1/.pow
     fun(u,...)^(.pow)
@@ -53,9 +53,9 @@ qtr_epsilon <- function(fun, nm_pow=".pow"){
 #' @description
 #' Some of the typical transformations of QFs, implementing a p-transformation rule.
 #'
-#'    - `ptr_lexp1()`: Raising of QF to an inverse power. Returns \eqn{u^{1/k}}.
-#'    - `ptr_lexp2()`: Raising of QF to an inverse power. Returns \eqn{1-(1-u)^{1/k}}.
-#'    - `ptr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}.
+#'    - `ptr_lehmann1()`: Lehman Type I inverse exponentiation. Returns \eqn{u^{1/k}}.
+#'    - `ptr_lehmann2()`: Lehman Type II inverse exponentiation. Returns \eqn{1-(1-u)^{1/k}}.
+#'    - `ptr_exp()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}. The value of k defaults to Euler's constant.
 #'    - `ptr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 #'    - `ptr_KM()`: Kavya-Manoharan (KM) transformation \eqn{-\ln(1-u\frac{e-1}{e})}
 #'    - `ptr_DUS()`: Dinesh-Umesh-Sunjay (DUS) transformation \eqn{\ln(1-u+eu)}.
@@ -70,10 +70,10 @@ qtr_epsilon <- function(fun, nm_pow=".pow"){
 #' @export
 #' @examples
 #' qf_exp <- function(u)-log(1-u)
-#' qf_weibull <- qtr_lexp1(qf_exp, "k")
+#' qf_weibull <- qtr_lehmann1(qf_exp, "k")
 #' qf_weibull(0.5,k=1/5)
 #' qweibull(0.5, shape = 5)
-ptr_lexp1 <- function(fun, nm_pow=".pow", .invert=TRUE){
+ptr_lehmann1 <- function(fun, nm_pow=".pow", .invert=TRUE){
   f <- function(u, .pow=1, ...){
     if(.invert) .pow <- 1/.pow
     fun(u^(.pow),...)
@@ -89,7 +89,7 @@ ptr_lexp1 <- function(fun, nm_pow=".pow", .invert=TRUE){
 
 #' @rdname ptransformations
 #' @export
-ptr_lexp2 <- function(fun, nm_pow=".pow", .invert=TRUE){
+ptr_lehmann2 <- function(fun, nm_pow=".pow", .invert=TRUE){
   f <- function(u, .pow=1, ...){
     if(.invert) .pow <- 1/.pow
     fun(1-(1-u)^(.pow),...)
@@ -108,10 +108,10 @@ ptr_lexp2 <- function(fun, nm_pow=".pow", .invert=TRUE){
 #' @export
 #' @examples
 #' qf_norm <- qff_decorate(qnorm, nm_location="mu", nm_scale="sigma")
-#' qf_lognorm <- qtr_exponentiate(qf_norm)
+#' qf_lognorm <- qtr_exp(qf_norm)
 #' qf_lognorm(0.2, mu=2, sigma=0.1)
 #' qlnorm(0.2, 2, 0.1)
-qtr_exponentiate <- function(fun, nm_base=".base", .invert=TRUE){
+qtr_exp <- function(fun, nm_base=".base", .invert=TRUE){
   f <- function(u, .base=exp(1), ...){
     if(.invert) .base <- 1/.base
     (.base)^fun(u,...)
@@ -128,7 +128,7 @@ qtr_exponentiate <- function(fun, nm_base=".base", .invert=TRUE){
 # Should be a valid unique variable name other than "u"
 #' @rdname ptransformations
 #' @export
-ptr_exponentiate <- function(fun, nm_base=".base", .invert=TRUE){
+ptr_exp <- function(fun, nm_base=".base", .invert=TRUE){
   f <- function(u, .base=exp(1), ...){
    if(.invert) .base <- 1/.base
    fun((.base)^u,...)

@@ -40,7 +40,10 @@ functions out of existing ones.
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+`{gilchrist}` is a special package! It uses `{magrittr}` pipe `%>%` to
+operate not on data, but on functions. It is a function factory engine!
+
+This is a basic example which shows you how to solve a common problem.
 
 ``` r
 library(gilchrist)
@@ -55,9 +58,6 @@ equi-spaced grid of probabilities
 p_grd <- ppoints(10)
 ```
 
-`{gilchrist}` is a special package! It uses magrittr pipe to operate not
-on data, but on functions. It is a function factory engine!
-
 ### Exponential
 
 Start with standard exponential quantile function. Note that this “basic
@@ -65,43 +65,16 @@ quantile function” has no parameters.
 
 $$S(u)=-\ln(1-u)$$
 
-The built-in equivalent in `{gilchrist}` is `sqf_exp()`. It is a regular
-R function, so we can inspect it.
+The built-in equivalent in `{gilchrist}` is `s_exp()`. It is a regular R
+function, so we can inspect it.
 
 ``` r
 s_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x6383ef0d6b30>
+#> <bytecode: 0x619a2e5b1a98>
 #> <environment: namespace:gilchrist>
-```
-
-We will now add a scale parameter to our basic exponential QF to make it
-like in
-[Wikipedia](https://en.wikipedia.org/wiki/Exponential_distribution).
-
-$$Q(u)=\frac{1}{\lambda}[-\ln(1-u)]$$
-
-In order to remember that our scale parameter should be reciprocated we
-call it “ilambda”.
-
-``` r
-qf_exp <- s_exp %>% 
-  qff_scale(nm_scale="lambda",.invert = TRUE)
-```
-
-We compare our hand-made exponential quantile function to the standard
-function in R. Note that `qexp` has a reciprocated scale.
-
-``` r
-qf_exp(p_grd, lambda=1/10)
-#>  [1]  0.6291383  1.7261274  2.9584538  4.3642733  6.0005676  7.9580133
-#>  [7] 10.3942342 13.6219681 18.4176989 27.9728133
-# compare to standard exponential quantile function. 
-qexp(p_grd, 1/10)
-#>  [1]  0.6291383  1.7261274  2.9584538  4.3642733  6.0005676  7.9580133
-#>  [7] 10.3942342 13.6219681 18.4176989 27.9728133
 ```
 
 `{gilchrist}` has several basic (parameterless) functions that you can
@@ -116,6 +89,33 @@ modify.
 - `s_halfcosine()`: Basic QF of half-cosine distribution
 - `s_sech()`: Basic QF of hyperbolic secant distribution.
 
+We will now add a scale parameter to our basic exponential QF to make it
+like in
+[Wikipedia](https://en.wikipedia.org/wiki/Exponential_distribution).
+
+$$Q(u)=\frac{1}{\lambda}[-\ln(1-u)]$$
+
+We can add a scale parameter $\frac{1}{\lambda}$ (`qexp` has a
+reciprocated scale).
+
+``` r
+qf_exp <- s_exp %>% 
+  qff_scale(nm_scale="lambda", .invert = TRUE)
+```
+
+We compare our hand-made exponential quantile function to the standard
+function in R.
+
+``` r
+qf_exp(p_grd, lambda=10)
+#>  [1] 0.006291383 0.017261274 0.029584538 0.043642733 0.060005676 0.079580133
+#>  [7] 0.103942342 0.136219681 0.184176989 0.279728133
+# compare to standard exponential quantile function. 
+qexp(p_grd, 10)
+#>  [1] 0.006291383 0.017261274 0.029584538 0.043642733 0.060005676 0.079580133
+#>  [7] 0.103942342 0.136219681 0.184176989 0.279728133
+```
+
 ### Logistic
 
 Let’s do a more challenging example. We will make a logistic
@@ -129,9 +129,8 @@ arguments have to always be named.
 
 ``` r
 qf_logistic <- s_exp %>% 
-  qff_add(
-    s_exp %>% qff_reflect()
-  ) %>% 
+  qff_reflect() %>%
+  qff_add(s_exp) %>% 
   qff_decorate("mu", "s")
 
 qf_logistic(p_grd, mu=4, s=2)
@@ -156,15 +155,14 @@ the order in which they are listed in `qff_mix`.
 
 ``` r
 qf_fsld <- s_exp %>% 
-  qff_mix(
-    qff_reflect(s_exp),
-    nm_wt="delta") %>% 
+  qff_reflect() %>%
+  qff_mix(s_exp, nm_wt="delta") %>% 
   qff_add(qff_scale(s_unif,"k")) %>% 
   qff_decorate(nm_location="alpha", nm_scale="beta")
 
 qf_fsld(p_grd, delta=0.21, alpha=4, beta=2, k=1)
-#>  [1] -0.2713295  1.4795741  2.4841792  3.2483276  3.8970968  4.4837079
-#>  [7]  5.0396856  5.5924918  6.1837420  6.9535031
+#>  [1]  3.046497  3.816258  4.407508  4.960314  5.516292  6.102903  6.751672
+#>  [8]  7.515821  8.520426 10.271329
 qpd::qfsld(p_grd, bt=2, k=1, dlt=0.21, a=4)
 #>  [1] -0.2713295  1.4795741  2.4841792  3.2483276  3.8970968  4.4837079
 #>  [7]  5.0396856  5.5924918  6.1837420  6.9535031
@@ -172,16 +170,16 @@ qpd::qfsld(p_grd, bt=2, k=1, dlt=0.21, a=4)
 
 ### Weibull
 
-Last one for this short tutorial. We make Weibull distribution. Weibull
-distribution is a Q-transformed exponential distribution. The
-transformation function is the the exponent $T(x)=x^k$.
+We can make Weibull distribution. Weibull distribution is a
+Q-transformed exponential distribution. The transformation function is
+the the Lehmann type 1 exponentiation $H(u)=u^{1/k}$.
 
 $$Q(u)=\lambda[-\ln(1-u)]^{1/k}$$ Again, to remember that the power
 should be reciprocated, which comes by default.
 
 ``` r
 qf_weibull <- s_exp %>% 
-  qtr_lexp1("k") %>% 
+  qtr_lehmann1("k") %>% 
   qff_scale("lambda")
 qf_weibull(p_grd, lambda=2, k=4)
 #>  [1] 1.001651 1.289134 1.475014 1.625579 1.760265 1.888997 2.019427 2.160678
@@ -234,9 +232,8 @@ distributions.
 
 ``` r
 qlogistic <- s_exp %>% 
-  qff_add(
-    s_exp %>% qff_reflect()
-  )
+  qff_reflect() %>% 
+  qff_add(s_exp)
 qlogistic(p_grd) %>% plot(p_grd,., type="l")
 ```
 
@@ -253,10 +250,9 @@ the second (reflected `s_exp`) gets the weight $1-\delta$.
 
 ``` r
 qskewlogis <- s_exp %>% 
-  qff_mix(
-    s_exp %>% qff_reflect(),
-    nm_wt="delta"
-  )
+  qff_reflect() %>% 
+  qff_mix(s_exp, nm_wt="delta")
+
 qskewlogis(p_grd, delta=0.9) %>% plot(p_grd,., type="l")
 ```
 
@@ -323,7 +319,7 @@ exponential.
 
 ``` r
 qweibull1 <- s_exp %>% 
-  qtr_lexp1("k") %>% 
+  qtr_lehmann1("k") %>% 
   qff_scale("lambda")
 qweibull1(p_grd, lambda=2, k=3) %>% plot(p_grd,., type="l")
 ```
@@ -333,27 +329,67 @@ qweibull1(p_grd, lambda=2, k=3) %>% plot(p_grd,., type="l")
 The analogous function exists for p-transforming the quantile function,
 i.e. raising the depth $u$ to the power $.pow$ (or its inverse).
 
-Let’s create Kumaraswamy distribution
+Lehmann transformations have been proposed for transforming CDF (Type I)
+and the CCDF (Type II). When expressed in terms of quantile function,
+these transformations become:
 
 $$
-Q(u)=(1-(1-u)^{1/b})^{1/a}
+H(u)=u^\frac{1}{\alpha}
+$$ and
+
+$$
+H(u)=1-(1-u)^\frac{1}{\beta}
+$$
+
+Remarkaby, Kumaraswamy distribution is a combination of these two
+transformations
+
+$$
+Q(u)=\left(1-\left(1-u\right)^\frac{1}{b}\right)^\frac{1}{a}
 $$
 
 ``` r
 qkumar1 <- s_unif %>%
-  qff_reflect() %>%
-  qtr_scaleby(-1) %>%
-  qtr_lexp1("b") %>%
-  qtr_scaleby(-1) %>%
-  qtr_shiftby(1) %>%
-  qtr_lexp1("a")
+  ptr_lehmann2("beta") %>%
+  qtr_lehmann1("alpha")
 
 all.equal(
  extraDistr::qkumar(p_grd, 4,5),
-  qkumar1(p_grd, a=4, b=5)
+  qkumar1(p_grd, alpha=4, beta=5)
 )
 #> [1] TRUE
 ```
+
+An interesting distribution is (exponentiated) inverse Kumaraswamy
+(Reddy, Rao, and Rosaiah 2024)
+
+$$
+Q(u)=\left[1-u^{\frac{1}{\lambda\beta}}\right]^{-\frac{1}{\alpha}}-1
+$$
+
+``` r
+qeik <- s_unif %>%
+  ptr_lehmann2("beta") %>%
+  qtr_lehmann1("alpha") %>%
+  qff_reciprocate() %>%
+  qtr_shiftby(-1) %>%
+  ptr_lehmann1("lambda")
+
+q_eik <- function(u, lambda, beta, alpha){
+  (1-u^(1/(beta*lambda)))^(-1/alpha)-1
+}
+
+all.equal(
+ qeik(p_grd, alpha=4,beta=5, lambda=6),
+ q_eik(p_grd, alpha=4,beta=5, lambda=6)
+)
+#> [1] TRUE
+
+qeik(p_grd, alpha=4,beta=5, lambda=6) %>%
+  plot(p_grd,.,type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
 
 ### Exponentiation
 
@@ -375,7 +411,7 @@ $$
 qchen <- s_exp %>% 
   qff_scale("lambda") %>% 
   qtr_fun(log1p) %>% 
-  qtr_lexp1("beta")
+  qtr_lehmann1("beta")
 ```
 
 ### Shift/scale/power by a constant
@@ -395,7 +431,7 @@ The authors apply this p-transformation to Weibuill distribution
 
 ``` r
 qf_KMweibull <- s_exp %>% 
-  qtr_lexp1("k") %>% 
+  qtr_lehmann1("k") %>% 
   qff_scale("lambda") %>% 
   ptr_KM()
 
@@ -403,7 +439,7 @@ qf_KMweibull(p_grd, lambda=3, k=4)%>%
   plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
 
 ### $\varepsilon$-transformation
 
@@ -428,14 +464,14 @@ We could transform another semi-bounded distribution, like Pareto
 # for positive alpha
 qupareto <- s_unif %>%
   qff_reciprocate() %>%
-  qtr_lexp1("alpha") %>%
+  qtr_lehmann1("alpha") %>%
   qtr_epsilon("beta")
   
 qs <- qupareto(p_grd, 3, 0.1)
 plot(p_grd, qs, type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
 
 Finally, we can apply the DUS-transformation proposed by Kumar, Singh,
 and Singh (2015)
@@ -456,7 +492,7 @@ plot(p_grd, qs, type="l")
 lines(p_grd, qexp(p_grd, 0.5), col=2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-22-1.png" width="100%" />
 
 ### Modi-transformation
 
@@ -465,11 +501,9 @@ Modi-transformed exponentiated exponential distribution
 ``` r
 qmodiexpexp <- s_exp %>%
   qff_scale("lambda") %>%
-  ptr_lexp1("delta") %>%
+  ptr_lehmann1("delta") %>%
   ptr_modi()
   
-
-
 qmodiexpexp1 <- function(u, lambda, alpha, beta, delta){
   1/lambda*(-log(1-(u*alpha^beta/(1-u+alpha^beta))^(1/delta)))
 }
@@ -498,12 +532,12 @@ qmuhammad <- s_unif %>%
   qff_scale("beta") %>% 
   qtr_fun(exp) %>% 
   qff_scale("theta") %>% 
-  ptr_lexp1("alpha")
+  ptr_lehmann1("alpha")
 
 qmuhammad(runif(1e3), theta=2, beta=7, alpha=0.7) %>% hist(50)
 ```
 
-<img src="man/figures/README-unnamed-chunk-23-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-24-1.png" width="100%" />
 
 Fréchet is Reciprocate transform of Weibull. Weibull is power transform
 of Exponential.
@@ -514,14 +548,14 @@ $$
 
 ``` r
 qfrechet <- s_exp %>%
-  qtr_lexp1("alpha") %>%
+  qtr_lehmann1("alpha") %>%
   qff_reciprocate() %>%
   qff_decorate("m", "s")
 
 qfrechet(p_grd, m=0, s=1, alpha=5)%>%plot(p_grd, ., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-24-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-25-1.png" width="100%" />
 
 What other cool transformations do you know? Please let me know!
 
@@ -587,6 +621,15 @@ Muhammad, Mustapha. 2023. “A New Three-Parameter Model with Support on a
 Bounded Domain: Properties and Quantile Regression Model.” *Journal of
 Computational Mathematics and Data Science* 6 (January): 100077.
 <https://doi.org/10.1016/j.jcmds.2023.100077>.
+
+</div>
+
+<div id="ref-reddy2024AcceptanceSamplingPlans" class="csl-entry">
+
+Reddy, M Rami, B Srinivasa Rao, and K Rosaiah. 2024. “Acceptance
+Sampling Plans Based on Percentiles of Exponentiated Inverse Kumaraswamy
+Distribution.” *Indian Journal Of Science And Technology* 17 (16):
+1681–89. <https://doi.org/10.17485/IJST/v17i16.222>.
 
 </div>
 
