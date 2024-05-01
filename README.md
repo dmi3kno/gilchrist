@@ -55,7 +55,7 @@ In using and testing quantile function it is useful to have an
 equi-spaced grid of probabilities
 
 ``` r
-p_grd <- ppoints(10)
+p_grd <- ppoints(15)
 ```
 
 ### Exponential
@@ -73,7 +73,7 @@ s_exp
 #> function(u, ...){
 #>   -log(1-u)
 #> }
-#> <bytecode: 0x619a2e5b1a98>
+#> <bytecode: 0x55eb63abc408>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -108,12 +108,14 @@ function in R.
 
 ``` r
 qf_exp(p_grd, lambda=10)
-#>  [1] 0.006291383 0.017261274 0.029584538 0.043642733 0.060005676 0.079580133
-#>  [7] 0.103942342 0.136219681 0.184176989 0.279728133
+#>  [1] 0.003390155 0.010536052 0.018232156 0.026570317 0.035667494 0.045675840
+#>  [7] 0.056798404 0.069314718 0.083624802 0.100330211 0.120397280 0.145528723
+#> [13] 0.179175947 0.230258509 0.340119738
 # compare to standard exponential quantile function. 
 qexp(p_grd, 10)
-#>  [1] 0.006291383 0.017261274 0.029584538 0.043642733 0.060005676 0.079580133
-#>  [7] 0.103942342 0.136219681 0.184176989 0.279728133
+#>  [1] 0.003390155 0.010536052 0.018232156 0.026570317 0.035667494 0.045675840
+#>  [7] 0.056798404 0.069314718 0.083624802 0.100330211 0.120397280 0.145528723
+#> [13] 0.179175947 0.230258509 0.340119738
 ```
 
 ### Logistic
@@ -134,11 +136,13 @@ qf_logistic <- s_exp %>%
   qff_decorate("mu", "s")
 
 qf_logistic(p_grd, mu=4, s=2)
-#>  [1] -1.4687350  0.6616857  1.8672971  2.7940078  3.6085108  4.3914892
-#>  [7]  5.2059922  6.1327029  7.3383143  9.4687350
+#>  [1] -2.7345917 -0.3944492  0.7811242  1.6208319  2.3054043  2.9069126
+#>  [7]  3.4634720  4.0000000  4.5365280  5.0930874  5.6945957  6.3791681
+#> [13]  7.2188758  8.3944492 10.7345917
 qlogis(p_grd, 4, 2)
-#>  [1] -1.4687350  0.6616857  1.8672971  2.7940078  3.6085108  4.3914892
-#>  [7]  5.2059922  6.1327029  7.3383143  9.4687350
+#>  [1] -2.7345917 -0.3944492  0.7811242  1.6208319  2.3054043  2.9069126
+#>  [7]  3.4634720  4.0000000  4.5365280  5.0930874  5.6945957  6.3791681
+#> [13]  7.2188758  8.3944492 10.7345917
 ```
 
 ### Flattened Skew-Logistic
@@ -156,16 +160,18 @@ the order in which they are listed in `qff_mix`.
 ``` r
 qf_fsld <- s_exp %>% 
   qff_reflect() %>%
-  qff_mix(s_exp, nm_wt="delta") %>% 
+  qff_cmix(s_exp, nm_wt="delta") %>% 
   qff_add(qff_scale(s_unif,"k")) %>% 
   qff_decorate(nm_location="alpha", nm_scale="beta")
 
 qf_fsld(p_grd, delta=0.21, alpha=4, beta=2, k=1)
-#>  [1]  3.046497  3.816258  4.407508  4.960314  5.516292  6.102903  6.751672
-#>  [8]  7.515821  8.520426 10.271329
+#>  [1] -1.292987  0.606167  1.578928  2.278908  2.847526  3.339955  3.783948
+#>  [8]  4.195949  4.587143  4.966375  5.342122  5.724743  6.131138  6.600616
+#> [15]  7.308272
 qpd::qfsld(p_grd, bt=2, k=1, dlt=0.21, a=4)
-#>  [1] -0.2713295  1.4795741  2.4841792  3.2483276  3.8970968  4.4837079
-#>  [7]  5.0396856  5.5924918  6.1837420  6.9535031
+#>  [1] -1.292987  0.606167  1.578928  2.278908  2.847526  3.339955  3.783948
+#>  [8]  4.195949  4.587143  4.966375  5.342122  5.724743  6.131138  6.600616
+#> [15]  7.308272
 ```
 
 ### Weibull
@@ -182,11 +188,13 @@ qf_weibull <- s_exp %>%
   qtr_lehmann1("k") %>% 
   qff_scale("lambda")
 qf_weibull(p_grd, lambda=2, k=4)
-#>  [1] 1.001651 1.289134 1.475014 1.625579 1.760265 1.888997 2.019427 2.160678
-#>  [9] 2.329908 2.586509
+#>  [1] 0.8581928 1.1394610 1.3068914 1.4359165 1.5456037 1.6441886 1.7362571
+#>  [8] 1.8248886 1.9125543 2.0016490 2.0950007 2.1966819 2.3139284 2.4636778
+#> [15] 2.7160512
 qweibull(p_grd, scale=2,  shape=4)
-#>  [1] 1.001651 1.289134 1.475014 1.625579 1.760265 1.888997 2.019427 2.160678
-#>  [9] 2.329908 2.586509
+#>  [1] 0.8581928 1.1394610 1.3068914 1.4359165 1.5456037 1.6441886 1.7362571
+#>  [8] 1.8248886 1.9125543 2.0016490 2.0950007 2.1966819 2.3139284 2.4636778
+#> [15] 2.7160512
 ```
 
 Therefore, you can compose new quantile functions following Gilchrist
@@ -251,7 +259,7 @@ the second (reflected `s_exp`) gets the weight $1-\delta$.
 ``` r
 qskewlogis <- s_exp %>% 
   qff_reflect() %>% 
-  qff_mix(s_exp, nm_wt="delta")
+  qff_cmix(s_exp, nm_wt="delta")
 
 qskewlogis(p_grd, delta=0.9) %>% plot(p_grd,., type="l")
 ```
@@ -306,25 +314,40 @@ qexp1(p_grd, lambda=2) %>% plot(p_grd,., type="l")
 Finally, `qff_decorate` adds both location and scale to a quantile
 function.
 
+``` r
+qlogistic <- s_exp %>%
+  qff_reflect() %>%
+  qff_add(s_exp) %>%
+  qff_decorate(nm_location = "mu", nm_scale = "s")
+
+all.equal(
+  qlogistic(p_grd, mu=3, s=2),
+  qlogis(p_grd, location = 3, scale=2)
+)
+#> [1] TRUE
+```
+
 ## Transformations
 
 `gilchrist` also implements several popular Q-transformations and
 p-transformations.
 
-### Power
+### Power (Lehmann transformations)
 
 Raising the quantile function to power results in a valid distribution
-only if the power is positive. Here’s Weibull, which is powered
-exponential.
+only if the power is positive. Here’s Weibull, which is Lehmann Type I
+transformed exponential.
 
 ``` r
 qweibull1 <- s_exp %>% 
   qtr_lehmann1("k") %>% 
   qff_scale("lambda")
-qweibull1(p_grd, lambda=2, k=3) %>% plot(p_grd,., type="l")
+
+qweibull1(p_grd, lambda=2, k=3) %>% 
+  plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
 
 The analogous function exists for p-transforming the quantile function,
 i.e. raising the depth $u$ to the power $.pow$ (or its inverse).
@@ -335,7 +358,9 @@ these transformations become:
 
 $$
 H(u)=u^\frac{1}{\alpha}
-$$ and
+$$
+
+and
 
 $$
 H(u)=1-(1-u)^\frac{1}{\beta}
@@ -389,7 +414,7 @@ qeik(p_grd, alpha=4,beta=5, lambda=6) %>%
   plot(p_grd,.,type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
 
 ### Exponentiation
 
@@ -424,7 +449,7 @@ than a parameter.
 The p-transformation proposed in Kavya and Manoharan (2021)
 
 $$
-T(y)=-\ln\left(1-y\frac{e-1}{e}\right)
+H(u)=-\ln\left(1-u\frac{e-1}{e}\right)
 $$
 
 The authors apply this p-transformation to Weibuill distribution
@@ -439,7 +464,7 @@ qf_KMweibull(p_grd, lambda=3, k=4)%>%
   plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" />
 
 ### $\varepsilon$-transformation
 
@@ -447,7 +472,7 @@ Unit transformation described by Bakouch et al. (2023) for positive
 distributions.
 
 $$
-T(x)=\frac{(1+x)^{1/\beta}-1}{(1+x)^{1/\beta}+1}
+T(u)=\frac{(1+u)^{1/\beta}-1}{(1+u)^{1/\beta}+1}
 $$
 
 In particular they present the unit exponential QF as
@@ -471,13 +496,13 @@ qs <- qupareto(p_grd, 3, 0.1)
 plot(p_grd, qs, type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-22-1.png" width="100%" />
 
 Finally, we can apply the DUS-transformation proposed by Kumar, Singh,
 and Singh (2015)
 
 $$
-T(x)=\ln(1-x+ex)
+H(u)=\ln(1-u+eu)
 $$
 
 The authors used it to transform exponential distribution
@@ -492,7 +517,7 @@ plot(p_grd, qs, type="l")
 lines(p_grd, qexp(p_grd, 0.5), col=2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-22-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-23-1.png" width="100%" />
 
 ### Modi-transformation
 
@@ -509,11 +534,13 @@ qmodiexpexp1 <- function(u, lambda, alpha, beta, delta){
 }
 
 qmodiexpexp(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
-#>  [1]  2.103170  2.872580  3.468606  4.031320  4.613770  5.258616  6.021092
-#>  [8]  6.999446  8.429094 11.268667
+#>  [1]  1.768450  2.452959  2.925599  3.335142  3.722179  4.106920  4.503626
+#>  [8]  4.925483  5.387532  5.909832  6.522736  7.278248  8.280512  9.797473
+#> [15] 13.069582
 qmodiexpexp1(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
-#>  [1] 0.2336856 0.3191756 0.3854007 0.4479244 0.5126411 0.5842906 0.6690102
-#>  [8] 0.7777162 0.9365660 1.2520741
+#>  [1] 0.1964944 0.2725510 0.3250666 0.3705714 0.4135754 0.4563245 0.5004029
+#>  [8] 0.5472759 0.5986147 0.6566480 0.7247485 0.8086942 0.9200569 1.0886081
+#> [15] 1.4521758
 ```
 
 ## Other examples
@@ -521,7 +548,7 @@ qmodiexpexp1(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
 Interesting “bathtube-shaped” distribution proposed by Muhammad (2023)
 
 $$
-Q(u)=\theta\exp\left[\frac{1}{\beta}(1-u^{-\frac{1}{\alpha}})\right]
+Q(u)=\theta\exp\left[\frac{1}{\beta}\left(1-u^{-\frac{1}{\alpha}}\right)\right]
 $$
 
 ``` r
@@ -537,7 +564,7 @@ qmuhammad <- s_unif %>%
 qmuhammad(runif(1e3), theta=2, beta=7, alpha=0.7) %>% hist(50)
 ```
 
-<img src="man/figures/README-unnamed-chunk-24-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-25-1.png" width="100%" />
 
 Fréchet is Reciprocate transform of Weibull. Weibull is power transform
 of Exponential.
@@ -555,7 +582,7 @@ qfrechet <- s_exp %>%
 qfrechet(p_grd, m=0, s=1, alpha=5)%>%plot(p_grd, ., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-25-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-26-1.png" width="100%" />
 
 What other cool transformations do you know? Please let me know!
 

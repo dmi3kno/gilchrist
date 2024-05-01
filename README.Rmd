@@ -61,7 +61,7 @@ library(magrittr)
 In using and testing quantile function it is useful to have an equi-spaced grid of probabilities
 
 ```{r}
-p_grd <- ppoints(10)
+p_grd <- ppoints(15)
 ```
 
 ### Exponential
@@ -133,7 +133,7 @@ Note that the exponential distribution will gain a weight `delta` and the reflec
 ```{r}
 qf_fsld <- s_exp %>% 
   qff_reflect() %>%
-  qff_mix(s_exp, nm_wt="delta") %>% 
+  qff_cmix(s_exp, nm_wt="delta") %>% 
   qff_add(qff_scale(s_unif,"k")) %>% 
   qff_decorate(nm_location="alpha", nm_scale="beta")
 
@@ -200,7 +200,7 @@ A quantile function factory `qff_mix` implement the "linear combination rule" wi
 ```{r}
 qskewlogis <- s_exp %>% 
   qff_reflect() %>% 
-  qff_mix(s_exp, nm_wt="delta")
+  qff_cmix(s_exp, nm_wt="delta")
 
 qskewlogis(p_grd, delta=0.9) %>% plot(p_grd,., type="l")
 ```
@@ -237,19 +237,33 @@ qexp1(p_grd, lambda=2) %>% plot(p_grd,., type="l")
 
 Finally, `qff_decorate` adds both location and scale to a quantile function.
 
+```{r}
+qlogistic <- s_exp %>%
+  qff_reflect() %>%
+  qff_add(s_exp) %>%
+  qff_decorate(nm_location = "mu", nm_scale = "s")
+
+all.equal(
+  qlogistic(p_grd, mu=3, s=2),
+  qlogis(p_grd, location = 3, scale=2)
+)
+```
+
 ## Transformations
 
 `gilchrist` also implements several popular Q-transformations and p-transformations. 
 
-### Power
+### Power (Lehmann transformations)
 
-Raising the quantile function to power results in a valid distribution only if the power is positive. Here's Weibull, which is powered exponential.
+Raising the quantile function to power results in a valid distribution only if the power is positive. Here's Weibull, which is Lehmann Type I transformed exponential.
 
 ```{r}
 qweibull1 <- s_exp %>% 
   qtr_lehmann1("k") %>% 
   qff_scale("lambda")
-qweibull1(p_grd, lambda=2, k=3) %>% plot(p_grd,., type="l")
+
+qweibull1(p_grd, lambda=2, k=3) %>% 
+  plot(p_grd,., type="l")
 ```
 
 The analogous function exists for p-transforming the quantile function, i.e. raising the depth $u$ to the power $.pow$ (or its inverse).
@@ -259,12 +273,12 @@ Lehmann transformations have been proposed for transforming CDF (Type I) and the
 $$
 H(u)=u^\frac{1}{\alpha}
 $$
+
 and 
 
 $$
 H(u)=1-(1-u)^\frac{1}{\beta}
 $$
-
 
 Remarkaby, Kumaraswamy distribution is a combination of these two transformations
 
@@ -343,7 +357,7 @@ The transformations where the shift, scale or power is a constant rather than a 
 The p-transformation proposed in @kavya2021ParsimoniousModelsLifetimes
 
 $$
-T(y)=-\ln\left(1-y\frac{e-1}{e}\right)
+H(u)=-\ln\left(1-u\frac{e-1}{e}\right)
 $$
 
 The authors apply this p-transformation to Weibuill distribution
@@ -365,7 +379,7 @@ qf_KMweibull(p_grd, lambda=3, k=4)%>%
 Unit transformation described by @bakouch2023UnitExponentialProbability for positive distributions.
 
 $$
-T(x)=\frac{(1+x)^{1/\beta}-1}{(1+x)^{1/\beta}+1}
+T(u)=\frac{(1+u)^{1/\beta}-1}{(1+u)^{1/\beta}+1}
 $$
 
 In particular they present the unit exponential QF as
@@ -393,7 +407,7 @@ plot(p_grd, qs, type="l")
 Finally, we can apply the DUS-transformation proposed by @kumar2015MethodProposingNew
 
 $$
-T(x)=\ln(1-x+ex)
+H(u)=\ln(1-u+eu)
 $$
 
 The authors used it to transform exponential distribution
@@ -434,7 +448,7 @@ qmodiexpexp1(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
 Interesting "bathtube-shaped" distribution proposed by @muhammad2023NewThreeparameterModel
 
 $$
-Q(u)=\theta\exp\left[\frac{1}{\beta}(1-u^{-\frac{1}{\alpha}})\right]
+Q(u)=\theta\exp\left[\frac{1}{\beta}\left(1-u^{-\frac{1}{\alpha}}\right)\right]
 $$
 
 ```{r}
@@ -467,7 +481,6 @@ qfrechet(p_grd, m=0, s=1, alpha=5)%>%plot(p_grd, ., type="l")
 ```
 
 What other cool transformations do you know? Please let me know!
-
 
 ## References
 
