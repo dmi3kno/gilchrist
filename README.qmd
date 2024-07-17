@@ -388,7 +388,7 @@ qf_KMweibull(p_grd, lambda=3, k=4)%>%
 SHASH (sinh-asinh) q-transformation is used in Johnson SU distribution and was further developed by @rigby2005GeneralizedAdditiveModels and @jones2009SinharcsinhDistributions. The transformation has the form
 
 $$
-T(u)=\sinh\left[\frac{1}{\delta}\{\text{asinh}(Q(u))-\epsilon\}\right]
+T(u)=\sinh\left[\frac{1}{\delta}\left[\text{asinh}(Q(u))-\epsilon\right]\right]
 $$
 
 Here's for example SHASH-normal distribution

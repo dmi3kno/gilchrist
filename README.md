@@ -75,7 +75,7 @@ s_exp
 #> {
 #>     -log(1 - u)
 #> }
-#> <bytecode: 0x5dc70db3f158>
+#> <bytecode: 0x63393af060d8>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -485,7 +485,7 @@ and was further developed by Rigby and Stasinopoulos (2005) and Jones
 and Pewsey (2009). The transformation has the form
 
 $$
-T(u)=\sinh\left[\frac{1}{\delta}\{\text{asinh}(Q(u))-\epsilon\}\right]
+T(u)=\sinh\left[\frac{1}{\delta}\left[\text{asinh}(Q(u))-\epsilon\right]\right]
 $$
 
 Here’s for example SHASH-normal distribution
