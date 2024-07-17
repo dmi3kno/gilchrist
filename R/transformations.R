@@ -35,6 +35,7 @@ qtr_lehmann1 <- function(fun, nm_pow=".pow", .invert=TRUE){
 #' @rdname qtransformations
 #' @export
 #' @examples
+#' qtr_epsilon(qnorm)
 qtr_epsilon <- function(fun, nm_pow=".pow"){
   f <- function(u, .pow=1, ...){
     x <- fun(u,...)
@@ -240,4 +241,29 @@ ptr_modi <- function(fun){
   function(u, alpha, beta, ...){
     fun(u*alpha^beta/(1-u+alpha^beta), ...)
   }
+}
+
+# SHASH (sinh-asinh) q-transformation
+#' @param nm_tail character.  The name of the tail thickness parameter. The default name is `.dlt`. 
+#' The tail thickness parameter should be positive (default value is 1).
+#' Should be a valid unique variable name other than "u"
+#' The asymmetry parameter can be positive or negative (default value is 0).
+#' @param nm_asymm character.  The name of the asymmetry parameter. The default name is `.eps`. 
+#' Should be a valid unique variable name other than "u"
+#' @rdname qtransformations
+#' @export
+#' @examples
+#' qtr_shash(qnorm)
+qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps"){
+  f <- function(u, .eps=0, .dlt=1, ...){
+    sinh(1/.dlt*(fun(u,...)- .eps))
+  }
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".dlt"] <- nm_tail
+  names(formals_)[names(formals_) == ".eps"] <- nm_asymm
+  body_ <- do.call(substitute, list(body_, list(.dlt = as.symbol(nm_tail))))
+  body_ <- do.call(substitute, list(body_, list(.eps = as.symbol(nm_asymm))))
+  as.function(c(formals_, body_))
 }

@@ -1,11 +1,20 @@
 ---
-bibliography: "`r rbbt::bbt_write_bib('data-raw/gilchrist-package.bib', translator='bibtex', overwrite = TRUE)`"
-output: github_document
+format: gfm
+bibliography: "data-raw/gilchrist-package.bib"
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+#| 
+if (!interactive())
+  rbbt::bbt_write_bib('data-raw/gilchrist-package.bib', translator='bibtex', overwrite = TRUE)
+```
+
+
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -52,7 +61,8 @@ remotes::install_packages("dmi3kno/gilchrist")
 
 This is a basic example which shows you how to solve a common problem.
 
-```{r example}
+```{r}
+#| label: example
 library(gilchrist)
 library(magrittr)
 ## basic example code
@@ -92,7 +102,8 @@ $$Q(u)=\frac{1}{\lambda}[-\ln(1-u)]$$
 
 We can add a scale parameter $\frac{1}{\lambda}$ (`qexp` has a reciprocated scale).
 
-```{r logistic}
+```{r}
+#| label: logistic
 qf_exp <- s_exp %>% 
   qff_scale(nm_scale="lambda", .invert = TRUE)
 ```
@@ -372,6 +383,23 @@ qf_KMweibull(p_grd, lambda=3, k=4)%>%
   plot(p_grd,., type="l")
 ```
 
+### SHASH-transformation
+
+SHASH (sinh-asinh) q-transformation is used in Johnson SU distribution and was further developed by @rigby2005GeneralizedAdditiveModels and @jones2009SinharcsinhDistributions. The transformation has the form
+
+$$
+T(u)=\sinh\left[\frac{1}{\delta}\{\text{asinh}(Q(u))-\epsilon\}\right]
+$$
+
+Here's for example SHASH-normal distribution
+
+```{r}
+qshashnorm <- s_norm %>%
+  qtr_shash(nm_tail="delta", nm_asymm="epsilon")
+
+qs <- qshashnorm(p_grd, delta=2, epsilon=2)
+plot(p_grd, qs, type="l")
+```
 
 
 ### $\varepsilon$-transformation
@@ -403,6 +431,8 @@ qs <- qupareto(p_grd, 3, 0.1)
 plot(p_grd, qs, type="l")
 
 ```
+
+### DUS-transformation
 
 Finally, we can apply the DUS-transformation proposed by @kumar2015MethodProposingNew
 
@@ -477,7 +507,6 @@ qfrechet <- s_exp %>%
   qff_decorate("m", "s")
 
 qfrechet(p_grd, m=0, s=1, alpha=5)%>%plot(p_grd, ., type="l")
-
 ```
 
 What other cool transformations do you know? Please let me know!

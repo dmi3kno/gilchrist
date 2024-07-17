@@ -8,6 +8,7 @@
 \alias{qtr_shiftby}
 \alias{qtr_scaleby}
 \alias{qtr_powerby}
+\alias{qtr_shash}
 \title{Q-transformations}
 \usage{
 qtr_lehmann1(fun, nm_pow = ".pow", .invert = TRUE)
@@ -23,6 +24,8 @@ qtr_shiftby(fun, x = 0)
 qtr_scaleby(fun, x = 1)
 
 qtr_powerby(fun, x = 1)
+
+qtr_shash(fun, nm_tail = ".dlt", nm_asymm = ".eps")
 }
 \arguments{
 \item{fun}{function}
@@ -37,6 +40,14 @@ Should be a valid unique variable name other than "u"}
 \item{.fun}{function without arguments(or with all default arguments) to be applied as Q-transformation}
 
 \item{x}{numeric. Fixed value to shift/scale/power the QF by}
+
+\item{nm_tail}{character.  The name of the tail thickness parameter. The default name is \code{.dlt}.
+The tail thickness parameter should be positive (default value is 1).
+Should be a valid unique variable name other than "u"
+The asymmetry parameter can be positive or negative (default value is 0).}
+
+\item{nm_asymm}{character.  The name of the asymmetry parameter. The default name is \code{.eps}.
+Should be a valid unique variable name other than "u"}
 }
 \value{
 modified function
@@ -55,9 +66,11 @@ qf_exp <- function(u)-log(1-u)
 qf_weibull <- qtr_lehmann1(qf_exp, "k")
 qf_weibull(0.5, k = 1/5)
 qweibull(0.5, shape = 5)
+qtr_epsilon(qnorm)
 qf_norm <- qff_decorate(qnorm, nm_location="mu", nm_scale="sigma")
 qf_lognorm <- qtr_exp(qf_norm)
 qf_lognorm(0.2, mu=2, sigma=0.1)
 qlnorm(0.2, 2, 0.1)
 qtr_fun(sqf_exp,log1p)
+qtr_shash(qnorm)
 }

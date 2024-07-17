@@ -1,4 +1,5 @@
 
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # gilchrist <a href='https://dmi3kno.github.io/gilchrist'><img src='man/figures/logo.png' align="right" height="200" /></a>
@@ -28,15 +29,15 @@ remotes::install_packages("dmi3kno/gilchrist")
 Gilchrist (2000) list the following rules for creating new quantile
 functions out of existing ones.
 
-| Original QF       | Rule                    | Resulting QF      | Resulting variable                             |
-|-------------------|-------------------------|-------------------|------------------------------------------------|
-| $Q_Y(u)$          | Relection rule          | $-Q(1-u)$         | QF of $-Y$                                     |
-| $Q_Y(u)$          | Reciprocal rule         | $1/Q(1-u)$        | QF of $1/Y$                                    |
-| $Q_1(u),Q_2(u)$   | Addition rule           | $Q_1(u)+Q_2(u)$   | Valid QF                                       |
-| $Q_1(u),Q_2(u)$   | Linear combination rule | $aQ_1(u)+bQ_2(u)$ | Valid QF for a,b\>0                            |
-| $Q_1(u),Q_2(u)>0$ | Multiplication rule     | $Q_1(u)Q_2(u)$    | Valid QF if $Q_1(u),Q_2(u)>0$                  |
-| $Q_Y(u)$          | Q-transformation        | $T(Q_Y(u))$       | QF of $T(Y)$, for non-decreasing $T$           |
-| $Q_Y(u)$          | p-transformation        | $Q_Y(H(u))$       | p-transformed $Q_Y(u)$, for non-decreasing $H$ |
+| Original QF | Rule | Resulting QF | Resulting variable |
+|----|----|----|----|
+| $Q_Y(u)$ | Relection rule | $-Q(1-u)$ | QF of $-Y$ |
+| $Q_Y(u)$ | Reciprocal rule | $1/Q(1-u)$ | QF of $1/Y$ |
+| $Q_1(u),Q_2(u)$ | Addition rule | $Q_1(u)+Q_2(u)$ | Valid QF |
+| $Q_1(u),Q_2(u)$ | Linear combination rule | $aQ_1(u)+bQ_2(u)$ | Valid QF for a,b\>0 |
+| $Q_1(u),Q_2(u)>0$ | Multiplication rule | $Q_1(u)Q_2(u)$ | Valid QF if $Q_1(u),Q_2(u)>0$ |
+| $Q_Y(u)$ | Q-transformation | $T(Q_Y(u))$ | QF of $T(Y)$, for non-decreasing $T$ |
+| $Q_Y(u)$ | p-transformation | $Q_Y(H(u))$ | p-transformed $Q_Y(u)$, for non-decreasing $H$ |
 
 ## Example
 
@@ -70,10 +71,11 @@ function, so we can inspect it.
 
 ``` r
 s_exp
-#> function(u, ...){
-#>   -log(1-u)
+#> function (u, ...) 
+#> {
+#>     -log(1 - u)
 #> }
-#> <bytecode: 0x55eb63abc408>
+#> <bytecode: 0x5dc70db3f158>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -216,7 +218,8 @@ qrexp <- s_exp %>%
 qrexp(p_grd) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-11-1.png"
+style="width:100.0%" />
 
 ### Reciprocation
 
@@ -230,7 +233,8 @@ qrecunif <- s_unif %>%
 qrecunif(p_grd) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-12-1.png"
+style="width:100.0%" />
 
 ### Addition
 
@@ -245,7 +249,8 @@ qlogistic <- s_exp %>%
 qlogistic(p_grd) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-13-1.png"
+style="width:100.0%" />
 
 ### Linear combination
 
@@ -264,7 +269,8 @@ qskewlogis <- s_exp %>%
 qskewlogis(p_grd, delta=0.9) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-14-1.png"
+style="width:100.0%" />
 
 The twin function `qff_cmix` swaps the weights: $1-\delta$ to the first
 function and $\delta$ to the second function.
@@ -282,7 +288,8 @@ qhcsexp <- s_halfcosine %>%
 qhcsexp(p_grd) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-15-1.png"
+style="width:100.0%" />
 
 ### Shift and scale
 
@@ -296,7 +303,8 @@ q_shiftedexp <- s_exp %>% qff_shift("mu")
 q_shiftedexp(p_grd, mu=2) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-16-1.png"
+style="width:100.0%" />
 
 The quantile function factory `qff_scale` implement the “multiplication
 rule” but for parameters: it can add a scale parameter to the QF,
@@ -309,7 +317,8 @@ qexp1 <- s_exp %>%
 qexp1(p_grd, lambda=2) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-17-1.png"
+style="width:100.0%" />
 
 Finally, `qff_decorate` adds both location and scale to a quantile
 function.
@@ -347,7 +356,8 @@ qweibull1(p_grd, lambda=2, k=3) %>%
   plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-19-1.png"
+style="width:100.0%" />
 
 The analogous function exists for p-transforming the quantile function,
 i.e. raising the depth $u$ to the power $.pow$ (or its inverse).
@@ -414,7 +424,8 @@ qeik(p_grd, alpha=4,beta=5, lambda=6) %>%
   plot(p_grd,.,type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-21-1.png"
+style="width:100.0%" />
 
 ### Exponentiation
 
@@ -464,7 +475,31 @@ qf_KMweibull(p_grd, lambda=3, k=4)%>%
   plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-23-1.png"
+style="width:100.0%" />
+
+### SHASH-transformation
+
+SHASH (sinh-asinh) q-transformation is used in Johnson SU distribution
+and was further developed by Rigby and Stasinopoulos (2005) and Jones
+and Pewsey (2009). The transformation has the form
+
+$$
+T(u)=\sinh\left[\frac{1}{\delta}\{\text{asinh}(Q(u))-\epsilon\}\right]
+$$
+
+Here’s for example SHASH-normal distribution
+
+``` r
+qshashnorm <- s_norm %>%
+  qtr_shash(nm_tail="delta", nm_asymm="epsilon")
+
+qs <- qshashnorm(p_grd, delta=2, epsilon=2)
+plot(p_grd, qs, type="l")
+```
+
+<img src="man/figures/README-unnamed-chunk-24-1.png"
+style="width:100.0%" />
 
 ### $\varepsilon$-transformation
 
@@ -496,7 +531,10 @@ qs <- qupareto(p_grd, 3, 0.1)
 plot(p_grd, qs, type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-22-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-26-1.png"
+style="width:100.0%" />
+
+### DUS-transformation
 
 Finally, we can apply the DUS-transformation proposed by Kumar, Singh,
 and Singh (2015)
@@ -517,7 +555,8 @@ plot(p_grd, qs, type="l")
 lines(p_grd, qexp(p_grd, 0.5), col=2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-23-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-27-1.png"
+style="width:100.0%" />
 
 ### Modi-transformation
 
@@ -564,7 +603,8 @@ qmuhammad <- s_unif %>%
 qmuhammad(runif(1e3), theta=2, beta=7, alpha=0.7) %>% hist(50)
 ```
 
-<img src="man/figures/README-unnamed-chunk-25-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-29-1.png"
+style="width:100.0%" />
 
 Fréchet is Reciprocate transform of Weibull. Weibull is power transform
 of Exponential.
@@ -582,13 +622,15 @@ qfrechet <- s_exp %>%
 qfrechet(p_grd, m=0, s=1, alpha=5)%>%plot(p_grd, ., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-26-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-30-1.png"
+style="width:100.0%" />
 
 What other cool transformations do you know? Please let me know!
 
 ## References
 
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
 
 <div id="ref-bakouch2023UnitExponentialProbability" class="csl-entry">
 
@@ -625,6 +667,13 @@ Functions*. Boca Raton: Chapman & Hall/CRC.
 
 </div>
 
+<div id="ref-jones2009SinharcsinhDistributions" class="csl-entry">
+
+Jones, M. C., and Arthur Pewsey. 2009. “Sinh-Arcsinh Distributions.”
+*Biometrika* 96 (4): 761–80. <https://doi.org/10.1093/biomet/asp053>.
+
+</div>
+
 <div id="ref-kavya2021ParsimoniousModelsLifetimes" class="csl-entry">
 
 Kavya, P., and M. Manoharan. 2021. “Some Parsimonious Models for
@@ -657,6 +706,15 @@ Reddy, M Rami, B Srinivasa Rao, and K Rosaiah. 2024. “Acceptance
 Sampling Plans Based on Percentiles of Exponentiated Inverse Kumaraswamy
 Distribution.” *Indian Journal Of Science And Technology* 17 (16):
 1681–89. <https://doi.org/10.17485/IJST/v17i16.222>.
+
+</div>
+
+<div id="ref-rigby2005GeneralizedAdditiveModels" class="csl-entry">
+
+Rigby, R. A., and D. M. Stasinopoulos. 2005. “Generalized Additive
+Models for Location, Scale and Shape.” *Journal of the Royal Statistical
+Society: Series C (Applied Statistics)* 54 (3): 507–54.
+<https://doi.org/10.1111/j.1467-9876.2005.00510.x>.
 
 </div>
 
