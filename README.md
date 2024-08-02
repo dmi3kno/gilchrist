@@ -75,7 +75,7 @@ s_exp
 #> {
 #>     -log(1 - u)
 #> }
-#> <bytecode: 0x63393af060d8>
+#> <bytecode: 0x6176f45fb870>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -584,6 +584,39 @@ qmodiexpexp1(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
 
 ## Other examples
 
+Dagum distribution seems to be a product of inverse Kumaraswamy and
+Lehmann Type I transformed uniform distribution.
+
+$$
+\begin{gathered}
+Q(u)=b(u^{-\frac{1}{p}}-1)^{-\frac{1}{a}}\\
+Q(u)=\frac{bu^{\frac{1}{pa}}}{\left(1-u^{\frac{1}{p}}\right)^\frac{1}{a}}
+\end{gathered}
+$$
+
+``` r
+qdagum_raw <- function(u, b, p, a){
+  mip <- -1/p
+  mia <- -1/a
+  b*(u^mip-1)^mia
+}
+
+qdagum <- s_unif %>%
+  ptr_lehmann2("p") %>%
+  qtr_lehmann1("a") %>%
+  qff_reciprocate() %>%
+  qff_multiply(
+    qtr_lehmann1(s_unif, "a") %>%
+      qtr_lehmann1("p")
+  ) %>%
+  qff_scale("b")
+
+qs1 <- qdagum_raw(p_grd, b=2, p=3, a=4)
+qs2 <- qdagum(p_grd, b=2, p=3, a=4)
+all.equal(qs1,qs2)
+#> [1] TRUE
+```
+
 Interesting “bathtube-shaped” distribution proposed by Muhammad (2023)
 
 $$
@@ -603,7 +636,7 @@ qmuhammad <- s_unif %>%
 qmuhammad(runif(1e3), theta=2, beta=7, alpha=0.7) %>% hist(50)
 ```
 
-<img src="man/figures/README-unnamed-chunk-29-1.png"
+<img src="man/figures/README-unnamed-chunk-30-1.png"
 style="width:100.0%" />
 
 Fréchet is Reciprocate transform of Weibull. Weibull is power transform
@@ -622,7 +655,7 @@ qfrechet <- s_exp %>%
 qfrechet(p_grd, m=0, s=1, alpha=5)%>%plot(p_grd, ., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-30-1.png"
+<img src="man/figures/README-unnamed-chunk-31-1.png"
 style="width:100.0%" />
 
 What other cool transformations do you know? Please let me know!
