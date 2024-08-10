@@ -75,7 +75,7 @@ s_exp
 #> {
 #>     -log(1 - u)
 #> }
-#> <bytecode: 0x6176f45fb870>
+#> <bytecode: 0x5848aa0542c0>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -455,29 +455,6 @@ qchen <- s_exp %>%
 The transformations where the shift, scale or power is a constant rather
 than a parameter.
 
-### Kavya-Manoharan (KM) p-transformation
-
-The p-transformation proposed in Kavya and Manoharan (2021)
-
-$$
-H(u)=-\ln\left(1-u\frac{e-1}{e}\right)
-$$
-
-The authors apply this p-transformation to Weibuill distribution
-
-``` r
-qf_KMweibull <- s_exp %>% 
-  qtr_lehmann1("k") %>% 
-  qff_scale("lambda") %>% 
-  ptr_KM()
-
-qf_KMweibull(p_grd, lambda=3, k=4)%>%
-  plot(p_grd,., type="l")
-```
-
-<img src="man/figures/README-unnamed-chunk-23-1.png"
-style="width:100.0%" />
-
 ### SHASH-transformation
 
 SHASH (sinh-asinh) q-transformation is used in Johnson SU distribution
@@ -498,7 +475,7 @@ qs <- qshashnorm(p_grd, delta=2, epsilon=2)
 plot(p_grd, qs, type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-24-1.png"
+<img src="man/figures/README-unnamed-chunk-23-1.png"
 style="width:100.0%" />
 
 ### $\varepsilon$-transformation
@@ -531,7 +508,7 @@ qs <- qupareto(p_grd, 3, 0.1)
 plot(p_grd, qs, type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-26-1.png"
+<img src="man/figures/README-unnamed-chunk-25-1.png"
 style="width:100.0%" />
 
 ### DUS-transformation
@@ -555,10 +532,41 @@ plot(p_grd, qs, type="l")
 lines(p_grd, qexp(p_grd, 0.5), col=2)
 ```
 
+<img src="man/figures/README-unnamed-chunk-26-1.png"
+style="width:100.0%" />
+
+### Kavya-Manoharan (KM) p-transformation
+
+This p-transformation proposed in Kavya and Manoharan (2021) is the
+reflected and shifted DUS transformation we considered above. It could
+as well be called DUS Type II transformation
+
+$$
+H(u)=-\ln\left(1-u\frac{e-1}{e}\right)
+$$
+
+The authors apply this p-transformation to Weibuill distribution
+
+``` r
+qf_KMweibull <- s_exp %>% 
+  qtr_lehmann1("k") %>% 
+  qff_scale("lambda") %>% 
+  ptr_KM()
+
+qf_KMweibull(p_grd, lambda=3, k=4)%>%
+  plot(p_grd,., type="l")
+```
+
 <img src="man/figures/README-unnamed-chunk-27-1.png"
 style="width:100.0%" />
 
 ### Modi-transformation
+
+Modi-transformation is a p-transformation of the following form
+
+$$
+H(u)=\frac{u\alpha^\beta}{1-u+\alpha^\beta}
+$$
 
 Modi-transformed exponentiated exponential distribution
 
@@ -566,7 +574,7 @@ Modi-transformed exponentiated exponential distribution
 qmodiexpexp <- s_exp %>%
   qff_scale("lambda") %>%
   ptr_lehmann1("delta") %>%
-  ptr_modi()
+  ptr_modi1()
   
 qmodiexpexp1 <- function(u, lambda, alpha, beta, delta){
   1/lambda*(-log(1-(u*alpha^beta/(1-u+alpha^beta))^(1/delta)))

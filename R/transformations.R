@@ -5,6 +5,7 @@
 #'    `qtr_exp()`: Exponentiating the QF. Returns \eqn{k^{Q_1(u)}}. Default \eqn{k=e} Euler's constant
 #'    `qtr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 #'    `qtr_epsilon()`: unit-Q-transform using inverse epsilon function \eqn{\frac{(1+Q_1(u))^{1/\beta}-1}{(1+Q_1(u))^{1/\beta}+1}}.
+#'    `qtr_shash()`: SHASH (sinh-asinh) q-transformation. \eqn{\text{sinh}(1/\delta(Q(u) - \epsilon)}
 #'
 #' Note that today p-transformations can be performed by applying Q-transformations to standard uniform distribution
 #' @param fun function
@@ -50,18 +51,45 @@ qtr_epsilon <- function(fun, nm_pow=".pow"){
   as.function(c(formals_, body_))
 }
 
+
+# SHASH (sinh-asinh) q-transformation
+#' @param nm_tail character.  The name of the tail thickness parameter. The default name is `.dlt`. 
+#' The tail thickness parameter should be positive (default value is 1).
+#' Should be a valid unique variable name other than "u"
+#' The asymmetry parameter can be positive or negative (default value is 0).
+#' @param nm_asymm character.  The name of the asymmetry parameter. The default name is `.eps`. 
+#' Should be a valid unique variable name other than "u"
+#' @rdname qtransformations
+#' @export
+#' @examples
+#' qtr_shash(qnorm)
+qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps"){
+  f <- function(u, .eps=0, .dlt=1, ...){
+    sinh(1/.dlt*(fun(u,...)- .eps))
+  }
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".dlt"] <- nm_tail
+  names(formals_)[names(formals_) == ".eps"] <- nm_asymm
+  body_ <- do.call(substitute, list(body_, list(.dlt = as.symbol(nm_tail))))
+  body_ <- do.call(substitute, list(body_, list(.eps = as.symbol(nm_asymm))))
+  as.function(c(formals_, body_))
+}
+
+
+
 #' p-transformations
 #' @description
 #' Some of the typical transformations of QFs, implementing a p-transformation rule.
 #'
-#'    - `ptr_lehmann1()`: Lehman Type I inverse exponentiation. Returns \eqn{u^{1/k}}.
-#'    - `ptr_lehmann2()`: Lehman Type II inverse exponentiation. Returns \eqn{1-(1-u)^{1/k}}.
-#'    - `ptr_exp()`: Exponentiating the QF. Returns \eqn{k^Q_1(u)}. The value of k defaults to Euler's constant.
-#'    - `ptr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
-#'    - `ptr_KM()`: Kavya-Manoharan (KM) transformation \eqn{-\ln(1-u\frac{e-1}{e})}
-#'    - `ptr_DUS()`: Dinesh-Umesh-Sunjay (DUS) transformation \eqn{\ln(1-u+eu)}.
-#'    - `ptr_cDUS()`: Complimentary (reflected and shifted) Dinesh-Umesh-Sunjay (DUS) transformation \eqn{1-\ln(u-eu+e)}.
-#'    - `ptr_modi()`: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta})}
+#'    - `ptr_lehmann1()`: Lehman Type I inverse exponentiation. (U->U). Returns \eqn{u^{1/k}}.
+#'    - `ptr_lehmann2()`: Lehman Type II inverse exponentiation. (U->U). Returns \eqn{1-(1-u)^{1/k}}.
+#'    - `ptr_fun()`: Q-transform with generic function without additional arguments. (U->U, U->R) \eqn{.fun(Q_1(u))}.
+#'    - `ptr_DUS()`: Dinesh-Umesh-Sunjay (DUS) transformation. (U->U) Returns \eqn{\ln(1-u+eu)}.
+#'    - `ptr_KM()`: Kavya-Manoharan (KM) transformation. Equal to reflected and shifted DUS trasnformation (U->U). Returns \eqn{-\ln(1-u\frac{e-1}{e})}
+#'    - `ptr_modi1()`: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta}}
+#'    - `ptr_modi2()`: Modi transformation \eqn{\frac{u+u\alpha^\beta}{u+\alpha^\beta})}
 #'
 #' @param fun function
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
@@ -117,23 +145,6 @@ qtr_exp <- function(fun, nm_base=".base", .invert=TRUE){
   f <- function(u, .base=exp(1), ...){
     if(.invert) .base <- 1/.base
     (.base)^fun(u,...)
-  }
-
-  formals_ <- formals(f)
-  body_ <- body(f)
-  names(formals_)[names(formals_) == ".base"] <- nm_base
-  body_ <- do.call(substitute, list(body_, list(.base = as.symbol(nm_base))))
-  as.function(c(formals_, body_))
-}
-
-#' @param nm_base character.  The name of the base parameter. The default name is `.base`. The default value is `exp(1)` (Euler's constant).
-# Should be a valid unique variable name other than "u"
-#' @rdname ptransformations
-#' @export
-ptr_exp <- function(fun, nm_base=".base", .invert=TRUE){
-  f <- function(u, .base=exp(1), ...){
-   if(.invert) .base <- 1/.base
-   fun((.base)^u,...)
   }
 
   formals_ <- formals(f)
@@ -235,45 +246,20 @@ ptr_DUS <- function(fun){
   }
 }
 
-# Complimentary Dinesh-Umesh-Sanjay (DUS) p-transformation (reflected and shifted by 1)
+# Modi (Type I) p-transformation
 #' @rdname ptransformations
 #' @export
-ptr_cDUS <- function(fun){
-  function(u, ...){
-    fun(1-log(u-exp(1)*u+exp(1)), ...)
-  }
-}
-
-# Modi p-transformation
-#' @rdname ptransformations
-#' @export
-ptr_modi <- function(fun){
+ptr_modi1 <- function(fun){
   function(u, alpha, beta, ...){
     fun(u*alpha^beta/(1-u+alpha^beta), ...)
   }
 }
 
-# SHASH (sinh-asinh) q-transformation
-#' @param nm_tail character.  The name of the tail thickness parameter. The default name is `.dlt`. 
-#' The tail thickness parameter should be positive (default value is 1).
-#' Should be a valid unique variable name other than "u"
-#' The asymmetry parameter can be positive or negative (default value is 0).
-#' @param nm_asymm character.  The name of the asymmetry parameter. The default name is `.eps`. 
-#' Should be a valid unique variable name other than "u"
-#' @rdname qtransformations
+# Modi Type II p-transformation
+#' @rdname ptransformations
 #' @export
-#' @examples
-#' qtr_shash(qnorm)
-qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps"){
-  f <- function(u, .eps=0, .dlt=1, ...){
-    sinh(1/.dlt*(fun(u,...)- .eps))
+ptr_modi2 <- function(fun){
+  function(u, alpha, beta, ...){
+    fun(u*alpha^beta/(1-u+alpha^beta), ...)
   }
-
-  formals_ <- formals(f)
-  body_ <- body(f)
-  names(formals_)[names(formals_) == ".dlt"] <- nm_tail
-  names(formals_)[names(formals_) == ".eps"] <- nm_asymm
-  body_ <- do.call(substitute, list(body_, list(.dlt = as.symbol(nm_tail))))
-  body_ <- do.call(substitute, list(body_, list(.eps = as.symbol(nm_asymm))))
-  as.function(c(formals_, body_))
 }

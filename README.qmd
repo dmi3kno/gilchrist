@@ -365,26 +365,6 @@ qchen <- s_exp %>%
 
 The transformations where the shift, scale or power is a constant rather than a parameter.
 
-### Kavya-Manoharan (KM) p-transformation
-
-The p-transformation proposed in @kavya2021ParsimoniousModelsLifetimes
-
-$$
-H(u)=-\ln\left(1-u\frac{e-1}{e}\right)
-$$
-
-The authors apply this p-transformation to Weibuill distribution
-
-```{r}
-qf_KMweibull <- s_exp %>% 
-  qtr_lehmann1("k") %>% 
-  qff_scale("lambda") %>% 
-  ptr_KM()
-
-qf_KMweibull(p_grd, lambda=3, k=4)%>%
-  plot(p_grd,., type="l")
-```
-
 ### SHASH-transformation
 
 SHASH (sinh-asinh) q-transformation is used in Johnson SU distribution and was further developed by @rigby2005GeneralizedAdditiveModels and @jones2009SinharcsinhDistributions. The transformation has the form
@@ -456,7 +436,35 @@ lines(p_grd, qexp(p_grd, 0.5), col=2)
 ```
 
 
+### Kavya-Manoharan (KM) p-transformation
+
+This p-transformation proposed in @kavya2021ParsimoniousModelsLifetimes is the reflected and shifted DUS transformation we considered above. It could as well be called DUS Type II transformation
+
+$$
+H(u)=-\ln\left(1-u\frac{e-1}{e}\right)
+$$
+
+The authors apply this p-transformation to Weibuill distribution
+
+```{r}
+qf_KMweibull <- s_exp %>% 
+  qtr_lehmann1("k") %>% 
+  qff_scale("lambda") %>% 
+  ptr_KM()
+
+qf_KMweibull(p_grd, lambda=3, k=4)%>%
+  plot(p_grd,., type="l")
+```
+
+
+
 ### Modi-transformation
+
+Modi-transformation is a p-transformation of the following form
+
+$$
+H(u)=\frac{u\alpha^\beta}{1-u+\alpha^\beta}
+$$
 
 Modi-transformed exponentiated exponential distribution
 
@@ -464,7 +472,7 @@ Modi-transformed exponentiated exponential distribution
 qmodiexpexp <- s_exp %>%
   qff_scale("lambda") %>%
   ptr_lehmann1("delta") %>%
-  ptr_modi()
+  ptr_modi1()
   
 qmodiexpexp1 <- function(u, lambda, alpha, beta, delta){
   1/lambda*(-log(1-(u*alpha^beta/(1-u+alpha^beta))^(1/delta)))

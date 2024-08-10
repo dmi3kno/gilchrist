@@ -3,17 +3,19 @@
 \name{qtr_lehmann1}
 \alias{qtr_lehmann1}
 \alias{qtr_epsilon}
+\alias{qtr_shash}
 \alias{qtr_exp}
 \alias{qtr_fun}
 \alias{qtr_shiftby}
 \alias{qtr_scaleby}
 \alias{qtr_powerby}
-\alias{qtr_shash}
 \title{Q-transformations}
 \usage{
 qtr_lehmann1(fun, nm_pow = ".pow", .invert = TRUE)
 
 qtr_epsilon(fun, nm_pow = ".pow")
+
+qtr_shash(fun, nm_tail = ".dlt", nm_asymm = ".eps")
 
 qtr_exp(fun, nm_base = ".base", .invert = TRUE)
 
@@ -24,8 +26,6 @@ qtr_shiftby(fun, x = 0)
 qtr_scaleby(fun, x = 1)
 
 qtr_powerby(fun, x = 1)
-
-qtr_shash(fun, nm_tail = ".dlt", nm_asymm = ".eps")
 }
 \arguments{
 \item{fun}{function}
@@ -35,12 +35,6 @@ Should be a valid unique variable name other than "u"}
 
 \item{.invert}{logical. Should the power parameter be inverted (1/.pow) before applying. Default TRUE}
 
-\item{nm_base}{character.  The name of the base parameter. The default name is \code{.base}. The default value is \code{exp(1)} (Euler's constant).}
-
-\item{.fun}{function without arguments(or with all default arguments) to be applied as Q-transformation}
-
-\item{x}{numeric. Fixed value to shift/scale/power the QF by}
-
 \item{nm_tail}{character.  The name of the tail thickness parameter. The default name is \code{.dlt}.
 The tail thickness parameter should be positive (default value is 1).
 Should be a valid unique variable name other than "u"
@@ -48,6 +42,12 @@ The asymmetry parameter can be positive or negative (default value is 0).}
 
 \item{nm_asymm}{character.  The name of the asymmetry parameter. The default name is \code{.eps}.
 Should be a valid unique variable name other than "u"}
+
+\item{nm_base}{character.  The name of the base parameter. The default name is \code{.base}. The default value is \code{exp(1)} (Euler's constant).}
+
+\item{.fun}{function without arguments(or with all default arguments) to be applied as Q-transformation}
+
+\item{x}{numeric. Fixed value to shift/scale/power the QF by}
 }
 \value{
 modified function
@@ -58,6 +58,7 @@ Some of the typical transformations of QFs, implementing a Q-transformation rule
 \code{qtr_exp()}: Exponentiating the QF. Returns \eqn{k^{Q_1(u)}}. Default \eqn{k=e} Euler's constant
 \code{qtr_fun()}: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 \code{qtr_epsilon()}: unit-Q-transform using inverse epsilon function \eqn{\frac{(1+Q_1(u))^{1/\beta}-1}{(1+Q_1(u))^{1/\beta}+1}}.
+\code{qtr_shash()}: SHASH (sinh-asinh) q-transformation. \eqn{\text{sinh}(1/\delta(Q(u) - \epsilon)}
 
 Note that today p-transformations can be performed by applying Q-transformations to standard uniform distribution
 }
@@ -67,10 +68,10 @@ qf_weibull <- qtr_lehmann1(qf_exp, "k")
 qf_weibull(0.5, k = 1/5)
 qweibull(0.5, shape = 5)
 qtr_epsilon(qnorm)
+qtr_shash(qnorm)
 qf_norm <- qff_decorate(qnorm, nm_location="mu", nm_scale="sigma")
 qf_lognorm <- qtr_exp(qf_norm)
 qf_lognorm(0.2, mu=2, sigma=0.1)
 qlnorm(0.2, 2, 0.1)
 qtr_fun(sqf_exp,log1p)
-qtr_shash(qnorm)
 }
