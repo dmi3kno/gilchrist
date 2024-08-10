@@ -60,6 +60,7 @@ qtr_epsilon <- function(fun, nm_pow=".pow"){
 #'    - `ptr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 #'    - `ptr_KM()`: Kavya-Manoharan (KM) transformation \eqn{-\ln(1-u\frac{e-1}{e})}
 #'    - `ptr_DUS()`: Dinesh-Umesh-Sunjay (DUS) transformation \eqn{\ln(1-u+eu)}.
+#'    - `ptr_cDUS()`: Complimentary (reflected and shifted) Dinesh-Umesh-Sunjay (DUS) transformation \eqn{1-\ln(u-eu+e)}.
 #'    - `ptr_modi()`: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta})}
 #'
 #' @param fun function
@@ -231,6 +232,15 @@ ptr_KM <- function(fun){
 ptr_DUS <- function(fun){
   function(u, ...){
     fun(log(1-u+exp(1)*u), ...)
+  }
+}
+
+# Complimentary Dinesh-Umesh-Sanjay (DUS) p-transformation (reflected and shifted by 1)
+#' @rdname ptransformations
+#' @export
+ptr_cDUS <- function(fun){
+  function(u, ...){
+    fun(1-log(u-exp(1)*u+exp(1)), ...)
   }
 }
 

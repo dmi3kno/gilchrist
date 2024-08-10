@@ -2,6 +2,7 @@
 
 export(ptr_DUS)
 export(ptr_KM)
+export(ptr_cDUS)
 export(ptr_exp)
 export(ptr_fun)
 export(ptr_lehmann1)

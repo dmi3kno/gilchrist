@@ -10,6 +10,7 @@
 \alias{ptr_powerby}
 \alias{ptr_KM}
 \alias{ptr_DUS}
+\alias{ptr_cDUS}
 \alias{ptr_modi}
 \title{p-transformations}
 \usage{
@@ -30,6 +31,8 @@ ptr_powerby(fun, x = 1)
 ptr_KM(fun)
 
 ptr_DUS(fun)
+
+ptr_cDUS(fun)
 
 ptr_modi(fun)
 }
@@ -59,6 +62,7 @@ Some of the typical transformations of QFs, implementing a p-transformation rule
 \item \code{ptr_fun()}: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 \item \code{ptr_KM()}: Kavya-Manoharan (KM) transformation \eqn{-\ln(1-u\frac{e-1}{e})}
 \item \code{ptr_DUS()}: Dinesh-Umesh-Sunjay (DUS) transformation \eqn{\ln(1-u+eu)}.
+\item \code{ptr_cDUS()}: Complimentary (reflected and shifted) Dinesh-Umesh-Sunjay (DUS) transformation \eqn{1-\ln(u-eu+e)}.
 \item \code{ptr_modi()}: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta})}
 }
 }
