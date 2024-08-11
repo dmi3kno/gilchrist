@@ -3,6 +3,7 @@
 export(ptr_DUS)
 export(ptr_KM)
 export(ptr_fun)
+export(ptr_half)
 export(ptr_lehmann1)
 export(ptr_lehmann2)
 export(ptr_modi1)

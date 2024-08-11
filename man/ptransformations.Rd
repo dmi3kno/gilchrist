@@ -4,6 +4,7 @@
 \alias{ptr_lehmann1}
 \alias{ptr_lehmann2}
 \alias{ptr_fun}
+\alias{ptr_half}
 \alias{ptr_shiftby}
 \alias{ptr_scaleby}
 \alias{ptr_powerby}
@@ -18,6 +19,8 @@ ptr_lehmann1(fun, nm_pow = ".pow", .invert = TRUE)
 ptr_lehmann2(fun, nm_pow = ".pow", .invert = TRUE)
 
 ptr_fun(fun, .fun)
+
+ptr_half(fun)
 
 ptr_shiftby(fun, x = 0)
 
@@ -57,7 +60,8 @@ Some of the typical transformations of QFs, implementing a p-transformation rule
 \itemize{
 \item \code{ptr_lehmann1()}: Lehman Type I inverse exponentiation. (U->U). Returns \eqn{u^{1/k}}.
 \item \code{ptr_lehmann2()}: Lehman Type II inverse exponentiation. (U->U). Returns \eqn{1-(1-u)^{1/k}}.
-\item \code{ptr_fun()}: Q-transform with generic function without additional arguments. (U->U, U->R) \eqn{.fun(Q_1(u))}.
+\item \code{ptr_fun()}: p-transform with generic function without additional arguments. (U->U, U->R) \eqn{Q_1(.fun(u))}.
+\item \code{ptr_half()}: p-transform into half-distribution. (U->U) Returns \eqn{Q_1((u+1)/2))}.
 \item \code{ptr_DUS()}: Dinesh-Umesh-Sunjay (DUS) transformation. (U->U) Returns \eqn{\ln(1-u+eu)}.
 \item \code{ptr_KM()}: Kavya-Manoharan (KM) transformation. Equal to reflected and shifted DUS trasnformation (U->U). Returns \eqn{-\ln(1-u\frac{e-1}{e})}
 \item \code{ptr_modi1()}: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta}}. Only alpha is mandatory, while beta defaults to 1

@@ -142,7 +142,8 @@ qtr_powerby <- function(fun, x=1){
 #'
 #'    - `ptr_lehmann1()`: Lehman Type I inverse exponentiation. (U->U). Returns \eqn{u^{1/k}}.
 #'    - `ptr_lehmann2()`: Lehman Type II inverse exponentiation. (U->U). Returns \eqn{1-(1-u)^{1/k}}.
-#'    - `ptr_fun()`: Q-transform with generic function without additional arguments. (U->U, U->R) \eqn{.fun(Q_1(u))}.
+#'    - `ptr_fun()`: p-transform with generic function without additional arguments. (U->U, U->R) \eqn{Q_1(.fun(u))}.
+#'    - `ptr_half()`: p-transform into half-distribution. (U->U) Returns \eqn{Q_1((u+1)/2))}.
 #'    - `ptr_DUS()`: Dinesh-Umesh-Sunjay (DUS) transformation. (U->U) Returns \eqn{\ln(1-u+eu)}.
 #'    - `ptr_KM()`: Kavya-Manoharan (KM) transformation. Equal to reflected and shifted DUS trasnformation (U->U). Returns \eqn{-\ln(1-u\frac{e-1}{e})}
 #'    - `ptr_modi1()`: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta}}. Only alpha is mandatory, while beta defaults to 1
@@ -198,6 +199,13 @@ ptr_fun <- function(fun, .fun){
   f <- function(u, ...)
     fun(.fun(u),...)
   f
+}
+
+#' @rdname ptransformations
+#' @export
+ptr_half <- function(fun){
+  function(u, ...)
+    fun((u+1)/2,...)
 }
 
 #' @param x numeric. Fixed value to shift/scale/power the u by
