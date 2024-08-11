@@ -2,16 +2,18 @@
 % Please edit documentation in R/transformations.R
 \name{qtr_lehmann1}
 \alias{qtr_lehmann1}
+\alias{qtr_shiftby}
 \alias{qtr_epsilon}
 \alias{qtr_shash}
 \alias{qtr_exp}
 \alias{qtr_fun}
-\alias{qtr_shiftby}
 \alias{qtr_scaleby}
 \alias{qtr_powerby}
 \title{Q-transformations}
 \usage{
 qtr_lehmann1(fun, nm_pow = ".pow", .invert = TRUE)
+
+qtr_shiftby(fun, x = 0)
 
 qtr_epsilon(fun, nm_pow = ".pow")
 
@@ -20,8 +22,6 @@ qtr_shash(fun, nm_tail = ".dlt", nm_asymm = ".eps")
 qtr_exp(fun, nm_base = ".base", .invert = TRUE)
 
 qtr_fun(fun, .fun)
-
-qtr_shiftby(fun, x = 0)
 
 qtr_scaleby(fun, x = 1)
 
@@ -35,6 +35,8 @@ Should be a valid unique variable name other than "u"}
 
 \item{.invert}{logical. Should the power parameter be inverted (1/.pow) before applying. Default TRUE}
 
+\item{x}{numeric. Fixed value to shift/scale/power the QF by}
+
 \item{nm_tail}{character.  The name of the tail thickness parameter. The default name is \code{.dlt}.
 The tail thickness parameter should be positive (default value is 1).
 Should be a valid unique variable name other than "u"
@@ -46,8 +48,6 @@ Should be a valid unique variable name other than "u"}
 \item{nm_base}{character.  The name of the base parameter. The default name is \code{.base}. The default value is \code{exp(1)} (Euler's constant).}
 
 \item{.fun}{function without arguments(or with all default arguments) to be applied as Q-transformation}
-
-\item{x}{numeric. Fixed value to shift/scale/power the QF by}
 }
 \value{
 modified function

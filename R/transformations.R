@@ -33,6 +33,15 @@ qtr_lehmann1 <- function(fun, nm_pow=".pow", .invert=TRUE){
   as.function(c(formals_, body_))
 }
 
+#' @param x numeric. Fixed value to shift/scale/power the QF by
+#' @rdname qtransformations
+#' @export
+qtr_shiftby <- function(fun, x=0){
+  function(u, ...){
+    x+fun(u, ...)
+  }
+}
+
 #' @rdname qtransformations
 #' @export
 #' @examples
@@ -77,7 +86,55 @@ qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps"){
   as.function(c(formals_, body_))
 }
 
+#' @param nm_base character.  The name of the base parameter. The default name is `.base`. The default value is `exp(1)` (Euler's constant).
+# Should be a valid unique variable name other than "u"
+#' @rdname qtransformations
+#' @export
+#' @examples
+#' qf_norm <- qff_decorate(qnorm, nm_location="mu", nm_scale="sigma")
+#' qf_lognorm <- qtr_exp(qf_norm)
+#' qf_lognorm(0.2, mu=2, sigma=0.1)
+#' qlnorm(0.2, 2, 0.1)
+qtr_exp <- function(fun, nm_base=".base", .invert=TRUE){
+  f <- function(u, .base=exp(1), ...){
+    if(.invert) .base <- 1/.base
+    (.base)^fun(u,...)
+  }
 
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".base"] <- nm_base
+  body_ <- do.call(substitute, list(body_, list(.base = as.symbol(nm_base))))
+  as.function(c(formals_, body_))
+}
+
+
+#' @param .fun function without arguments(or with all default arguments) to be applied as Q-transformation
+#' @rdname qtransformations
+#' @export
+#' @examples
+#' qtr_fun(sqf_exp,log1p)
+qtr_fun <- function(fun, .fun){
+  f <- function(u, ...)
+    .fun(fun(u,...))
+  f
+}
+
+#' @rdname qtransformations
+#' @export
+qtr_scaleby <- function(fun, x=1){
+  function(u, ...){
+    x*fun(u, ...)
+  }
+}
+
+#' @rdname qtransformations
+#' @export
+qtr_powerby <- function(fun, x=1){
+  function(u, ...){
+    fun(u, ...)^x
+  }
+}
 
 #' p-transformations
 #' @description
@@ -88,8 +145,8 @@ qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps"){
 #'    - `ptr_fun()`: Q-transform with generic function without additional arguments. (U->U, U->R) \eqn{.fun(Q_1(u))}.
 #'    - `ptr_DUS()`: Dinesh-Umesh-Sunjay (DUS) transformation. (U->U) Returns \eqn{\ln(1-u+eu)}.
 #'    - `ptr_KM()`: Kavya-Manoharan (KM) transformation. Equal to reflected and shifted DUS trasnformation (U->U). Returns \eqn{-\ln(1-u\frac{e-1}{e})}
-#'    - `ptr_modi1()`: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta}}
-#'    - `ptr_modi2()`: Modi transformation \eqn{\frac{u+u\alpha^\beta}{u+\alpha^\beta})}
+#'    - `ptr_modi1()`: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta}}. Only alpha is mandatory, while beta defaults to 1
+#'    - `ptr_modi2()`: Modi transformation \eqn{\frac{u+u\alpha^\beta}{u+\alpha^\beta})}. Only alpha is mandatory, while beta defaults to 1
 #'
 #' @param fun function
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
@@ -132,40 +189,6 @@ ptr_lehmann2 <- function(fun, nm_pow=".pow", .invert=TRUE){
   as.function(c(formals_, body_))
 }
 
-#' @param nm_base character.  The name of the base parameter. The default name is `.base`. The default value is `exp(1)` (Euler's constant).
-# Should be a valid unique variable name other than "u"
-#' @rdname qtransformations
-#' @export
-#' @examples
-#' qf_norm <- qff_decorate(qnorm, nm_location="mu", nm_scale="sigma")
-#' qf_lognorm <- qtr_exp(qf_norm)
-#' qf_lognorm(0.2, mu=2, sigma=0.1)
-#' qlnorm(0.2, 2, 0.1)
-qtr_exp <- function(fun, nm_base=".base", .invert=TRUE){
-  f <- function(u, .base=exp(1), ...){
-    if(.invert) .base <- 1/.base
-    (.base)^fun(u,...)
-  }
-
-  formals_ <- formals(f)
-  body_ <- body(f)
-  names(formals_)[names(formals_) == ".base"] <- nm_base
-  body_ <- do.call(substitute, list(body_, list(.base = as.symbol(nm_base))))
-  as.function(c(formals_, body_))
-}
-
-
-#' @param .fun function without arguments(or with all default arguments) to be applied as Q-transformation
-#' @rdname qtransformations
-#' @export
-#' @examples
-#' qtr_fun(sqf_exp,log1p)
-qtr_fun <- function(fun, .fun){
-  f <- function(u, ...)
-    .fun(fun(u,...))
-  f
-}
-
 #' @param .fun function without arguments(or with all default arguments) to be applied as Q-transformation
 #' @rdname ptransformations
 #' @export
@@ -177,30 +200,12 @@ ptr_fun <- function(fun, .fun){
   f
 }
 
-
-#' @param x numeric. Fixed value to shift/scale/power the QF by
-#' @rdname qtransformations
-#' @export
-qtr_shiftby <- function(fun, x=0){
-  function(u, ...){
-    x+fun(u, ...)
-  }
-}
-
 #' @param x numeric. Fixed value to shift/scale/power the u by
 #' @rdname ptransformations
 #' @export
 ptr_shiftby <- function(fun, x=0){
   function(u, ...){
     fun(x+u, ...)
-  }
-}
-
-#' @rdname qtransformations
-#' @export
-qtr_scaleby <- function(fun, x=1){
-  function(u, ...){
-    x*fun(u, ...)
   }
 }
 
@@ -212,13 +217,6 @@ ptr_scaleby <- function(fun, x=1){
   }
 }
 
-#' @rdname qtransformations
-#' @export
-qtr_powerby <- function(fun, x=1){
-  function(u, ...){
-    fun(u, ...)^x
-  }
-}
 
 #' @rdname ptransformations
 #' @export
@@ -247,19 +245,37 @@ ptr_DUS <- function(fun){
 }
 
 # Modi (Type I) p-transformation
+#' @param nm_a character.  The name of the Modi parameter `alpha`. The default name is `.modialpha`.
+#' @param nm_b character.  The name of the Modi parameter `beta`. The default name is `.modibeta`. Default value is 1. 
 #' @rdname ptransformations
 #' @export
-ptr_modi1 <- function(fun){
-  function(u, alpha, beta, ...){
-    fun(u*alpha^beta/(1-u+alpha^beta), ...)
+ptr_modi1 <- function(fun, nm_a=".modialpha", nm_b=".modibeta"){
+  f <- function(u, .modialpha, .modibeta=1, ...){
+    fun(u * .modialpha ^ .modibeta/(1-u+ .modialpha ^ .modibeta), ...)
   }
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".modialpha"] <- nm_a
+  names(formals_)[names(formals_) == ".modibeta"] <- nm_b
+  body_ <- do.call(substitute, list(body_, list(.modialpha = as.symbol(nm_a))))
+  body_ <- do.call(substitute, list(body_, list(.modibeta = as.symbol(nm_b))))
+  as.function(c(formals_, body_))
 }
 
 # Modi Type II p-transformation
 #' @rdname ptransformations
 #' @export
-ptr_modi2 <- function(fun){
-  function(u, alpha, beta, ...){
-    fun(u*alpha^beta/(1-u+alpha^beta), ...)
+ptr_modi2 <- function(fun, nm_a=".modialpha", nm_b=".modibeta"){
+  f <- function(u, .modialpha, .modibeta=1, ...){
+    fun((u + u * .modialpha ^ .modibeta)/(u + .modialpha ^ .modibeta), ...)
   }
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".modialpha"] <- nm_a
+  names(formals_)[names(formals_) == ".modibeta"] <- nm_b
+  body_ <- do.call(substitute, list(body_, list(.modialpha = as.symbol(nm_a))))
+  body_ <- do.call(substitute, list(body_, list(.modibeta = as.symbol(nm_b))))
+  as.function(c(formals_, body_))
 }

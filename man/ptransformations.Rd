@@ -29,9 +29,9 @@ ptr_KM(fun)
 
 ptr_DUS(fun)
 
-ptr_modi1(fun)
+ptr_modi1(fun, nm_a = ".modialpha", nm_b = ".modibeta")
 
-ptr_modi2(fun)
+ptr_modi2(fun, nm_a = ".modialpha", nm_b = ".modibeta")
 }
 \arguments{
 \item{fun}{function}
@@ -44,6 +44,10 @@ Should be a valid unique variable name other than "u"}
 \item{.fun}{function without arguments(or with all default arguments) to be applied as Q-transformation}
 
 \item{x}{numeric. Fixed value to shift/scale/power the u by}
+
+\item{nm_a}{character.  The name of the Modi parameter \code{alpha}. The default name is \code{.modialpha}.}
+
+\item{nm_b}{character.  The name of the Modi parameter \code{beta}. The default name is \code{.modibeta}. Default value is 1.}
 }
 \value{
 modified function
@@ -56,8 +60,8 @@ Some of the typical transformations of QFs, implementing a p-transformation rule
 \item \code{ptr_fun()}: Q-transform with generic function without additional arguments. (U->U, U->R) \eqn{.fun(Q_1(u))}.
 \item \code{ptr_DUS()}: Dinesh-Umesh-Sunjay (DUS) transformation. (U->U) Returns \eqn{\ln(1-u+eu)}.
 \item \code{ptr_KM()}: Kavya-Manoharan (KM) transformation. Equal to reflected and shifted DUS trasnformation (U->U). Returns \eqn{-\ln(1-u\frac{e-1}{e})}
-\item \code{ptr_modi1()}: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta}}
-\item \code{ptr_modi2()}: Modi transformation \eqn{\frac{u+u\alpha^\beta}{u+\alpha^\beta})}
+\item \code{ptr_modi1()}: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta}}. Only alpha is mandatory, while beta defaults to 1
+\item \code{ptr_modi2()}: Modi transformation \eqn{\frac{u+u\alpha^\beta}{u+\alpha^\beta})}. Only alpha is mandatory, while beta defaults to 1
 }
 }
 \examples{

@@ -75,7 +75,7 @@ s_exp
 #> {
 #>     -log(1 - u)
 #> }
-#> <bytecode: 0x5848aa0542c0>
+#> <bytecode: 0x5cbd954c2840>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -574,7 +574,7 @@ Modi-transformed exponentiated exponential distribution
 qmodiexpexp <- s_exp %>%
   qff_scale("lambda") %>%
   ptr_lehmann1("delta") %>%
-  ptr_modi1()
+  ptr_modi1("alpha", "beta")
   
 qmodiexpexp1 <- function(u, lambda, alpha, beta, delta){
   1/lambda*(-log(1-(u*alpha^beta/(1-u+alpha^beta))^(1/delta)))
