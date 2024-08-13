@@ -44,6 +44,30 @@ qtr_shiftby <- function(fun, x=0){
 
 #' @rdname qtransformations
 #' @export
+qtr_reflect_shift <- function(fun){
+  function(u, ...){
+    -fun(1-u, ...) + 1
+  }
+}
+
+#' @rdname qtransformations
+#' @export
+qtr_shift_reciprocate <- function(fun){
+  function(u, ...){
+    1/(1+fun(1-u, ...))
+  }
+}
+
+#' @rdname qtransformations
+#' @export
+qtr_odd <- function(fun){
+  function(u, ...){
+    fun(u, ...)/(1+fun(u, ...))
+  }
+}
+
+#' @rdname qtransformations
+#' @export
 #' @examples
 #' qtr_epsilon(qnorm)
 qtr_epsilon <- function(fun, nm_pow=".pow"){
@@ -136,6 +160,14 @@ qtr_powerby <- function(fun, x=1){
   }
 }
 
+#' @rdname qtransformations
+#' @export
+qtr_oddITL <- function(fun){
+  function(u, ...){
+    sqrt(fun(u, ...)) / (1-sqrt(fun(u, ...)))
+  }
+}
+
 #' p-transformations
 #' @description
 #' Some of the typical transformations of QFs, implementing a p-transformation rule.
@@ -144,6 +176,7 @@ qtr_powerby <- function(fun, x=1){
 #'    - `ptr_lehmann2()`: Lehman Type II inverse exponentiation. (U->U). Returns \eqn{1-(1-u)^{1/k}}.
 #'    - `ptr_fun()`: p-transform with generic function without additional arguments. (U->U, U->R) \eqn{Q_1(.fun(u))}.
 #'    - `ptr_half()`: p-transform into half-distribution. (U->U) Returns \eqn{Q_1((u+1)/2))}.
+#'    - `ptr_oddITL()`: Odd Inverse Topp-Leone transformation \eqn{\frac{\sqrt{u}}{1-\sqrt{u}}=\frac{u+\sqrt{u}}{1-u}=\frac{\sqrt{u}(1+\sqrt{u})}{1-u}=(u^{-1/2}-1)^{-1} }
 #'    - `ptr_DUS()`: Dinesh-Umesh-Sunjay (DUS) transformation. (U->U) Returns \eqn{\ln(1-u+eu)}.
 #'    - `ptr_KM()`: Kavya-Manoharan (KM) transformation. Equal to reflected and shifted DUS trasnformation (U->U). Returns \eqn{-\ln(1-u\frac{e-1}{e})}
 #'    - `ptr_modi1()`: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta}}. Only alpha is mandatory, while beta defaults to 1
@@ -249,6 +282,14 @@ ptr_KM <- function(fun){
 ptr_DUS <- function(fun){
   function(u, ...){
     fun(log(1-u+exp(1)*u), ...)
+  }
+}
+
+#' @rdname ptransformations
+#' @export
+ptr_oddITL <- function(fun){
+  function(u, ...){
+    fun( sqrt(u)/(1-sqrt(u)), ...)
   }
 }
 

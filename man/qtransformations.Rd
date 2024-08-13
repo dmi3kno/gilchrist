@@ -3,17 +3,27 @@
 \name{qtr_lehmann1}
 \alias{qtr_lehmann1}
 \alias{qtr_shiftby}
+\alias{qtr_reflect_shift}
+\alias{qtr_shift_reciprocate}
+\alias{qtr_odd}
 \alias{qtr_epsilon}
 \alias{qtr_shash}
 \alias{qtr_exp}
 \alias{qtr_fun}
 \alias{qtr_scaleby}
 \alias{qtr_powerby}
+\alias{qtr_oddITL}
 \title{Q-transformations}
 \usage{
 qtr_lehmann1(fun, nm_pow = ".pow", .invert = TRUE)
 
 qtr_shiftby(fun, x = 0)
+
+qtr_reflect_shift(fun)
+
+qtr_shift_reciprocate(fun)
+
+qtr_odd(fun)
 
 qtr_epsilon(fun, nm_pow = ".pow")
 
@@ -26,6 +36,8 @@ qtr_fun(fun, .fun)
 qtr_scaleby(fun, x = 1)
 
 qtr_powerby(fun, x = 1)
+
+qtr_oddITL(fun)
 }
 \arguments{
 \item{fun}{function}

@@ -10,6 +10,7 @@
 \alias{ptr_powerby}
 \alias{ptr_KM}
 \alias{ptr_DUS}
+\alias{ptr_oddITL}
 \alias{ptr_modi1}
 \alias{ptr_modi2}
 \title{p-transformations}
@@ -31,6 +32,8 @@ ptr_powerby(fun, x = 1)
 ptr_KM(fun)
 
 ptr_DUS(fun)
+
+ptr_oddITL(fun)
 
 ptr_modi1(fun, nm_a = ".modialpha", nm_b = ".modibeta")
 
@@ -62,6 +65,7 @@ Some of the typical transformations of QFs, implementing a p-transformation rule
 \item \code{ptr_lehmann2()}: Lehman Type II inverse exponentiation. (U->U). Returns \eqn{1-(1-u)^{1/k}}.
 \item \code{ptr_fun()}: p-transform with generic function without additional arguments. (U->U, U->R) \eqn{Q_1(.fun(u))}.
 \item \code{ptr_half()}: p-transform into half-distribution. (U->U) Returns \eqn{Q_1((u+1)/2))}.
+\item \code{ptr_oddITL()}: Odd Inverse Topp-Leone transformation \eqn{\frac{\sqrt{u}}{1-\sqrt{u}}=\frac{u+\sqrt{u}}{1-u}=\frac{\sqrt{u}(1+\sqrt{u})}{1-u}=(u^{-1/2}-1)^{-1} }
 \item \code{ptr_DUS()}: Dinesh-Umesh-Sunjay (DUS) transformation. (U->U) Returns \eqn{\ln(1-u+eu)}.
 \item \code{ptr_KM()}: Kavya-Manoharan (KM) transformation. Equal to reflected and shifted DUS trasnformation (U->U). Returns \eqn{-\ln(1-u\frac{e-1}{e})}
 \item \code{ptr_modi1()}: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta}}. Only alpha is mandatory, while beta defaults to 1
