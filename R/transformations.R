@@ -2,7 +2,7 @@
 #' @description
 #' Some of the typical transformations of QFs, implementing a Q-transformation rule.
 #'    `qtr_lehmann1()`: Raising of QF to a power using Lehman Type I inverse exponentiation. Returns \eqn{Q_1(u)^{1/k}}.
-#'    `qtr_exp()`: Exponentiating the QF. Returns \eqn{k^{Q_1(u)}}. Default \eqn{k=e} Euler's constant
+#'    `qtr_exponentiate()`: Exponentiating the QF. Returns \eqn{k^{Q_1(u)}}. Default \eqn{k=e} Euler's constant
 #'    `qtr_fun()`: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 #'    `qtr_epsilon()`: unit-Q-transform using inverse epsilon function \eqn{\frac{(1+Q_1(u))^{1/\beta}-1}{(1+Q_1(u))^{1/\beta}+1}}.
 #'    `qtr_shash()`: SHASH (sinh-asinh) q-transformation. \eqn{\text{sinh}(1/\delta(Q(u) - \epsilon)}
@@ -116,10 +116,10 @@ qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps"){
 #' @export
 #' @examples
 #' qf_norm <- qff_decorate(qnorm, nm_location="mu", nm_scale="sigma")
-#' qf_lognorm <- qtr_exp(qf_norm)
+#' qf_lognorm <- qtr_exponentiate(qf_norm)
 #' qf_lognorm(0.2, mu=2, sigma=0.1)
 #' qlnorm(0.2, 2, 0.1)
-qtr_exp <- function(fun, nm_base=".base", .invert=TRUE){
+qtr_exponentiate <- function(fun, nm_base=".base", .invert=FALSE){
   f <- function(u, .base=exp(1), ...){
     if(.invert) .base <- 1/.base
     (.base)^fun(u,...)

@@ -8,7 +8,7 @@
 \alias{qtr_odd}
 \alias{qtr_epsilon}
 \alias{qtr_shash}
-\alias{qtr_exp}
+\alias{qtr_exponentiate}
 \alias{qtr_fun}
 \alias{qtr_qf}
 \alias{qtr_scaleby}
@@ -30,7 +30,7 @@ qtr_epsilon(fun, nm_pow = ".pow")
 
 qtr_shash(fun, nm_tail = ".dlt", nm_asymm = ".eps")
 
-qtr_exp(fun, nm_base = ".base", .invert = TRUE)
+qtr_exponentiate(fun, nm_base = ".base", .invert = FALSE)
 
 qtr_fun(fun, .fun)
 
@@ -72,7 +72,7 @@ modified function
 \description{
 Some of the typical transformations of QFs, implementing a Q-transformation rule.
 \code{qtr_lehmann1()}: Raising of QF to a power using Lehman Type I inverse exponentiation. Returns \eqn{Q_1(u)^{1/k}}.
-\code{qtr_exp()}: Exponentiating the QF. Returns \eqn{k^{Q_1(u)}}. Default \eqn{k=e} Euler's constant
+\code{qtr_exponentiate()}: Exponentiating the QF. Returns \eqn{k^{Q_1(u)}}. Default \eqn{k=e} Euler's constant
 \code{qtr_fun()}: Q-transform with generic function without additional arguments. \eqn{.fun(Q_1(u))}.
 \code{qtr_epsilon()}: unit-Q-transform using inverse epsilon function \eqn{\frac{(1+Q_1(u))^{1/\beta}-1}{(1+Q_1(u))^{1/\beta}+1}}.
 \code{qtr_shash()}: SHASH (sinh-asinh) q-transformation. \eqn{\text{sinh}(1/\delta(Q(u) - \epsilon)}
@@ -87,7 +87,7 @@ qweibull(0.5, shape = 5)
 qtr_epsilon(qnorm)
 qtr_shash(qnorm)
 qf_norm <- qff_decorate(qnorm, nm_location="mu", nm_scale="sigma")
-qf_lognorm <- qtr_exp(qf_norm)
+qf_lognorm <- qtr_exponentiate(qf_norm)
 qf_lognorm(0.2, mu=2, sigma=0.1)
 qlnorm(0.2, 2, 0.1)
 qtr_fun(sqf_exp,log1p)
