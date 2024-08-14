@@ -144,6 +144,17 @@ qtr_fun <- function(fun, .fun){
   f
 }
 
+#' @param .qf quantile function made with gilchrist (or regular function wrapped to safely accept optional arguments through ellipsis) to be applied as Q-transformation
+#' @rdname qtransformations
+#' @export
+#' @examples
+#' qtr_fun(sqf_exp,log1p)
+qtr_qf <- function(fun, .qf){
+  f <- function(u, ...)
+    .qf(fun(u,...), ...)
+  f
+}
+
 #' @rdname qtransformations
 #' @export
 qtr_scaleby <- function(fun, x=1){
@@ -231,6 +242,17 @@ ptr_lehmann2 <- function(fun, nm_pow=".pow", .invert=TRUE){
 ptr_fun <- function(fun, .fun){
   f <- function(u, ...)
     fun(.fun(u),...)
+  f
+}
+
+#' @param .qf quantile function made with gilchrist (or wrapped basic function able to accept optional arguments through ellipsis) to be applied as p-transformation
+#' @rdname ptransformations
+#' @export
+#' @examples
+#' qtr_fun(sqf_exp,log1p)
+ptr_qf <- function(fun, .qf){
+  f <- function(u, ...)
+    fun(.qf(u, ...), ...)
   f
 }
 

@@ -10,6 +10,7 @@
 \alias{qtr_shash}
 \alias{qtr_exp}
 \alias{qtr_fun}
+\alias{qtr_qf}
 \alias{qtr_scaleby}
 \alias{qtr_powerby}
 \alias{qtr_oddITL}
@@ -32,6 +33,8 @@ qtr_shash(fun, nm_tail = ".dlt", nm_asymm = ".eps")
 qtr_exp(fun, nm_base = ".base", .invert = TRUE)
 
 qtr_fun(fun, .fun)
+
+qtr_qf(fun, .qf)
 
 qtr_scaleby(fun, x = 1)
 
@@ -60,6 +63,8 @@ Should be a valid unique variable name other than "u"}
 \item{nm_base}{character.  The name of the base parameter. The default name is \code{.base}. The default value is \code{exp(1)} (Euler's constant).}
 
 \item{.fun}{function without arguments(or with all default arguments) to be applied as Q-transformation}
+
+\item{.qf}{quantile function made with gilchrist (or regular function wrapped to safely accept optional arguments through ellipsis) to be applied as Q-transformation}
 }
 \value{
 modified function
@@ -85,5 +90,6 @@ qf_norm <- qff_decorate(qnorm, nm_location="mu", nm_scale="sigma")
 qf_lognorm <- qtr_exp(qf_norm)
 qf_lognorm(0.2, mu=2, sigma=0.1)
 qlnorm(0.2, 2, 0.1)
+qtr_fun(sqf_exp,log1p)
 qtr_fun(sqf_exp,log1p)
 }

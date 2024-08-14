@@ -4,6 +4,7 @@
 \alias{ptr_lehmann1}
 \alias{ptr_lehmann2}
 \alias{ptr_fun}
+\alias{ptr_qf}
 \alias{ptr_half}
 \alias{ptr_shiftby}
 \alias{ptr_scaleby}
@@ -20,6 +21,8 @@ ptr_lehmann1(fun, nm_pow = ".pow", .invert = TRUE)
 ptr_lehmann2(fun, nm_pow = ".pow", .invert = TRUE)
 
 ptr_fun(fun, .fun)
+
+ptr_qf(fun, .qf)
 
 ptr_half(fun)
 
@@ -49,6 +52,8 @@ Should be a valid unique variable name other than "u"}
 
 \item{.fun}{function without arguments(or with all default arguments) to be applied as Q-transformation}
 
+\item{.qf}{quantile function made with gilchrist (or wrapped basic function able to accept optional arguments through ellipsis) to be applied as p-transformation}
+
 \item{x}{numeric. Fixed value to shift/scale/power the u by}
 
 \item{nm_a}{character.  The name of the Modi parameter \code{alpha}. The default name is \code{.modialpha}.}
@@ -77,5 +82,6 @@ qf_exp <- function(u)-log(1-u)
 qf_weibull <- qtr_lehmann1(qf_exp, "k")
 qf_weibull(0.5,k=1/5)
 qweibull(0.5, shape = 5)
+qtr_fun(sqf_exp,log1p)
 qtr_fun(sqf_exp,log1p)
 }
