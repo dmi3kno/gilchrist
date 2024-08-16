@@ -1,6 +1,6 @@
 Package: gilchrist
 Title: Building Blocks for Quantile Functions
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     c(person(given = "Dmytro",
            family = "Perepolkin",
@@ -8,8 +8,8 @@ Authors@R:
            email = "dperepolkin@gmail.com",
            comment = c(ORCID = "0000-0001-8558-6183")),
           person(given = "Antoine",
-             family = "Fabri",
-             role = "ctb"))
+           family = "Fabri",
+           role = "ctb"))
 Description: Craft quantile functions step by step following Gilchrist QF transformation rules.
 License: MIT + file LICENSE
 Encoding: UTF-8

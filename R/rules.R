@@ -2,14 +2,14 @@
 #'
 #' @description
 #' Gilchrist rules for constructing valid quantile functions implemented as function factories. All functions take \eqn{Q_1(u)} (the QF of \eqn{X}). Some also take \eqn{Q_2(u)} (the QF of \eqn{Y})
-#' `qff_reflect()`: Reflection rule. Returns \eqn{-Q_1(1-u)} (the QF of \eqn{-X}).
-#' `qff_reciprocate()`: Reciprocal rule. Returns \eqn{1/Q_1(1-u)} (the QF of \eqn{1/X}).
-#' `qff_add()`: Addition rule. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{Q_1(u)+Q_2(u)} - a valid QF of the sum of \eqn{X} and \eqn{Y}.
-#' `qff_mix()`: Linear combination rule with weight parameter `.wt`. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{aQ_1(u)+(1-a)Q_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
-#' `qff_cmix()`: Complimentary linear combination rule with weight parameter `.wt`. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{(1-a)Q_1(u)+aQ_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
-#' `qff_multiply()`:Multiplication rule for positive QFs.  Takes \eqn{Q_1(u), Q_2(u)>0} on all \eqn{[0,1]}. Returns \eqn{Q_1(u)Q_2(u)} - a product QF of \eqn{X} and \eqn{Y}.
-#' `qff_shift()`: Addition rule with a constant shift (adding location parameter). Takes \eqn{Q_1(u)}. Returns \eqn{a+Q_1(u)}.
-#' `qff_scale()`: Multiplication rule with a constant scale (multiplying by the scale parameter). Takes \eqn{Q_1(u)}. Returns \eqn{sQ_1(u)}.
+#' `qtr_reflect()`: Reflection rule. Returns \eqn{-Q_1(1-u)} (the QF of \eqn{-X}).
+#' `qtr_reciprocate()`: Reciprocal rule. Returns \eqn{1/Q_1(1-u)} (the QF of \eqn{1/X}).
+#' `qtr_add()`: Addition rule. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{Q_1(u)+Q_2(u)} - a valid QF of the sum of \eqn{X} and \eqn{Y}.
+#' `qtr_mix()`: Linear combination rule with weight parameter `.wt`. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{aQ_1(u)+(1-a)Q_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
+#' `qtr_cmix()`: Complimentary linear combination rule with weight parameter `.wt`. Takes \eqn{Q_1(u), Q_2(u)}. Returns \eqn{(1-a)Q_1(u)+aQ_2(u)} - a weighted sum QF of \eqn{X} and \eqn{Y}.
+#' `qtr_multiply()`:Multiplication rule for positive QFs.  Takes \eqn{Q_1(u), Q_2(u)>0} on all \eqn{[0,1]}. Returns \eqn{Q_1(u)Q_2(u)} - a product QF of \eqn{X} and \eqn{Y}.
+#' `qtr_shift()`: Addition rule with a constant shift (adding location parameter). Takes \eqn{Q_1(u)}. Returns \eqn{a+Q_1(u)}.
+#' `qtr_scale()`: Multiplication rule with a constant scale (multiplying by the scale parameter). Takes \eqn{Q_1(u)}. Returns \eqn{sQ_1(u)}.
 #' @param fun,fun1,fun2 functions
 #'
 #' @return modified function
@@ -18,10 +18,10 @@
 #'
 #' @examples
 #' qf_exp <- function(u)-log(1-u)
-#' qf_logistic <- qff_add(qf_exp, qff_reflect(qf_exp))
+#' qf_logistic <- qtr_add(qf_exp, qtr_reflect(qf_exp))
 #' qf_logistic(0.6)
 #' qlogis(0.6)
-qff_reflect <- function(fun){
+qtr_reflect <- function(fun){
   function(u, ...){
     -fun(1-u, ...)
   }
@@ -29,7 +29,7 @@ qff_reflect <- function(fun){
 
 #' @rdname rules
 #' @export
-qff_reciprocate <- function(fun){
+qtr_reciprocate <- function(fun){
   function(u,...){
     1/fun(1-u,...)
   }
@@ -37,17 +37,18 @@ qff_reciprocate <- function(fun){
 
 #' @rdname rules
 #' @export
-qff_add <- function(fun1, fun2){
+qtr_add <- function(fun1, fun2){
   function(u, ...){
     fun1(u, ...) + fun2(u, ...)
   }
 }
 
+#' @param wt numeric. Fixed value of weight parameter (for mixing). The default is 0.5. 
 #' @param nm_wt character.  The name of the weight parameter (for mixing). The default name is `.wt`. The default value is 0.5
 #' @rdname rules
 #' @export
-qff_mix <- function(fun1, fun2, nm_wt=".wt"){
-   f <- function(u, .wt=0.5, ...){
+qtr_mix <- function(fun1, fun2, nm_wt=".wt", wt=0.5){
+   f <- function(u, .wt=wt, ...){
     (.wt)*fun1(u, ...) + (1-.wt)*fun2(u, ...)
    }
 
@@ -60,8 +61,8 @@ qff_mix <- function(fun1, fun2, nm_wt=".wt"){
 
 #' @rdname rules
 #' @export
-qff_cmix <- function(fun1, fun2, nm_wt=".wt"){
-  f <- function(u, .wt=0.5, ...){
+qtr_cmix <- function(fun1, fun2, nm_wt=".wt", wt=0.5){
+  f <- function(u, .wt=wt, ...){
     (1-.wt)*fun1(u, ...) + (.wt)*fun2(u, ...)
   }
 
@@ -74,7 +75,7 @@ qff_cmix <- function(fun1, fun2, nm_wt=".wt"){
 
 #' @rdname rules
 #' @export
-qff_multiply <- function(fun1, fun2){
+qtr_multiply <- function(fun1, fun2){
   function(u,...){
     f1 <- fun1(u,...)
     f2 <- fun2(u,...)
@@ -84,11 +85,12 @@ qff_multiply <- function(fun1, fun2){
   }
 }
 
+#' @param shift numeric. Fixed value for `.location`. The default value is 0
 #' @param nm_shift character.  The name of the shift parameter. The default name is `.location`. The default value is 0
 #' @rdname rules
 #' @export
-qff_shift <- function(fun, nm_shift=".location"){
-  f <- function(u, .location=0, ...){
+qtr_shift <- function(fun, nm_shift=".location", shift=0){
+  f <- function(u, .location=shift, ...){
     (.location)+fun(u, ...)
   }
 
@@ -99,12 +101,13 @@ qff_shift <- function(fun, nm_shift=".location"){
   as.function(c(formals_, body_))
 }
 
+#' @param scale numeric  Fixed value of the scale parameter. The default value is 1
 #' @param nm_scale character.  The name of the scale parameter. The default name is `.scale`. The default value is 1
 #' @param .invert logical. Should the scale parameter be inverted (1/.scale) before applying. Default FALSE
 #' @rdname rules
 #' @export
-qff_scale <- function(fun, nm_scale=".scale", .invert=FALSE){
-  f <- function(u, .scale=1, ...){
+qtr_scale <- function(fun, nm_scale=".scale", scale=1, .invert=FALSE){
+  f <- function(u, .scale=scale, ...){
     if(.invert) .scale <- 1/.scale
     (.scale)*fun(u, ...)
   }
@@ -118,26 +121,27 @@ qff_scale <- function(fun, nm_scale=".scale", .invert=FALSE){
 
 #' Decorate the basic QF with location and scale parameters
 #'
-#' @description Add location (`.location`) and scale (`.scale`) parameters (or the inverse scale for `qff_idecorate()`)
+#' @description Add location (`.location`) and scale (`.scale`) parameters (or the inverse scale for `qtr_idecorate()`)
 #' Note! The parameter names can be changed by passing the names
 #'
 #' @param fun function to be decorated
 #' @param nm_location character. The name of the location parameter. Default name `.location`. Default value is 0.
 #' @param nm_scale character. The name of the scale parameter. Default name `.scale`. Default value is 1.
+#' @param location numeric. Fixed value for location. Default is 0.
+#' @param scale numeric. Fixed value for scale. Default is 1.
 #' @param .invert logical. Should the scale parameter be inverted (1/.scale) before applying. Default FALSE
 #'
 #' @return modified function with location and scale parameter. The parameter names specified by the user.
 #'
 #' @examples
-#' qff_decorate(s_exp)
+#' qtr_decorate(s_exp)
 
 #' @rdname decorate
 #' @export
-qff_decorate <- function(fun, nm_location=".location", nm_scale=".scale", .invert=FALSE){
+qtr_decorate <- function(fun, nm_location=".location", nm_scale=".scale", location=0, scale=1, .invert=FALSE){
   function(u, ...){
-    s_fun <- qff_scale(fun, nm_scale, .invert=.invert)
-    ss_fun <- qff_shift(s_fun, nm_location)
+    s_fun <- qtr_scale(fun, nm_scale=nm_scale, scale=scale, .invert=.invert)
+    ss_fun <- qtr_shift(s_fun, nm_shift=nm_location, shift=location)
     ss_fun(u,...)
   }
 }
-

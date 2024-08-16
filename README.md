@@ -75,7 +75,7 @@ s_exp
 #> {
 #>     -log(1 - u)
 #> }
-#> <bytecode: 0x5cbd954c2840>
+#> <bytecode: 0x643ef6c7e370>
 #> <environment: namespace:gilchrist>
 ```
 
@@ -102,7 +102,7 @@ reciprocated scale).
 
 ``` r
 qf_exp <- s_exp %>% 
-  qff_scale(nm_scale="lambda", .invert = TRUE)
+  qtr_scale(nm_scale="lambda", .invert = TRUE)
 ```
 
 We compare our hand-made exponential quantile function to the standard
@@ -133,9 +133,9 @@ arguments have to always be named.
 
 ``` r
 qf_logistic <- s_exp %>% 
-  qff_reflect() %>%
-  qff_add(s_exp) %>% 
-  qff_decorate("mu", "s")
+  qtr_reflect() %>%
+  qtr_add(s_exp) %>% 
+  qtr_decorate("mu", "s")
 
 qf_logistic(p_grd, mu=4, s=2)
 #>  [1] -2.7345917 -0.3944492  0.7811242  1.6208319  2.3054043  2.9069126
@@ -157,14 +157,14 @@ $$Q(u)=\alpha+\beta[(1-\delta)\ln(u)-\delta\ln(1-u)+ku]$$
 
 Note that the exponential distribution will gain a weight `delta` and
 the reflected exponential will gain a weight `1-delta`, because this is
-the order in which they are listed in `qff_mix`.
+the order in which they are listed in `qtr_mix`.
 
 ``` r
 qf_fsld <- s_exp %>% 
-  qff_reflect() %>%
-  qff_cmix(s_exp, nm_wt="delta") %>% 
-  qff_add(qff_scale(s_unif,"k")) %>% 
-  qff_decorate(nm_location="alpha", nm_scale="beta")
+  qtr_reflect() %>%
+  qtr_cmix(s_exp, nm_wt="delta") %>% 
+  qtr_add(qtr_scale(s_unif,"k")) %>% 
+  qtr_decorate(nm_location="alpha", nm_scale="beta")
 
 qf_fsld(p_grd, delta=0.21, alpha=4, beta=2, k=1)
 #>  [1] -1.292987  0.606167  1.578928  2.278908  2.847526  3.339955  3.783948
@@ -188,7 +188,7 @@ should be reciprocated, which comes by default.
 ``` r
 qf_weibull <- s_exp %>% 
   qtr_lehmann1("k") %>% 
-  qff_scale("lambda")
+  qtr_scale("lambda")
 qf_weibull(p_grd, lambda=2, k=4)
 #>  [1] 0.8581928 1.1394610 1.3068914 1.4359165 1.5456037 1.6441886 1.7362571
 #>  [8] 1.8248886 1.9125543 2.0016490 2.0950007 2.1966819 2.3139284 2.4636778
@@ -209,12 +209,12 @@ with quantile functions. First five of them implement Gilchrist’s rules:
 
 ### Reflection
 
-A quantile function factory `qff_reflect` implement the “reflection
+A quantile function factory `qtr_reflect` implement the “reflection
 rule”. Here’s an example of reflected exponential distribution.
 
 ``` r
 qrexp <- s_exp %>% 
-  qff_reflect()
+  qtr_reflect()
 qrexp(p_grd) %>% plot(p_grd,., type="l")
 ```
 
@@ -223,13 +223,13 @@ style="width:100.0%" />
 
 ### Reciprocation
 
-A quantile function factory `qff_reciprocate` implement the
+A quantile function factory `qtr_reciprocate` implement the
 “reciprocatal rule”. Here’s an example of reciprocated uniform
 distribution.
 
 ``` r
 qrecunif <- s_unif %>% 
-  qff_reciprocate()
+  qtr_reciprocate()
 qrecunif(p_grd) %>% plot(p_grd,., type="l")
 ```
 
@@ -238,14 +238,14 @@ style="width:100.0%" />
 
 ### Addition
 
-A quantile function factory `qff_add` implement the “addition rule”.
+A quantile function factory `qtr_add` implement the “addition rule”.
 Here’s an example of sum of exponential and reflected exponential
 distributions.
 
 ``` r
 qlogistic <- s_exp %>% 
-  qff_reflect() %>% 
-  qff_add(s_exp)
+  qtr_reflect() %>% 
+  qtr_add(s_exp)
 qlogistic(p_grd) %>% plot(p_grd,., type="l")
 ```
 
@@ -254,7 +254,7 @@ style="width:100.0%" />
 
 ### Linear combination
 
-A quantile function factory `qff_mix` implement the “linear combination
+A quantile function factory `qtr_mix` implement the “linear combination
 rule” with a particular values of $a$ and $b$ adding up to 1. Here’s an
 example of sum of skew-logistic distribution implemented as a weighted
 mix of exponential and reflected exponential distributions. Note that
@@ -263,8 +263,8 @@ the second (reflected `s_exp`) gets the weight $1-\delta$.
 
 ``` r
 qskewlogis <- s_exp %>% 
-  qff_reflect() %>% 
-  qff_cmix(s_exp, nm_wt="delta")
+  qtr_reflect() %>% 
+  qtr_cmix(s_exp, nm_wt="delta")
 
 qskewlogis(p_grd, delta=0.9) %>% plot(p_grd,., type="l")
 ```
@@ -272,18 +272,18 @@ qskewlogis(p_grd, delta=0.9) %>% plot(p_grd,., type="l")
 <img src="man/figures/README-unnamed-chunk-14-1.png"
 style="width:100.0%" />
 
-The twin function `qff_cmix` swaps the weights: $1-\delta$ to the first
+The twin function `qtr_cmix` swaps the weights: $1-\delta$ to the first
 function and $\delta$ to the second function.
 
 ### Multiplication
 
-A quantile function factory `qff_multiply` implement the “multiplication
+A quantile function factory `qtr_multiply` implement the “multiplication
 rule” for positive quantile functions. Here’s an example of multiplied
 half-cosine and exponential distributions
 
 ``` r
 qhcsexp <- s_halfcosine %>% 
-  qff_multiply(s_exp)
+  qtr_multiply(s_exp)
 
 qhcsexp(p_grd) %>% plot(p_grd,., type="l")
 ```
@@ -293,41 +293,41 @@ style="width:100.0%" />
 
 ### Shift and scale
 
-The quantile function factory `qff_shift` implement the “addition rule”
+The quantile function factory `qtr_shift` implement the “addition rule”
 but for parameters. It allows to add a location parameter to any part of
 the QF. Here’s for example shifted exponential distribution (starting at
 2).
 
 ``` r
-q_shiftedexp <- s_exp %>% qff_shift("mu")
+q_shiftedexp <- s_exp %>% qtr_shift("mu")
 q_shiftedexp(p_grd, mu=2) %>% plot(p_grd,., type="l")
 ```
 
 <img src="man/figures/README-unnamed-chunk-16-1.png"
 style="width:100.0%" />
 
-The quantile function factory `qff_scale` implement the “multiplication
+The quantile function factory `qtr_scale` implement the “multiplication
 rule” but for parameters: it can add a scale parameter to the QF,
 provided it is positive. The scale can be inverted, if necessary (as the
 case is with exponential distribution)
 
 ``` r
 qexp1 <- s_exp %>% 
-  qff_scale("lambda", .invert = TRUE)
+  qtr_scale("lambda", .invert = TRUE)
 qexp1(p_grd, lambda=2) %>% plot(p_grd,., type="l")
 ```
 
 <img src="man/figures/README-unnamed-chunk-17-1.png"
 style="width:100.0%" />
 
-Finally, `qff_decorate` adds both location and scale to a quantile
+Finally, `qtr_decorate` adds both location and scale to a quantile
 function.
 
 ``` r
 qlogistic <- s_exp %>%
-  qff_reflect() %>%
-  qff_add(s_exp) %>%
-  qff_decorate(nm_location = "mu", nm_scale = "s")
+  qtr_reflect() %>%
+  qtr_add(s_exp) %>%
+  qtr_decorate(nm_location = "mu", nm_scale = "s")
 
 all.equal(
   qlogistic(p_grd, mu=3, s=2),
@@ -350,7 +350,7 @@ transformed exponential.
 ``` r
 qweibull1 <- s_exp %>% 
   qtr_lehmann1("k") %>% 
-  qff_scale("lambda")
+  qtr_scale("lambda")
 
 qweibull1(p_grd, lambda=2, k=3) %>% 
   plot(p_grd,., type="l")
@@ -406,8 +406,8 @@ $$
 qeik <- s_unif %>%
   ptr_lehmann2("beta") %>%
   qtr_lehmann1("alpha") %>%
-  qff_reciprocate() %>%
-  qtr_shiftby(-1) %>%
+  qtr_reciprocate() %>%
+  qtr_shift(shift=-1) %>%
   ptr_lehmann1("lambda")
 
 q_eik <- function(u, lambda, beta, alpha){
@@ -434,7 +434,7 @@ Raising the parameter to the power of quantile function.
 ### Function
 
 Applying arbitrary function (without parameters) to the quantile
-function `qff_fun` or the depth `ptr_fun`.
+function `qtr_fun` or the depth `ptr_fun`.
 
 Lets create a U-shaped Chen distribution described in Chen (2000). The
 quantile function of Chen ditribution is
@@ -445,7 +445,7 @@ $$
 
 ``` r
 qchen <- s_exp %>% 
-  qff_scale("lambda") %>% 
+  qtr_scale("lambda") %>% 
   qtr_fun(log1p) %>% 
   qtr_lehmann1("beta")
 ```
@@ -491,7 +491,7 @@ In particular they present the unit exponential QF as
 
 ``` r
 quexp <- s_exp %>%
-  qff_scale("lambda", .invert=TRUE) %>%
+  qtr_scale("lambda", .invert=TRUE) %>%
   qtr_epsilon("beta")
 ```
 
@@ -500,7 +500,7 @@ We could transform another semi-bounded distribution, like Pareto
 ``` r
 # for positive alpha
 qupareto <- s_unif %>%
-  qff_reciprocate() %>%
+  qtr_reciprocate() %>%
   qtr_lehmann1("alpha") %>%
   qtr_epsilon("beta")
   
@@ -524,7 +524,7 @@ The authors used it to transform exponential distribution
 
 ``` r
 qDUSexp <- s_exp %>%
-  qff_scale("lambda", .invert = TRUE) %>%
+  qtr_scale("lambda", .invert = TRUE) %>%
   ptr_DUS()
 
 qs <- qDUSexp(p_grd, lambda=0.5)
@@ -550,7 +550,7 @@ The authors apply this p-transformation to Weibuill distribution
 ``` r
 qf_KMweibull <- s_exp %>% 
   qtr_lehmann1("k") %>% 
-  qff_scale("lambda") %>% 
+  qtr_scale("lambda") %>% 
   ptr_KM()
 
 qf_KMweibull(p_grd, lambda=3, k=4)%>%
@@ -572,7 +572,7 @@ Modi-transformed exponentiated exponential distribution
 
 ``` r
 qmodiexpexp <- s_exp %>%
-  qff_scale("lambda") %>%
+  qtr_scale("lambda") %>%
   ptr_lehmann1("delta") %>%
   ptr_modi1("alpha", "beta")
   
@@ -612,12 +612,12 @@ qdagum_raw <- function(u, b, p, a){
 qdagum <- s_unif %>%
   ptr_lehmann2("p") %>%
   qtr_lehmann1("a") %>%
-  qff_reciprocate() %>%
-  qff_multiply(
+  qtr_reciprocate() %>%
+  qtr_multiply(
     qtr_lehmann1(s_unif, "a") %>%
       qtr_lehmann1("p")
   ) %>%
-  qff_scale("b")
+  qtr_scale("b")
 
 qs1 <- qdagum_raw(p_grd, b=2, p=3, a=4)
 qs2 <- qdagum(p_grd, b=2, p=3, a=4)
@@ -633,12 +633,12 @@ $$
 
 ``` r
 qmuhammad <- s_unif %>% 
-  qff_reciprocate() %>% 
-  qff_reflect() %>% 
-  qtr_shiftby(1) %>% 
-  qff_scale("beta") %>% 
+  qtr_reciprocate() %>% 
+  qtr_reflect() %>% 
+  qtr_shift(shift=1) %>% 
+  qtr_scale("beta") %>% 
   qtr_fun(exp) %>% 
-  qff_scale("theta") %>% 
+  qtr_scale("theta") %>% 
   ptr_lehmann1("alpha")
 
 qmuhammad(runif(1e3), theta=2, beta=7, alpha=0.7) %>% hist(50)
@@ -657,8 +657,8 @@ $$
 ``` r
 qfrechet <- s_exp %>%
   qtr_lehmann1("alpha") %>%
-  qff_reciprocate() %>%
-  qff_decorate("m", "s")
+  qtr_reciprocate() %>%
+  qtr_decorate("m", "s")
 
 qfrechet(p_grd, m=0, s=1, alpha=5)%>%plot(p_grd, ., type="l")
 ```
