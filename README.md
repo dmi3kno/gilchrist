@@ -75,8 +75,14 @@ s_exp
 #> {
 #>     -log(1 - u)
 #> }
-#> <bytecode: 0x643ef6c7e370>
+#> <bytecode: 0x57cd47ffcb20>
 #> <environment: namespace:gilchrist>
+#> attr(,"class")
+#> [1] "function" "qf"       "basic"   
+#> attr(,"expects")
+#> [1] "U"
+#> attr(,"returns")
+#> [1] NA
 ```
 
 `{gilchrist}` has several basic (parameterless) functions that you can
