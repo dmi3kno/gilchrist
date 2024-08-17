@@ -8,14 +8,16 @@
 \alias{ptr_half}
 \alias{ptr_KM}
 \alias{ptr_DUS}
+\alias{ptr_MO}
+\alias{ptr_TL}
 \alias{ptr_oddITL}
 \alias{ptr_modi1}
 \alias{ptr_modi2}
 \title{p-transformations}
 \usage{
-ptr_lehmann1(fun, nm_pow = ".pow", .invert = TRUE)
+ptr_lehmann1(fun, nm_pow = ".pow", pow = 1, .invert = TRUE)
 
-ptr_lehmann2(fun, nm_pow = ".pow", .invert = TRUE)
+ptr_lehmann2(fun, nm_pow = ".pow", pow = 1, .invert = TRUE)
 
 ptr_fun(fun, .fun)
 
@@ -27,11 +29,15 @@ ptr_KM(fun)
 
 ptr_DUS(fun)
 
+ptr_MO(fun, nm_mopar = ".mopar", mopar = 1)
+
+ptr_TL(fun, nm_tlpar = ".tlpar", tlpar = 1)
+
 ptr_oddITL(fun)
 
-ptr_modi1(fun, nm_a = ".modialpha", nm_b = ".modibeta")
+ptr_modi1(fun, nm_a = ".modialpha", nm_b = ".modibeta", a = 1, b = 1)
 
-ptr_modi2(fun, nm_a = ".modialpha", nm_b = ".modibeta")
+ptr_modi2(fun, nm_a = ".modialpha", nm_b = ".modibeta", a = 1, b = 1)
 }
 \arguments{
 \item{fun}{function}
@@ -39,15 +45,29 @@ ptr_modi2(fun, nm_a = ".modialpha", nm_b = ".modibeta")
 \item{nm_pow}{character.  The name of the power parameter. The default name is \code{.pow}. The default value is 1
 Should be a valid unique variable name other than "u"}
 
+\item{pow}{character.  The name of the power parameter. The default name is \code{.pow}.}
+
 \item{.invert}{logical. Should the power parameter be inverted (1/.pow) before applying. Default TRUE}
 
 \item{.fun}{function without arguments(or with all default arguments) to be applied as Q-transformation}
 
 \item{.qf}{quantile function made with gilchrist (or wrapped basic function able to accept optional arguments through ellipsis) to be applied as p-transformation}
 
+\item{nm_mopar}{character. Name of the Marchall-Olking parameter. Default \code{.mopar}}
+
+\item{mopar}{numeric. Default value for MO parameter. Default is 1.}
+
+\item{nm_tlpar}{character. Name of the Marchall-Olking parameter. Default \code{.tlpar}}
+
+\item{tlpar}{numeric. Default value for MO parameter. Default is 1.}
+
 \item{nm_a}{character.  The name of the Modi parameter \code{alpha}. The default name is \code{.modialpha}.}
 
 \item{nm_b}{character.  The name of the Modi parameter \code{beta}. The default name is \code{.modibeta}. Default value is 1.}
+
+\item{a}{numeric. Default value of the Modi parameter \code{alpha}. Default is 1}
+
+\item{b}{numeric. Default value of the Modi parameter \code{beta}. Default is 2}
 }
 \value{
 modified function
@@ -67,10 +87,10 @@ Some of the typical transformations of QFs, implementing a p-transformation rule
 }
 }
 \examples{
-qf_exp <- function(u)-log(1-u)
+qf_exp <- as_qf(function(u)-log(1-u))
 qf_weibull <- qtr_lehmann1(qf_exp, "k")
 qf_weibull(0.5,k=1/5)
 qweibull(0.5, shape = 5)
-qtr_fun(sqf_exp,log1p)
-qtr_fun(sqf_exp,log1p)
+qtr_fun(qf_exp,log1p)
+qtr_fun(qf_exp,log1p)
 }

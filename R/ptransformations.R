@@ -14,6 +14,7 @@
 #'    - `ptr_modi2()`: Modi transformation \eqn{\frac{u+u\alpha^\beta}{u+\alpha^\beta})}. Only alpha is mandatory, while beta defaults to 1
 #'
 #' @param fun function
+#' @param pow character.  The name of the power parameter. The default name is `.pow`. 
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
 #' Should be a valid unique variable name other than "u"
 #' @param .invert logical. Should the power parameter be inverted (1/.pow) before applying. Default TRUE
@@ -21,12 +22,13 @@
 #' @rdname ptransformations
 #' @export
 #' @examples
-#' qf_exp <- function(u)-log(1-u)
+#' qf_exp <- as_qf(function(u)-log(1-u))
 #' qf_weibull <- qtr_lehmann1(qf_exp, "k")
 #' qf_weibull(0.5,k=1/5)
 #' qweibull(0.5, shape = 5)
-ptr_lehmann1 <- function(fun, nm_pow=".pow", .invert=TRUE){
-  f <- function(u, .pow=1, ...){
+ptr_lehmann1 <- function(fun, nm_pow=".pow", pow=1, .invert=TRUE){
+  stopifnot("ptr_lehmann1() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, .pow=pow, ...){
     if(.invert) .pow <- 1/.pow
     fun(u^(.pow),...)
   }
@@ -35,14 +37,14 @@ ptr_lehmann1 <- function(fun, nm_pow=".pow", .invert=TRUE){
   body_ <- body(f)
   names(formals_)[names(formals_) == ".pow"] <- nm_pow
   body_ <- do.call(substitute, list(body_, list(.pow = as.symbol(nm_pow))))
-  as.function(c(formals_, body_))
+  as_qf(as.function(c(formals_, body_)))
 }
-
 
 #' @rdname ptransformations
 #' @export
-ptr_lehmann2 <- function(fun, nm_pow=".pow", .invert=TRUE){
-  f <- function(u, .pow=1, ...){
+ptr_lehmann2 <- function(fun, nm_pow=".pow", pow=1, .invert=TRUE){
+  stopifnot("ptr_lehmann2() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, .pow=pow, ...){
     if(.invert) .pow <- 1/.pow
     fun(1-(1-u)^(.pow),...)
   }
@@ -51,71 +53,121 @@ ptr_lehmann2 <- function(fun, nm_pow=".pow", .invert=TRUE){
   body_ <- body(f)
   names(formals_)[names(formals_) == ".pow"] <- nm_pow
   body_ <- do.call(substitute, list(body_, list(.pow = as.symbol(nm_pow))))
-  as.function(c(formals_, body_))
+  as_qf(as.function(c(formals_, body_)))
 }
 
 #' @param .fun function without arguments(or with all default arguments) to be applied as Q-transformation
 #' @rdname ptransformations
 #' @export
 #' @examples
-#' qtr_fun(sqf_exp,log1p)
+#' qtr_fun(qf_exp,log1p)
 ptr_fun <- function(fun, .fun){
+  stopifnot("ptr_fun() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, ...)
     fun(.fun(u),...)
-  f
+  as_qf(f)
 }
 
 #' @param .qf quantile function made with gilchrist (or wrapped basic function able to accept optional arguments through ellipsis) to be applied as p-transformation
 #' @rdname ptransformations
 #' @export
 #' @examples
-#' qtr_fun(sqf_exp,log1p)
+#' qtr_fun(qf_exp,log1p)
 ptr_qf <- function(fun, .qf){
+  stopifnot("ptr_qf() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  stopifnot(".qf in ptr_qf() should be a quantile function"=inherits(.qf, c("function", "qf")))
   f <- function(u, ...)
     fun(.qf(u, ...), ...)
-  f
+  as_qf(f)
 }
 
 #' @rdname ptransformations
 #' @export
 ptr_half <- function(fun){
-  function(u, ...)
+  stopifnot("ptr_half() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, ...)
     fun((u+1)/2,...)
+  as_qf(f)
 }
 
 # Kavya-Manoharan (KM) p-transformation
 #' @rdname ptransformations
 #' @export
 ptr_KM <- function(fun){
-  function(u, ...){
+  stopifnot("ptr_KM() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, ...){
     em1e <- expm1(1)/exp(1)
     fun(-log(1-u*em1e), ...)
   }
+  as_qf(f)
 }
 # Dinesh-Umesh-Sanjay (DUS) p-transformation
 #' @rdname ptransformations
 #' @export
 ptr_DUS <- function(fun){
-  function(u, ...){
+  stopifnot("ptr_DUS() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, ...){
     fun(log(1-u+exp(1)*u), ...)
   }
+  as_qf(f)
+}
+
+# Marshall-Olkin (MO) p-transformation
+#' @param mopar numeric. Default value for MO parameter. Default is 1.
+#' @param nm_mopar character. Name of the Marchall-Olking parameter. Default `.mopar`
+#' @rdname ptransformations
+#' @export
+ptr_MO <- function(fun, nm_mopar=".mopar", mopar=1) {
+  stopifnot("ptr_MO() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, .mopar=mopar, ...){
+    fun(.mopar*u/( 1-(1-.mopar)*u ), ...)
+  }
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".mopar"] <- nm_mopar
+  body_ <- do.call(substitute, list(body_, list(.mopar = as.symbol(nm_mopar))))
+  as_qf(as.function(c(formals_, body_)))
+}
+
+# Topp-Leone (TL) p-transformation
+#' @param tlpar numeric. Default value for MO parameter. Default is 1.
+#' @param nm_tlpar character. Name of the Marchall-Olking parameter. Default `.tlpar`
+#' @rdname ptransformations
+#' @export
+ptr_TL <- function(fun, nm_tlpar=".tlpar", tlpar=1) {
+  stopifnot("ptr_TL() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, .tlpar=tlpar, ...){
+    fun(1-sqrt(1-u^(1/.tlpar)), ...)
+  }
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".tlpar"] <- nm_tlpar
+  body_ <- do.call(substitute, list(body_, list(.tlpar = as.symbol(nm_tlpar))))
+  as_qf(as.function(c(formals_, body_)))
 }
 
 #' @rdname ptransformations
 #' @export
 ptr_oddITL <- function(fun){
-  function(u, ...){
+  stopifnot("ptr_oddITL() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, ...){
     fun( sqrt(u)/(1-sqrt(u)), ...)
   }
+  as_qf(f)
 }
 
 # Modi (Type I) p-transformation
+#' @param a numeric. Default value of the Modi parameter `alpha`. Default is 1
+#' @param b numeric. Default value of the Modi parameter `beta`. Default is 2
 #' @param nm_a character.  The name of the Modi parameter `alpha`. The default name is `.modialpha`.
 #' @param nm_b character.  The name of the Modi parameter `beta`. The default name is `.modibeta`. Default value is 1. 
 #' @rdname ptransformations
 #' @export
-ptr_modi1 <- function(fun, nm_a=".modialpha", nm_b=".modibeta"){
-  f <- function(u, .modialpha, .modibeta=1, ...){
+ptr_modi1 <- function(fun, nm_a=".modialpha", nm_b=".modibeta", a=1, b=1){
+  stopifnot("ptr_modi1() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, .modialpha=a, .modibeta=b, ...){
     fun(u * .modialpha ^ .modibeta/(1-u+ .modialpha ^ .modibeta), ...)
   }
 
@@ -125,14 +177,15 @@ ptr_modi1 <- function(fun, nm_a=".modialpha", nm_b=".modibeta"){
   names(formals_)[names(formals_) == ".modibeta"] <- nm_b
   body_ <- do.call(substitute, list(body_, list(.modialpha = as.symbol(nm_a))))
   body_ <- do.call(substitute, list(body_, list(.modibeta = as.symbol(nm_b))))
-  as.function(c(formals_, body_))
+  as_qf(as.function(c(formals_, body_)))
 }
 
 # Modi Type II p-transformation
 #' @rdname ptransformations
 #' @export
-ptr_modi2 <- function(fun, nm_a=".modialpha", nm_b=".modibeta"){
-  f <- function(u, .modialpha, .modibeta=1, ...){
+ptr_modi2 <- function(fun, nm_a=".modialpha", nm_b=".modibeta", a=1, b=1){
+  stopifnot("ptr_modi2() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, .modialpha=a, .modibeta=b, ...){
     fun((u + u * .modialpha ^ .modibeta)/(u + .modialpha ^ .modibeta), ...)
   }
 
@@ -142,5 +195,5 @@ ptr_modi2 <- function(fun, nm_a=".modialpha", nm_b=".modibeta"){
   names(formals_)[names(formals_) == ".modibeta"] <- nm_b
   body_ <- do.call(substitute, list(body_, list(.modialpha = as.symbol(nm_a))))
   body_ <- do.call(substitute, list(body_, list(.modibeta = as.symbol(nm_b))))
-  as.function(c(formals_, body_))
+  as_qf(as.function(c(formals_, body_)))
 }

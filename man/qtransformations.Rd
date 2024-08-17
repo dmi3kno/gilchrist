@@ -88,6 +88,5 @@ qf_norm <- qtr_decorate(qnorm, nm_location="mu", nm_scale="sigma")
 qf_lognorm <- qtr_exponentiate(qf_norm)
 qf_lognorm(0.2, mu=2, sigma=0.1)
 qlnorm(0.2, 2, 0.1)
-qtr_fun(sqf_exp, log1p)
-qtr_fun(sqf_exp,log1p)
+qtr_fun(s_exp, log1p)
 }

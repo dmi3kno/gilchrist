@@ -22,25 +22,28 @@
 #' qf_logistic(0.6)
 #' qlogis(0.6)
 qtr_reflect <- function(fun){
-  function(u, ...){
+  f <- function(u, ...){
     -fun(1-u, ...)
   }
+  as_qf(f)
 }
 
 #' @rdname rules
 #' @export
 qtr_reciprocate <- function(fun){
-  function(u,...){
+  f <- function(u,...){
     1/fun(1-u,...)
   }
+  as_qf(f)
 }
 
 #' @rdname rules
 #' @export
 qtr_add <- function(fun1, fun2){
-  function(u, ...){
+  f <- function(u, ...){
     fun1(u, ...) + fun2(u, ...)
   }
+  as_qf(f)
 }
 
 #' @param wt numeric. Fixed value of weight parameter (for mixing). The default is 0.5. 
@@ -48,15 +51,15 @@ qtr_add <- function(fun1, fun2){
 #' @rdname rules
 #' @export
 qtr_mix <- function(fun1, fun2, nm_wt=".wt", wt=0.5){
-   f <- function(u, .wt=wt, ...){
+  f <- function(u, .wt=wt, ...){
     (.wt)*fun1(u, ...) + (1-.wt)*fun2(u, ...)
-   }
+  }
 
   formals_ <- formals(f)
   body_ <- body(f)
   names(formals_)[names(formals_) == ".wt"] <- nm_wt
   body_ <- do.call(substitute, list(body_, list(.wt = as.symbol(nm_wt))))
-  as.function(c(formals_, body_))
+  as_qf(as.function(c(formals_, body_)))
 }
 
 #' @rdname rules
@@ -70,19 +73,20 @@ qtr_cmix <- function(fun1, fun2, nm_wt=".wt", wt=0.5){
   body_ <- body(f)
   names(formals_)[names(formals_) == ".wt"] <- nm_wt
   body_ <- do.call(substitute, list(body_, list(.wt = as.symbol(nm_wt))))
-  as.function(c(formals_, body_))
+  as_qf(as.function(c(formals_, body_)))
 }
 
 #' @rdname rules
 #' @export
 qtr_multiply <- function(fun1, fun2){
-  function(u,...){
+  f <- function(u,...){
     f1 <- fun1(u,...)
     f2 <- fun2(u,...)
     stopifnot(all(f1>=0), all(f2>=0))
     #if f1 and f2 are positive for all u \in [0,1]
     f1*f2
   }
+  as_qf(f)
 }
 
 #' @param shift numeric. Fixed value for `.location`. The default value is 0
@@ -98,7 +102,7 @@ qtr_shift <- function(fun, nm_shift=".location", shift=0){
   body_ <- body(f)
   names(formals_)[names(formals_) == ".location"] <- nm_shift
   body_ <- do.call(substitute, list(body_, list(.location = as.symbol(nm_shift))))
-  as.function(c(formals_, body_))
+  as_qf(as.function(c(formals_, body_)))
 }
 
 #' @param scale numeric  Fixed value of the scale parameter. The default value is 1
@@ -116,7 +120,7 @@ qtr_scale <- function(fun, nm_scale=".scale", scale=1, .invert=FALSE){
   body_ <- body(f)
   names(formals_)[names(formals_) == ".scale"] <- nm_scale
   body_ <- do.call(substitute, list(body_, list(.scale = as.symbol(nm_scale))))
-  as.function(c(formals_, body_))
+  as_qf(as.function(c(formals_, body_)))
 }
 
 #' Decorate the basic QF with location and scale parameters
@@ -139,9 +143,10 @@ qtr_scale <- function(fun, nm_scale=".scale", scale=1, .invert=FALSE){
 #' @rdname decorate
 #' @export
 qtr_decorate <- function(fun, nm_location=".location", nm_scale=".scale", location=0, scale=1, .invert=FALSE){
-  function(u, ...){
+  f <- function(u, ...){
     s_fun <- qtr_scale(fun, nm_scale=nm_scale, scale=scale, .invert=.invert)
     ss_fun <- qtr_shift(s_fun, nm_shift=nm_location, shift=location)
     ss_fun(u,...)
   }
+  as_qf(f)
 }

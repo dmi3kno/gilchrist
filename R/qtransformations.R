@@ -22,7 +22,9 @@
 #' qf_weibull(0.5, k = 1/5)
 #' qweibull(0.5, shape = 5)
 qtr_lehmann1 <- function(fun, nm_pow=".pow", pow=1, .invert=TRUE){
+  stopifnot("qtr_lehmann1() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .pow=pow, ...){
+    stopifnot("Expecting positive power"=(.pow>=0))
     if(.invert) .pow <- 1/.pow
     fun(u,...)^(.pow)
   }
@@ -31,31 +33,39 @@ qtr_lehmann1 <- function(fun, nm_pow=".pow", pow=1, .invert=TRUE){
   body_ <- body(f)
   names(formals_)[names(formals_) == ".pow"] <- nm_pow
   body_ <- do.call(substitute, list(body_, list(.pow = as.symbol(nm_pow))))
-  as.function(c(formals_, body_))
+  as_qf(as.function(c(formals_, body_)))
 }
+
+
 
 #' @rdname qtransformations
 #' @export
 qtr_reflect_shift <- function(fun){
-  function(u, ...){
+  stopifnot("qtr_reflect_shift() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, ...){
     -fun(1-u, ...) + 1
   }
+  as_qf(f)
 }
 
 #' @rdname qtransformations
 #' @export
 qtr_shift_reciprocate <- function(fun){
-  function(u, ...){
+  stopifnot("qtr_shift_reciprocate() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, ...){
     1/(1+fun(1-u, ...))
   }
+  as_qf(f, returns="U")
 }
 
 #' @rdname qtransformations
 #' @export
 qtr_odd <- function(fun){
-  function(u, ...){
+  stopifnot("qtr_odd() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, ...){
     fun(u, ...)/(1+fun(u, ...))
   }
+  as_qf(f, returns="U")
 }
 
 #' @param pow numeric. Fixed value for the power parameter. Default is 1
@@ -64,6 +74,7 @@ qtr_odd <- function(fun){
 #' @examples
 #' qtr_epsilon(qnorm)
 qtr_epsilon <- function(fun, nm_pow=".pow", pow=1){
+  stopifnot("qtr_epsilon() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .pow=pow, ...){
     x <- fun(u,...)
     ((1+x)^(1/.pow)-1)/
@@ -74,7 +85,7 @@ qtr_epsilon <- function(fun, nm_pow=".pow", pow=1){
   body_ <- body(f)
   names(formals_)[names(formals_) == ".pow"] <- nm_pow
   body_ <- do.call(substitute, list(body_, list(.pow = as.symbol(nm_pow))))
-  as.function(c(formals_, body_))
+  as_qf(as.function(c(formals_, body_)), returns="U")
 }
 
 #' @param tail numeric. Fixed value for the tail parameter. Default is 1
@@ -90,6 +101,7 @@ qtr_epsilon <- function(fun, nm_pow=".pow", pow=1){
 #' @examples
 #' qtr_shash(qnorm)
 qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps", tail=1, asymm=0){
+  stopifnot("qtr_shash() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .eps=asymm, .dlt=tail, ...){
     sinh(1/.dlt*(fun(u,...)- .eps))
   }
@@ -100,7 +112,7 @@ qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps", tail=1, asymm=0){
   names(formals_)[names(formals_) == ".eps"] <- nm_asymm
   body_ <- do.call(substitute, list(body_, list(.dlt = as.symbol(nm_tail))))
   body_ <- do.call(substitute, list(body_, list(.eps = as.symbol(nm_asymm))))
-  as.function(c(formals_, body_))
+  as_qf(as.function(c(formals_, body_)))
 }
 
 #' @param base numeric. Fixed value of the base parameter. The default value is exp(1) (Eulers constant).
@@ -114,6 +126,7 @@ qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps", tail=1, asymm=0){
 #' qf_lognorm(0.2, mu=2, sigma=0.1)
 #' qlnorm(0.2, 2, 0.1)
 qtr_exponentiate <- function(fun, nm_base=".base", base=exp(1), .invert=FALSE){
+  stopifnot("qtr_exponentiate() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .base=base, ...){
     if(.invert) .base <- 1/.base
     (.base)^fun(u,...)
@@ -123,7 +136,7 @@ qtr_exponentiate <- function(fun, nm_base=".base", base=exp(1), .invert=FALSE){
   body_ <- body(f)
   names(formals_)[names(formals_) == ".base"] <- nm_base
   body_ <- do.call(substitute, list(body_, list(.base = as.symbol(nm_base))))
-  as.function(c(formals_, body_))
+  as_qf(as.function(c(formals_, body_)))
 }
 
 
@@ -131,28 +144,31 @@ qtr_exponentiate <- function(fun, nm_base=".base", base=exp(1), .invert=FALSE){
 #' @rdname qtransformations
 #' @export
 #' @examples
-#' qtr_fun(sqf_exp, log1p)
+#' qtr_fun(s_exp, log1p)
 qtr_fun <- function(fun, .fun){
+  stopifnot("qtr_fun() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, ...)
     .fun(fun(u,...))
-  f
+  as_qf(f)
 }
 
 #' @param .qf quantile function made with gilchrist (or regular function wrapped to safely accept optional arguments through ellipsis) to be applied as Q-transformation
 #' @rdname qtransformations
 #' @export
-#' @examples
-#' qtr_fun(sqf_exp,log1p)
 qtr_qf <- function(fun, .qf){
+  stopifnot("qtr_qf() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  stopifnot(".qf in qtr_qf() should be a quantile function"=inherits(.qf, c("function", "qf")))
   f <- function(u, ...)
     .qf(fun(u,...), ...)
-  f
+  as_qf(f)
 }
 
 #' @rdname qtransformations
 #' @export
 qtr_oddITL <- function(fun){
-  function(u, ...){
+  stopifnot("qtr_oddITL() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, ...){
     sqrt(fun(u, ...)) / (1-sqrt(fun(u, ...)))
   }
+  as_qf(f)
 }
