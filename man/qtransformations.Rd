@@ -19,7 +19,7 @@ qtr_reflect_shift(fun)
 
 qtr_shift_reciprocate(fun)
 
-qtr_odd(fun)
+qtr_odd(fun, nm_offset = ".offset", offset = 1)
 
 qtr_epsilon(fun, nm_pow = ".pow", pow = 1)
 
@@ -42,6 +42,10 @@ Should be a valid unique variable name other than "u"}
 \item{pow}{numeric. Fixed value for the power parameter. Default is 1}
 
 \item{.invert}{logical. Should the power parameter be inverted (1/.pow) before applying. Default TRUE}
+
+\item{nm_offset}{character. Name of the offset argument. Default is \code{.offset}}
+
+\item{offset}{numeric. Default value for odd offset. Defaults to 1}
 
 \item{nm_tail}{character.  The name of the tail thickness parameter. The default name is \code{.dlt}.
 The tail thickness parameter should be positive (default value is 1).

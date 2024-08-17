@@ -58,14 +58,21 @@ qtr_shift_reciprocate <- function(fun){
   as_qf(f, returns="U")
 }
 
+#' @param nm_offset character. Name of the offset argument. Default is `.offset`
+#' @param offset numeric. Default value for odd offset. Defaults to 1
 #' @rdname qtransformations
 #' @export
-qtr_odd <- function(fun){
+qtr_odd <- function(fun, nm_offset=".offset", offset=1){
   stopifnot("qtr_odd() is expecting a quantile function"=inherits(fun, c("function", "qf")))
-  f <- function(u, ...){
-    fun(u, ...)/(1+fun(u, ...))
+  f <- function(u, .offset=offset, ...){
+    fun(u, ...)/(.offset + fun(u, ...))
   }
-  as_qf(f, returns="U")
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".offset"] <- nm_offset
+  body_ <- do.call(substitute, list(body_, list(.offset = as.symbol(nm_offset))))
+  as_qf(as.function(c(formals_, body_)), returns="U")
 }
 
 #' @param pow numeric. Fixed value for the power parameter. Default is 1
