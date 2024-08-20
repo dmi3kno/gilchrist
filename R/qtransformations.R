@@ -48,6 +48,7 @@ qtr_reflect_shift <- function(fun){
   as_qf(f)
 }
 
+#' Also know as Odd-Inverse transformation
 #' @rdname qtransformations
 #' @export
 qtr_shift_reciprocate <- function(fun){

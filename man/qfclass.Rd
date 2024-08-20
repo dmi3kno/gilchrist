@@ -4,13 +4,16 @@
 \alias{as_qf}
 \alias{expects}
 \alias{returns}
+\alias{math}
 \title{Wrapper for producing classed functions.}
 \usage{
-as_qf(fun, subclass = NULL, expects = NA, returns = NA)
+as_qf(fun, subclass = NULL, expects = NA, returns = NA, math = NA)
 
 expects(fun)
 
 returns(fun)
+
+math(fun)
 }
 \arguments{
 \item{fun}{function}
@@ -20,6 +23,8 @@ returns(fun)
 \item{expects}{domain flag for incoming function domain}
 
 \item{returns}{domain flag for resulting function domain}
+
+\item{math}{raw string for math describing quantile function}
 }
 \description{
 Returns function of classes \code{c("function", "qf")}

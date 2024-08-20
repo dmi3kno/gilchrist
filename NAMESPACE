@@ -2,6 +2,7 @@
 
 export(as_qf)
 export(expects)
+export(math)
 export(ptr_DUS)
 export(ptr_KM)
 export(ptr_MO)

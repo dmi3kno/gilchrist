@@ -20,18 +20,20 @@
 s_exp <- function(u, ...){
   -log(1-u)
 }
-class(s_exp) <- c("function", "qf", "basic")
+class(s_exp) <- c("qf", "function")
 attr(s_exp, "expects") <- "U"
 attr(s_exp, "returns") <- NA
+attr(s_exp, "math") <- r"--{-\ln(1- {u} )}--"
 
 #' @rdname basicqf
 #' @export
 s_unif <- function(u, ...){
   u
 }
-class(s_unif) <- c("function", "qf", "basic")
+class(s_unif) <- c("qf", "function")
 attr(s_unif, "expects") <- "U"
 attr(s_unif, "returns") <- NA
+attr(s_unif, "math") <- r"--{ {u} }--"
 
 #' @rdname basicqf
 #' @export
@@ -39,42 +41,48 @@ attr(s_unif, "returns") <- NA
 s_norm <- function(u, ...){
   qnorm(u)
 }
-class(s_norm) <- c("function", "qf", "basic")
+class(s_norm) <- c("qf", "function")
 attr(s_norm, "expects") <- "U"
 attr(s_norm, "returns") <- NA
+attr(s_norm, "math") <- r"--{\Phi^{-1}\left( {u} \right)}--"
 
 #' @rdname basicqf
 #' @export
 s_cauchy <- function(u, ...){
   tan(pi*(u-0.5))
 }
-class(s_cauchy) <- c("function", "qf", "basic")
+class(s_cauchy) <- c("qf", "function")
 attr(s_cauchy, "expects") <- "U"
 attr(s_cauchy, "returns") <- NA
+attr(s_cauchy, "math") <- r"--{\tan\left( \pi\left( {u}-\frac{1}{2} \right)  \right) }--"
 
 #' @rdname basicqf
 #' @export
 s_halftriang <- function(u, ...){
   -sqrt(1-u)
 }
-class(s_halftriang) <- c("function", "qf", "basic")
+class(s_halftriang) <- c("qf", "function")
 attr(s_halftriang, "expects") <- "U"
 attr(s_halftriang, "returns") <- NA
+attr(s_halftriang, "math") <- r"--{-\sqrt{ 1- {u}} }--"
+
 
 #' @rdname basicqf
 #' @export
 s_halfcosine <- function(u, ...){
   asin(u)
 }
-class(s_halfcosine) <- c("function", "qf", "basic")
+class(s_halfcosine) <- c("qf", "function")
 attr(s_halfcosine, "expects") <- "U"
 attr(s_halfcosine, "returns") <- NA
+attr(s_halfcosine, "math") <- r"--{ \arcsin{ {u} } }--"
 
 #' @rdname basicqf
 #' @export
 s_sech <- function(u,...){
   2/pi*log(tan(pi/2*u))
 }
-class(s_sech) <- c("function", "qf", "basic")
+class(s_sech) <- c("qf", "function")
 attr(s_sech, "expects") <- "U"
 attr(s_sech, "returns") <- NA
+attr(s_sech, "math") <- r"--{ \frac{2}{\pi}\ln \left( \tan\left(\frac{\pi}{2} {u} \right) \right) }--"

@@ -120,6 +120,7 @@ ptr_DUS <- function(fun){
 ptr_MO <- function(fun, nm_mopar=".mopar", mopar=1) {
   stopifnot("ptr_MO() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .mopar=mopar, ...){
+    stopifnot("Marshall-Olkin parameter should be positive"=.mopar>0)
     fun(.mopar*u/( 1-(1-.mopar)*u ), ...)
   }
 
@@ -138,6 +139,7 @@ ptr_MO <- function(fun, nm_mopar=".mopar", mopar=1) {
 ptr_TL <- function(fun, nm_tlpar=".tlpar", tlpar=1) {
   stopifnot("ptr_TL() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .tlpar=tlpar, ...){
+    stopifnot("Topp-Leone parameter should be positive"=.tlpar>0)
     fun(1-sqrt(1-u^(1/.tlpar)), ...)
   }
 
