@@ -137,7 +137,7 @@ This is how we do it. Note that in the resulting quantile function, the argument
 #| output: 'asis'
 qf_logistic <- s_exp %>% 
   qtr_reflect() %>%
-  qtr_add(s_exp) %>% 
+  qtr_add(s_exp)# %>% 
   qtr_decorate("mu", "s")
 
 display(qf_logistic)
@@ -619,6 +619,7 @@ qmuhammad <- s_unif %>%
   ptr_lehmann1("alpha")
 display(qmuhammad)
 ```
+
 ```{r}
 qmuhammad(runif(1e3), theta=2, beta=7, alpha=0.7) %>% hist(50)
 ```

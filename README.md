@@ -75,7 +75,7 @@ s_exp
 #> {
 #>     -log(1 - u)
 #> }
-#> <bytecode: 0x62cbe39c1198>
+#> <bytecode: 0x63bd1d242d78>
 #> <environment: namespace:gilchrist>
 #> attr(,"class")
 #> [1] "qf"       "function"
@@ -154,19 +154,29 @@ arguments have to always be named.
 ``` r
 qf_logistic <- s_exp %>% 
   qtr_reflect() %>%
-  qtr_add(s_exp) %>% 
+  qtr_add(s_exp)# %>% 
   qtr_decorate("mu", "s")
+```
+
+function (u, …) { s_fun \<- qtr_scale(fun, nm_scale = nm_scale, scale =
+scale, .invert = .invert) ss_fun \<- qtr_shift(s_fun, nm_shift =
+nm_location, shift = location) ss_fun(u, …) } \<bytecode:
+0x63bd197fb538\> \<environment: 0x63bd197ec2c8\> attr(,“class”) \[1\]
+“qf” “function” attr(,“expects”) \[1\] NA attr(,“returns”) \[1\] NA
+attr(,“math”) \[1\] “{\text{s} }+{\text{.scale} }\left\[\right\]”
+
+``` r
 
 display(qf_logistic)
 ```
 
-$$Q(u)={ {\mu} }+{\text{s} }\left[\left\{ -\left[-\ln(1- {\left[1-u\right]} )\right]\right\} +\left\{ -\ln(1- {u} )\right\} \right]$$
+$$Q(u)=\left\{ -\left[-\ln(1- {\left[1-u\right]} )\right]\right\} +\left\{ -\ln(1- {u} )\right\} $$
 
 ``` r
 qf_logistic(p_grd, mu=4, s=2)
-#>  [1] -2.7345917 -0.3944492  0.7811242  1.6208319  2.3054043  2.9069126
-#>  [7]  3.4634720  4.0000000  4.5365280  5.0930874  5.6945957  6.3791681
-#> [13]  7.2188758  8.3944492 10.7345917
+#>  [1] -3.3672958 -2.1972246 -1.6094379 -1.1895841 -0.8472979 -0.5465437
+#>  [7] -0.2682640  0.0000000  0.2682640  0.5465437  0.8472979  1.1895841
+#> [13]  1.6094379  2.1972246  3.3672958
 qlogis(p_grd, 4, 2)
 #>  [1] -2.7345917 -0.3944492  0.7811242  1.6208319  2.3054043  2.9069126
 #>  [7]  3.4634720  4.0000000  4.5365280  5.0930874  5.6945957  6.3791681
