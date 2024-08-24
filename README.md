@@ -75,7 +75,7 @@ s_exp
 #> {
 #>     -log(1 - u)
 #> }
-#> <bytecode: 0x5af45af0d160>
+#> <bytecode: 0x62cbe39c1198>
 #> <environment: namespace:gilchrist>
 #> attr(,"class")
 #> [1] "qf"       "function"

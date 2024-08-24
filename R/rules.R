@@ -57,8 +57,8 @@ qtr_add <- function(fun1, fun2){
   }
   math_y1 <- math(fun1)
   math_y2 <- math(fun2)
-  math_f <- paste0(br(math_y1, left=r"--(\{ )--", right=r"--(\} )--"), "+", 
-                    br(math_y2, left=r"--(\{ )--", right=r"--(\} )--"))
+  math_f <- paste0(br(math_y1, left=r"--{\{ }--", right=r"--{\} }--"), "+", 
+                    br(math_y2, left=r"--{\{ }--", right=r"--{\} }--"))
   as_qf(f, math = math_f)
 }
 
@@ -73,8 +73,8 @@ qtr_mix <- function(fun1, fun2, nm_wt=".wt", wt=0.5){
 
   math_y1 <- math(fun1)
   math_y2 <- math(fun2)
-  math_f <- paste0(prmtr(nm_wt, FALSE),  br(math_y1, left=r"--(\{ )--", right=r"--(\} )--"), 
-        "+(1-",prmtr(nm_wt, FALSE), ")", br(math_y2, left=r"--(\{ )--", right=r"--(\} )--"))
+  math_f <- paste0(prmtr(nm_wt, FALSE),  br(math_y1, left=r"--{\{ }--", right=r"--{\} }--"), 
+        "+(1-",prmtr(nm_wt, FALSE), ")", br(math_y2, left=r"--{\{ }--", right=r"--{\} }--"))
 
   formals_ <- formals(f)
   body_ <- body(f)
@@ -92,8 +92,8 @@ qtr_cmix <- function(fun1, fun2, nm_wt=".wt", wt=0.5){
 
   math_y1 <- math(fun1)
   math_y2 <- math(fun2)
-  math_f <- paste0("(1-", prmtr(nm_wt, FALSE), ")", br(math_y1, left=r"--(\{ )--", right=r"--(\} )--"), 
-  "+", prmtr(nm_wt, FALSE), br(math_y2, left=r"--(\{ )--", right=r"--(\} )--"))
+  math_f <- paste0("(1-", prmtr(nm_wt, FALSE), ")", br(math_y1, left=r"--{\{ }--", right=r"--{\} }--"), 
+  "+", prmtr(nm_wt, FALSE), br(math_y2, left=r"--{\{ }--", right=r"--{\} }--"))
 
   formals_ <- formals(f)
   body_ <- body(f)
@@ -115,8 +115,8 @@ qtr_multiply <- function(fun1, fun2){
 
   math_y1 <- math(fun1)
   math_y2 <- math(fun2)
-  math_f <- paste0(br(math_y1, left=r"--(\{ )--", right=r"--(\} )--"), r"--(\times)--", 
-  br(math_y2, left=r"--(\{ )--", right=r"--(\} )--"))
+  math_f <- paste0(br(math_y1, left=r"--{\{ }--", right=r"--{\} }--"), r"--(\times)--", 
+                    br(math_y2, left=r"--{\{ }--", right=r"--{\} }--"))
 
   as_qf(f, math = math_f)
 }
