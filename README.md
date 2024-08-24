@@ -75,7 +75,7 @@ s_exp
 #> {
 #>     -log(1 - u)
 #> }
-#> <bytecode: 0x63bd1d242d78>
+#> <bytecode: 0x61f2e40cad40>
 #> <environment: namespace:gilchrist>
 #> attr(,"class")
 #> [1] "qf"       "function"
@@ -161,7 +161,7 @@ qf_logistic <- s_exp %>%
 function (u, …) { s_fun \<- qtr_scale(fun, nm_scale = nm_scale, scale =
 scale, .invert = .invert) ss_fun \<- qtr_shift(s_fun, nm_shift =
 nm_location, shift = location) ss_fun(u, …) } \<bytecode:
-0x63bd197fb538\> \<environment: 0x63bd197ec2c8\> attr(,“class”) \[1\]
+0x61f2e06835a8\> \<environment: 0x61f2e0674338\> attr(,“class”) \[1\]
 “qf” “function” attr(,“expects”) \[1\] NA attr(,“returns”) \[1\] NA
 attr(,“math”) \[1\] “{\text{s} }+{\text{.scale} }\left\[\right\]”
 
@@ -367,7 +367,7 @@ qhcsexp <- s_halfcosine %>%
 display(qhcsexp)
 ```
 
-$$Q(u)=\left\{  \arcsin{ {u} } \right\} \times\left\{ -\ln(1- {u} )\right\} $$
+$$Q(u)=\left\langle \arcsin{ {u} } \right\rangle\times\left\langle -\ln(1- {u} )\right\rangle$$
 
 ``` r
 qhcsexp(p_grd) %>% plot(p_grd,., type="l")

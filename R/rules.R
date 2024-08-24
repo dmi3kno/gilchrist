@@ -115,8 +115,8 @@ qtr_multiply <- function(fun1, fun2){
 
   math_y1 <- math(fun1)
   math_y2 <- math(fun2)
-  math_f <- paste0(br(math_y1, left=r"--{\{ }--", right=r"--{\} }--"), r"--(\times)--", 
-                    br(math_y2, left=r"--{\{ }--", right=r"--{\} }--"))
+  math_f <- paste0(br(math_y1, left=r"--{\langle}--", right=r"--{\rangle}--"), r"--(\times)--", 
+                    br(math_y2, left=r"--{\langle }--", right=r"--{\rangle}--"))
 
   as_qf(f, math = math_f)
 }
