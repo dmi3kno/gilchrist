@@ -75,15 +75,23 @@ s_exp
 #> {
 #>     -log(1 - u)
 #> }
-#> <bytecode: 0x57cd47ffcb20>
+#> <bytecode: 0x6074d25b7aa0>
 #> <environment: namespace:gilchrist>
 #> attr(,"class")
-#> [1] "function" "qf"       "basic"   
+#> [1] "qf"       "function"
 #> attr(,"expects")
 #> [1] "U"
 #> attr(,"returns")
 #> [1] NA
+#> attr(,"math")
+#> [1] "-\\ln(1- {&} )"
 ```
+
+``` r
+display(s_exp)
+```
+
+$$Q(u)=-\ln(1- {u} )$$
 
 `{gilchrist}` has several basic (parameterless) functions that you can
 modify.
@@ -110,6 +118,12 @@ reciprocated scale).
 qf_exp <- s_exp %>% 
   qtr_scale(nm_scale="lambda", .invert = TRUE)
 ```
+
+``` r
+display(qf_exp)
+```
+
+$$Q(u)=\frac{1}{ {\lambda}}\left[-\ln(1- {u} )\right]$$
 
 We compare our hand-made exponential quantile function to the standard
 function in R.
@@ -143,6 +157,12 @@ qf_logistic <- s_exp %>%
   qtr_add(s_exp) %>% 
   qtr_decorate("mu", "s")
 
+display(qf_logistic)
+```
+
+$$Q(u)={ {\mu} }+{\text{s} }\left[\left\{ -\left[-\ln(1- {\left[1-u\right]} )\right]\right\} +\left\{ -\ln(1- {u} )\right\} \right]$$
+
+``` r
 qf_logistic(p_grd, mu=4, s=2)
 #>  [1] -2.7345917 -0.3944492  0.7811242  1.6208319  2.3054043  2.9069126
 #>  [7]  3.4634720  4.0000000  4.5365280  5.0930874  5.6945957  6.3791681
@@ -171,7 +191,12 @@ qf_fsld <- s_exp %>%
   qtr_cmix(s_exp, nm_wt="delta") %>% 
   qtr_add(qtr_scale(s_unif,"k")) %>% 
   qtr_decorate(nm_location="alpha", nm_scale="beta")
+display(qf_fsld)
+```
 
+$$Q(u)={ {\alpha} }+{ {\beta} }\left[\left\{ (1-{ {\delta} })\left\{ -\left[-\ln(1- {\left[1-u\right]} )\right]\right\} +{ {\delta} }\left\{ -\ln(1- {u} )\right\} \right\} +\left\{ {\text{k} }\left[ {u} \right]\right\} \right]$$
+
+``` r
 qf_fsld(p_grd, delta=0.21, alpha=4, beta=2, k=1)
 #>  [1] -1.292987  0.606167  1.578928  2.278908  2.847526  3.339955  3.783948
 #>  [8]  4.195949  4.587143  4.966375  5.342122  5.724743  6.131138  6.600616
@@ -188,13 +213,27 @@ We can make Weibull distribution. Weibull distribution is a
 Q-transformed exponential distribution. The transformation function is
 the the Lehmann type 1 exponentiation $H(u)=u^{1/k}$.
 
-$$Q(u)=\lambda[-\ln(1-u)]^{1/k}$$ Again, to remember that the power
-should be reciprocated, which comes by default.
+$$Q(u)=\lambda[-\ln(1-u)]^{\frac{1}{k}}$$
+
+working
+
+$$
+Q(u)={ {\lambda} }\left[\left[-\ln(1- {u} )\right]^{1/k}\right]
+$$
+
+Again, to remember that the power should be reciprocated, which comes by
+default.
 
 ``` r
 qf_weibull <- s_exp %>% 
   qtr_lehmann1("k") %>% 
   qtr_scale("lambda")
+display(qf_weibull)
+```
+
+$$Q(u)={ {\lambda} }\left[\left[-\ln(1- {u} )\right]^{\frac{1}{\text{k}}}\right]$$
+
+``` r
 qf_weibull(p_grd, lambda=2, k=4)
 #>  [1] 0.8581928 1.1394610 1.3068914 1.4359165 1.5456037 1.6441886 1.7362571
 #>  [8] 1.8248886 1.9125543 2.0016490 2.0950007 2.1966819 2.3139284 2.4636778
@@ -221,10 +260,16 @@ rule”. Here’s an example of reflected exponential distribution.
 ``` r
 qrexp <- s_exp %>% 
   qtr_reflect()
+display(qrexp)
+```
+
+$$Q(u)=-\left[-\ln(1- {\left[1-u\right]} )\right]$$
+
+``` r
 qrexp(p_grd) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.png"
+<img src="man/figures/README-unnamed-chunk-17-1.png"
 style="width:100.0%" />
 
 ### Reciprocation
@@ -236,10 +281,16 @@ distribution.
 ``` r
 qrecunif <- s_unif %>% 
   qtr_reciprocate()
+display(qrecunif)
+```
+
+$$Q(u)=\frac{1}{\left[ {\left[1-u\right]} \right]}$$
+
+``` r
 qrecunif(p_grd) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-12-1.png"
+<img src="man/figures/README-unnamed-chunk-19-1.png"
 style="width:100.0%" />
 
 ### Addition
@@ -252,10 +303,16 @@ distributions.
 qlogistic <- s_exp %>% 
   qtr_reflect() %>% 
   qtr_add(s_exp)
+display(qlogistic)
+```
+
+$$Q(u)=\left\{ -\left[-\ln(1- {\left[1-u\right]} )\right]\right\} +\left\{ -\ln(1- {u} )\right\} $$
+
+``` r
 qlogistic(p_grd) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-13-1.png"
+<img src="man/figures/README-unnamed-chunk-21-1.png"
 style="width:100.0%" />
 
 ### Linear combination
@@ -272,10 +329,16 @@ qskewlogis <- s_exp %>%
   qtr_reflect() %>% 
   qtr_cmix(s_exp, nm_wt="delta")
 
+display(qskewlogis)
+```
+
+$$Q(u)=(1-{ {\delta} })\left\{ -\left[-\ln(1- {\left[1-u\right]} )\right]\right\} +{ {\delta} }\left\{ -\ln(1- {u} )\right\} $$
+
+``` r
 qskewlogis(p_grd, delta=0.9) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-1.png"
+<img src="man/figures/README-unnamed-chunk-23-1.png"
 style="width:100.0%" />
 
 The twin function `qtr_cmix` swaps the weights: $1-\delta$ to the first
@@ -291,10 +354,16 @@ half-cosine and exponential distributions
 qhcsexp <- s_halfcosine %>% 
   qtr_multiply(s_exp)
 
+display(qhcsexp)
+```
+
+$$Q(u)=\left\{  \arcsin{ {u} } \right\} \times\left\{ -\ln(1- {u} )\right\} $$
+
+``` r
 qhcsexp(p_grd) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-1.png"
+<img src="man/figures/README-unnamed-chunk-25-1.png"
 style="width:100.0%" />
 
 ### Shift and scale
@@ -309,7 +378,7 @@ q_shiftedexp <- s_exp %>% qtr_shift("mu")
 q_shiftedexp(p_grd, mu=2) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-16-1.png"
+<img src="man/figures/README-unnamed-chunk-26-1.png"
 style="width:100.0%" />
 
 The quantile function factory `qtr_scale` implement the “multiplication
@@ -323,7 +392,7 @@ qexp1 <- s_exp %>%
 qexp1(p_grd, lambda=2) %>% plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-17-1.png"
+<img src="man/figures/README-unnamed-chunk-27-1.png"
 style="width:100.0%" />
 
 Finally, `qtr_decorate` adds both location and scale to a quantile
@@ -362,7 +431,7 @@ qweibull1(p_grd, lambda=2, k=3) %>%
   plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-19-1.png"
+<img src="man/figures/README-unnamed-chunk-29-1.png"
 style="width:100.0%" />
 
 The analogous function exists for p-transforming the quantile function,
@@ -394,6 +463,12 @@ qkumar1 <- s_unif %>%
   ptr_lehmann2("beta") %>%
   qtr_lehmann1("alpha")
 
+display(qkumar1)
+```
+
+$$Q(u)=\left[ {\left[1-(1-u)^{\frac{1}{ {\beta}}}\right]} \right]^{\frac{1}{ {\alpha}}}$$
+
+``` r
 all.equal(
  extraDistr::qkumar(p_grd, 4,5),
   qkumar1(p_grd, alpha=4, beta=5)
@@ -419,6 +494,12 @@ qeik <- s_unif %>%
 q_eik <- function(u, lambda, beta, alpha){
   (1-u^(1/(beta*lambda)))^(-1/alpha)-1
 }
+display(qeik)
+```
+
+$$Q(u)={\text{.location} }+\left[\frac{1}{\left[\left[ {\left[1-(1-\left[1-u^{\frac{1}{ {\lambda}}}\right])^{\frac{1}{ {\beta}}}\right]} \right]^{\frac{1}{ {\alpha}}}\right]}\right]$$
+
+``` r
 
 all.equal(
  qeik(p_grd, alpha=4,beta=5, lambda=6),
@@ -430,7 +511,7 @@ qeik(p_grd, alpha=4,beta=5, lambda=6) %>%
   plot(p_grd,.,type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-21-1.png"
+<img src="man/figures/README-unnamed-chunk-33-1.png"
 style="width:100.0%" />
 
 ### Exponentiation
@@ -454,7 +535,10 @@ qchen <- s_exp %>%
   qtr_scale("lambda") %>% 
   qtr_fun(log1p) %>% 
   qtr_lehmann1("beta")
+display(qchen)
 ```
+
+$$Q(u)=\left[\text{log1p}(\left[{ {\lambda} }\left[-\ln(1- {u} )\right]\right])\right]^{\frac{1}{ {\beta}}}$$
 
 ### Shift/scale/power by a constant
 
@@ -476,12 +560,17 @@ Here’s for example SHASH-normal distribution
 ``` r
 qshashnorm <- s_norm %>%
   qtr_shash(nm_tail="delta", nm_asymm="epsilon")
+display(qshashnorm)
+```
 
+$$Q(u)=\text{sinh}\left( \frac{1}{ {\delta}} \left(\left[\Phi^{-1}\left( {u} \right)\right] - { {\epsilon} } \right)\right)  $$
+
+``` r
 qs <- qshashnorm(p_grd, delta=2, epsilon=2)
 plot(p_grd, qs, type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-23-1.png"
+<img src="man/figures/README-unnamed-chunk-36-1.png"
 style="width:100.0%" />
 
 ### $\varepsilon$-transformation
@@ -499,7 +588,10 @@ In particular they present the unit exponential QF as
 quexp <- s_exp %>%
   qtr_scale("lambda", .invert=TRUE) %>%
   qtr_epsilon("beta")
+display(quexp)
 ```
+
+$$Q(u)=\frac{ \left(1+\left[\frac{1}{ {\lambda}}\left[-\ln(1- {u} )\right]\right] \right)^\frac{1}{ {\beta}}-1}{ \left( 1+\left[\frac{1}{ {\lambda}}\left[-\ln(1- {u} )\right]\right] \right)^\frac{1}{ {\beta}} +1}$$
 
 We could transform another semi-bounded distribution, like Pareto
 
@@ -509,12 +601,17 @@ qupareto <- s_unif %>%
   qtr_reciprocate() %>%
   qtr_lehmann1("alpha") %>%
   qtr_epsilon("beta")
-  
+display(qupareto)
+```
+
+$$Q(u)=\frac{ \left(1+\left[\left[\frac{1}{\left[ {\left[1-u\right]} \right]}\right]^{\frac{1}{ {\alpha}}}\right] \right)^\frac{1}{ {\beta}}-1}{ \left( 1+\left[\left[\frac{1}{\left[ {\left[1-u\right]} \right]}\right]^{\frac{1}{ {\alpha}}}\right] \right)^\frac{1}{ {\beta}} +1}$$
+
+``` r
 qs <- qupareto(p_grd, 3, 0.1)
 plot(p_grd, qs, type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-25-1.png"
+<img src="man/figures/README-unnamed-chunk-39-1.png"
 style="width:100.0%" />
 
 ### DUS-transformation
@@ -534,11 +631,17 @@ qDUSexp <- s_exp %>%
   ptr_DUS()
 
 qs <- qDUSexp(p_grd, lambda=0.5)
+display(qDUSexp)
+```
+
+$$Q(u)=\frac{1}{ {\lambda}}\left[-\ln(1- {\left[\ln \left( 1 - u + eu \right)\right]} )\right]$$
+
+``` r
 plot(p_grd, qs, type="l")
 lines(p_grd, qexp(p_grd, 0.5), col=2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-26-1.png"
+<img src="man/figures/README-unnamed-chunk-41-1.png"
 style="width:100.0%" />
 
 ### Kavya-Manoharan (KM) p-transformation
@@ -558,12 +661,17 @@ qf_KMweibull <- s_exp %>%
   qtr_lehmann1("k") %>% 
   qtr_scale("lambda") %>% 
   ptr_KM()
+display(qf_KMweibull)
+```
 
+$$Q(u)={ {\lambda} }\left[\left[-\ln(1- {\left[-\ln \left(1-u\frac{e-1}{e} \right)\right]} )\right]^{\frac{1}{\text{k}}}\right]$$
+
+``` r
 qf_KMweibull(p_grd, lambda=3, k=4)%>%
   plot(p_grd,., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-27-1.png"
+<img src="man/figures/README-unnamed-chunk-43-1.png"
 style="width:100.0%" />
 
 ### Modi-transformation
@@ -585,7 +693,12 @@ qmodiexpexp <- s_exp %>%
 qmodiexpexp1 <- function(u, lambda, alpha, beta, delta){
   1/lambda*(-log(1-(u*alpha^beta/(1-u+alpha^beta))^(1/delta)))
 }
+display(qmodiexpexp)
+```
 
+$$Q(u)={ {\lambda} }\left[-\ln(1- {\left[\frac{u { {\alpha} }^{ {\beta} } }{ 1- u +{ {\alpha} }^{ {\beta} }}\right]^{\frac{1}{ {\delta}}}} )\right]$$
+
+``` r
 qmodiexpexp(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
 #>  [1]  1.768450  2.452959  2.925599  3.335142  3.722179  4.106920  4.503626
 #>  [8]  4.925483  5.387532  5.909832  6.522736  7.278248  8.280512  9.797473
@@ -646,11 +759,16 @@ qmuhammad <- s_unif %>%
   qtr_fun(exp) %>% 
   qtr_scale("theta") %>% 
   ptr_lehmann1("alpha")
+display(qmuhammad)
+```
 
+$$Q(u)={ {\theta} }\left[\text{exp}(\left[{ {\beta} }\left[{\text{.location} }+\left[-\left[\frac{1}{\left[ {\left[1-\left[1-u^{\frac{1}{ {\alpha}}}\right]\right]} \right]}\right]\right]\right]\right])\right]$$
+
+``` r
 qmuhammad(runif(1e3), theta=2, beta=7, alpha=0.7) %>% hist(50)
 ```
 
-<img src="man/figures/README-unnamed-chunk-30-1.png"
+<img src="man/figures/README-unnamed-chunk-48-1.png"
 style="width:100.0%" />
 
 Fréchet is Reciprocate transform of Weibull. Weibull is power transform
@@ -669,7 +787,7 @@ qfrechet <- s_exp %>%
 qfrechet(p_grd, m=0, s=1, alpha=5)%>%plot(p_grd, ., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-31-1.png"
+<img src="man/figures/README-unnamed-chunk-49-1.png"
 style="width:100.0%" />
 
 What other cool transformations do you know? Please let me know!

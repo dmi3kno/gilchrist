@@ -32,12 +32,15 @@ ptr_lehmann1 <- function(fun, nm_pow=".pow", pow=1, .invert=TRUE){
     if(.invert) .pow <- 1/.pow
     fun(u^(.pow),...)
   }
-
+  math_x <- math(fun)
+  math_y <- paste0(r"--(&^{)--", prmtr(nm_pow, .invert) ,r"--(})--")
+  math_f <-  fn_insert(math_x, math_y, br=FALSE)
+  
   formals_ <- formals(f)
   body_ <- body(f)
   names(formals_)[names(formals_) == ".pow"] <- nm_pow
   body_ <- do.call(substitute, list(body_, list(.pow = as.symbol(nm_pow))))
-  as_qf(as.function(c(formals_, body_)))
+  as_qf(as.function(c(formals_, body_)), math=math_f)
 }
 
 #' @rdname ptransformations
@@ -48,12 +51,15 @@ ptr_lehmann2 <- function(fun, nm_pow=".pow", pow=1, .invert=TRUE){
     if(.invert) .pow <- 1/.pow
     fun(1-(1-u)^(.pow),...)
   }
+  math_x <- math(fun)
+  math_y <- paste0(r"--(1-(1-&)^{)--", prmtr(nm_pow, .invert) ,r"--(})--")
+  math_f <-  fn_insert(math_x, math_y)
 
   formals_ <- formals(f)
   body_ <- body(f)
   names(formals_)[names(formals_) == ".pow"] <- nm_pow
   body_ <- do.call(substitute, list(body_, list(.pow = as.symbol(nm_pow))))
-  as_qf(as.function(c(formals_, body_)))
+  as_qf(as.function(c(formals_, body_)), math=math_f)
 }
 
 #' @param .fun function without arguments(or with all default arguments) to be applied as Q-transformation
@@ -65,8 +71,15 @@ ptr_fun <- function(fun, .fun){
   stopifnot("ptr_fun() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, ...)
     fun(.fun(u),...)
-  as_qf(f)
+  
+  math_x <- math(fun)
+  math_y <- paste0(r"--(\text{)--", deparse(substitute(.fun)), "}(&)")
+  math_f <-  fn_insert(math_x, math_y)
+
+  as_qf(f, math=math_f)
 }
+
+
 
 #' @param .qf quantile function made with gilchrist (or wrapped basic function able to accept optional arguments through ellipsis) to be applied as p-transformation
 #' @rdname ptransformations
@@ -78,7 +91,12 @@ ptr_qf <- function(fun, .qf){
   stopifnot(".qf in ptr_qf() should be a quantile function"=inherits(.qf, c("function", "qf")))
   f <- function(u, ...)
     fun(.qf(u, ...), ...)
-  as_qf(f)
+
+  math_x <- math(fun)
+  math_y <- math(.qf)
+  math_f <- fn_insert(math_x, math_y)
+
+  as_qf(f, math=math_f)
 }
 
 #' @rdname ptransformations
@@ -87,7 +105,12 @@ ptr_half <- function(fun){
   stopifnot("ptr_half() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, ...)
     fun((u+1)/2,...)
-  as_qf(f)
+
+  math_x <- math(fun)
+  math_y <- paste0(r"--(\frac{&+1}{2})--")
+  math_f <- fn_insert(math_x, math_y, br=FALSE)
+
+  as_qf(f, math = math_f)
 }
 
 # Kavya-Manoharan (KM) p-transformation
@@ -99,7 +122,11 @@ ptr_KM <- function(fun){
     em1e <- expm1(1)/exp(1)
     fun(-log(1-u*em1e), ...)
   }
-  as_qf(f)
+  math_x <- math(fun)
+  math_y <- paste0(r"--{-\ln \left(1-&\frac{e-1}{e} \right)}--")
+  math_f <- fn_insert(math_x, math_y)
+
+  as_qf(f, math = math_f)
 }
 # Dinesh-Umesh-Sanjay (DUS) p-transformation
 #' @rdname ptransformations
@@ -109,7 +136,11 @@ ptr_DUS <- function(fun){
   f <- function(u, ...){
     fun(log(1-u+exp(1)*u), ...)
   }
-  as_qf(f)
+  math_x <- math(fun)
+  math_y <- paste0(r"--{\ln \left( 1 - & + e& \right)}--")
+  math_f <- fn_insert(math_x, math_y)
+
+  as_qf(f, math = math_f)
 }
 
 # Marshall-Olkin (MO) p-transformation
@@ -124,11 +155,16 @@ ptr_MO <- function(fun, nm_mopar=".mopar", mopar=1) {
     fun(.mopar*u/( 1-(1-.mopar)*u ), ...)
   }
 
+  math_x <- math(fun)
+  math_y <- paste0(r"--(\frac{)--", prmtr(nm_mopar) ,r"--{ &}{1-\left(1-}--", 
+                    prmtr(nm_mopar),  r"--{ \right)&} }--")
+  math_f <- fn_insert(math_x, math_y)
+
   formals_ <- formals(f)
   body_ <- body(f)
   names(formals_)[names(formals_) == ".mopar"] <- nm_mopar
   body_ <- do.call(substitute, list(body_, list(.mopar = as.symbol(nm_mopar))))
-  as_qf(as.function(c(formals_, body_)))
+  as_qf(as.function(c(formals_, body_)), math = math_f)
 }
 
 # Topp-Leone (TL) p-transformation
@@ -143,11 +179,15 @@ ptr_TL <- function(fun, nm_tlpar=".tlpar", tlpar=1) {
     fun(1-sqrt(1-u^(1/.tlpar)), ...)
   }
 
+  math_x <- math(fun)
+  math_y <- paste0(r"--(1-\sqrt{1-&^\frac{1}{ )--", prmtr(nm_tlpar), r"--( } })--")
+  math_f <- fn_insert(math_x, math_y)
+
   formals_ <- formals(f)
   body_ <- body(f)
   names(formals_)[names(formals_) == ".tlpar"] <- nm_tlpar
   body_ <- do.call(substitute, list(body_, list(.tlpar = as.symbol(nm_tlpar))))
-  as_qf(as.function(c(formals_, body_)))
+  as_qf(as.function(c(formals_, body_)), math=math_f)
 }
 
 #' @rdname ptransformations
@@ -157,7 +197,12 @@ ptr_oddITL <- function(fun){
   f <- function(u, ...){
     fun( sqrt(u)/(1-sqrt(u)), ...)
   }
-  as_qf(f)
+
+  math_x <- math(fun)
+  math_y <- paste0(r"--( \frac{\sqrt{&} }{1-\sqrt{&} } )--")
+  math_f <- fn_insert(math_x, math_y)
+
+  as_qf(f, math=math_f)
 }
 
 # Modi (Type I) p-transformation
@@ -173,13 +218,18 @@ ptr_modi1 <- function(fun, nm_a=".modialpha", nm_b=".modibeta", a=1, b=1){
     fun(u * .modialpha ^ .modibeta/(1-u+ .modialpha ^ .modibeta), ...)
   }
 
+  math_x <- math(fun)
+  math_y <- paste0(r"--{\frac{& }--",prmtr(nm_a), r"--{^}--", prmtr(nm_b), r"--{ }{ }--",
+                    r"--{1- & +}--", prmtr(nm_a), r"--{^}--", prmtr(nm_b), r"--(})--")
+  math_f <- fn_insert(math_x, math_y)
+
   formals_ <- formals(f)
   body_ <- body(f)
   names(formals_)[names(formals_) == ".modialpha"] <- nm_a
   names(formals_)[names(formals_) == ".modibeta"] <- nm_b
   body_ <- do.call(substitute, list(body_, list(.modialpha = as.symbol(nm_a))))
   body_ <- do.call(substitute, list(body_, list(.modibeta = as.symbol(nm_b))))
-  as_qf(as.function(c(formals_, body_)))
+  as_qf(as.function(c(formals_, body_)), math = math_f)
 }
 
 # Modi Type II p-transformation
@@ -191,11 +241,16 @@ ptr_modi2 <- function(fun, nm_a=".modialpha", nm_b=".modibeta", a=1, b=1){
     fun((u + u * .modialpha ^ .modibeta)/(u + .modialpha ^ .modibeta), ...)
   }
 
+  math_x <- math(fun)
+  math_y <- paste0(r"--{\frac{ & + & }--",prmtr(nm_a), r"--{^}--", prmtr(nm_b), r"--{ }{ }--",
+                  r"--{& +}--",prmtr(nm_a), r"--{^}--", prmtr(nm_b), r"--(})--")
+  math_f <- fn_insert(math_x, math_y)
+
   formals_ <- formals(f)
   body_ <- body(f)
   names(formals_)[names(formals_) == ".modialpha"] <- nm_a
   names(formals_)[names(formals_) == ".modibeta"] <- nm_b
   body_ <- do.call(substitute, list(body_, list(.modialpha = as.symbol(nm_a))))
   body_ <- do.call(substitute, list(body_, list(.modibeta = as.symbol(nm_b))))
-  as_qf(as.function(c(formals_, body_)))
+  as_qf(as.function(c(formals_, body_)), math = math_f)
 }

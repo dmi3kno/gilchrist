@@ -7,6 +7,7 @@
 #' @param expects domain flag for incoming function domain
 #' @param returns domain flag for resulting function domain
 #' @param math raw string for math describing quantile function
+#' @param value string. Value of the attribute
 #' @export
 #' @rdname qfclass
 as_qf <- function(fun, subclass=NULL, expects=NA, returns=NA, math=NA){
@@ -17,11 +18,18 @@ as_qf <- function(fun, subclass=NULL, expects=NA, returns=NA, math=NA){
   fun
 }
 
-#' Accessors for function attributes
+#' Accessors and replacers for function attributes
 #' @export
 #' @rdname qfclass
 expects <- function(fun){
   attr(fun, "expects")
+}
+
+#' @export
+#' @rdname qfclass
+`expects<-` <- function(fun, value){
+  attr(fun, "expects") <- value
+  fun
 }
 
 #' @export
@@ -32,7 +40,21 @@ returns <- function(fun){
 
 #' @export
 #' @rdname qfclass
+`returns<-` <- function(fun, value){
+  attr(fun, "returns") <- value
+  fun
+}
+
+
+#' @export
+#' @rdname qfclass
 math <- function(fun){
   attr(fun, "math")
 }
 
+#' @export
+#' @rdname qfclass
+`math<-` <- function(fun, value){
+  attr(fun, "math") <- value
+  fun
+}
