@@ -75,7 +75,7 @@ s_exp
 #> {
 #>     -log(1 - u)
 #> }
-#> <bytecode: 0x61f2e40cad40>
+#> <bytecode: 0x5e38092b5d40>
 #> <environment: namespace:gilchrist>
 #> attr(,"class")
 #> [1] "qf"       "function"
@@ -161,7 +161,7 @@ qf_logistic <- s_exp %>%
 function (u, …) { s_fun \<- qtr_scale(fun, nm_scale = nm_scale, scale =
 scale, .invert = .invert) ss_fun \<- qtr_shift(s_fun, nm_shift =
 nm_location, shift = location) ss_fun(u, …) } \<bytecode:
-0x61f2e06835a8\> \<environment: 0x61f2e0674338\> attr(,“class”) \[1\]
+0x5e380586e5a8\> \<environment: 0x5e380585f338\> attr(,“class”) \[1\]
 “qf” “function” attr(,“expects”) \[1\] NA attr(,“returns”) \[1\] NA
 attr(,“math”) \[1\] “{\text{s} }+{\text{.scale} }\left\[\right\]”
 
@@ -170,7 +170,7 @@ attr(,“math”) \[1\] “{\text{s} }+{\text{.scale} }\left\[\right\]”
 display(qf_logistic)
 ```
 
-$$Q(u)=\left\{ -\left[-\ln(1- {\left[1-u\right]} )\right]\right\} +\left\{ -\ln(1- {u} )\right\} $$
+$$Q(u)=\left\langle-\left[-\ln(1- {\left[1-u\right]} )\right]\right\rangle+\left\langle-\ln(1- {u} )\right\rangle$$
 
 ``` r
 qf_logistic(p_grd, mu=4, s=2)
@@ -204,7 +204,7 @@ qf_fsld <- s_exp %>%
 display(qf_fsld)
 ```
 
-$$Q(u)={ {\alpha} }+{ {\beta} }\left[\left\{ (1-{ {\delta} })\left\{ -\left[-\ln(1- {\left[1-u\right]} )\right]\right\} +{ {\delta} }\left\{ -\ln(1- {u} )\right\} \right\} +\left\{ {\text{k} }\left[ {u} \right]\right\} \right]$$
+$$Q(u)={ {\alpha} }+{ {\beta} }\left[\left\langle(1-{ {\delta} })\left\langle-\left[-\ln(1- {\left[1-u\right]} )\right]\right\rangle+{ {\delta} }\left\langle-\ln(1- {u} )\right\rangle\right\rangle+\left\langle{\text{k} }\left[ {u} \right]\right\rangle\right]$$
 
 ``` r
 qf_fsld(p_grd, delta=0.21, alpha=4, beta=2, k=1)
@@ -316,7 +316,7 @@ qlogistic <- s_exp %>%
 display(qlogistic)
 ```
 
-$$Q(u)=\left\{ -\left[-\ln(1- {\left[1-u\right]} )\right]\right\} +\left\{ -\ln(1- {u} )\right\} $$
+$$Q(u)=\left\langle-\left[-\ln(1- {\left[1-u\right]} )\right]\right\rangle+\left\langle-\ln(1- {u} )\right\rangle$$
 
 ``` r
 qlogistic(p_grd) %>% plot(p_grd,., type="l")
@@ -342,7 +342,7 @@ qskewlogis <- s_exp %>%
 display(qskewlogis)
 ```
 
-$$Q(u)=(1-{ {\delta} })\left\{ -\left[-\ln(1- {\left[1-u\right]} )\right]\right\} +{ {\delta} }\left\{ -\ln(1- {u} )\right\} $$
+$$Q(u)=(1-{ {\delta} })\left\langle-\left[-\ln(1- {\left[1-u\right]} )\right]\right\rangle+{ {\delta} }\left\langle-\ln(1- {u} )\right\rangle$$
 
 ``` r
 qskewlogis(p_grd, delta=0.9) %>% plot(p_grd,., type="l")
