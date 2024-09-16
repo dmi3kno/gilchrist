@@ -9,6 +9,7 @@
 \alias{ptr_KM}
 \alias{ptr_DUS}
 \alias{ptr_MO}
+\alias{ptr_GMO}
 \alias{ptr_TL}
 \alias{ptr_oddITL}
 \alias{ptr_modi1}
@@ -30,6 +31,8 @@ ptr_KM(fun)
 ptr_DUS(fun)
 
 ptr_MO(fun, nm_mopar = ".mopar", mopar = 1)
+
+ptr_GMO(fun, nm_mopar = ".mopar", nm_pow = ".pow", mopar = 1, pow = 1)
 
 ptr_TL(fun, nm_tlpar = ".tlpar", tlpar = 1)
 
@@ -53,7 +56,8 @@ Should be a valid unique variable name other than "u"}
 
 \item{.qf}{quantile function made with gilchrist (or wrapped basic function able to accept optional arguments through ellipsis) to be applied as p-transformation}
 
-\item{nm_mopar}{character. Name of the Marchall-Olking parameter. Default \code{.mopar}}
+\item{nm_mopar}{character. Name of the Marchall-Olking parameter. Default \code{.mopar}.
+Should be a valid unique variable name other than "u"}
 
 \item{mopar}{numeric. Default value for MO parameter. Default is 1.}
 

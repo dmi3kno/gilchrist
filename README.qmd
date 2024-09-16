@@ -566,6 +566,33 @@ qmodiexpexp1(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
 
 ```
 
+## Marshall-Olkin and its generalization
+
+Marshall-Olkin is a popular p-transformation of the following form
+
+```{r}
+qMO <- s_unif %>%
+  ptr_MO("theta")
+```
+
+```{r}
+#| output: 'asis'
+display(qMO)
+```
+
+Harris (Generalized Marshall Olkin) is an extension of the previous transformation (rearranged for convenience)
+
+```{r}
+qGMO <- s_unif %>%
+  ptr_GMO("theta", "kappa")
+```
+
+```{r}
+#| output: 'asis'
+display(qGMO)
+```
+
+
 ## Other examples
 
 Dagum distribution seems to be a product of inverse Kumaraswamy and Lehmann Type I transformed uniform distribution.

@@ -167,6 +167,38 @@ ptr_MO <- function(fun, nm_mopar=".mopar", mopar=1) {
   as_qf(as.function(c(formals_, body_)), math = math_f)
 }
 
+# Generalized Marshall-Olkin (Harris) p-transformation
+#' @param mopar numeric. Default value for MO parameter. Default is 1.
+#' @param nm_mopar character. Name of the Marchall-Olking parameter. Default `.mopar`. 
+#' Should be a valid unique variable name other than "u"
+#' @param pow character.  The name of the power parameter. The default name is `.pow`. 
+#' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
+#' Should be a valid unique variable name other than "u"
+#' @rdname ptransformations
+#' @export
+ptr_GMO <- function(fun, nm_mopar=".mopar", nm_pow=".pow", mopar=1, pow=1) {
+  stopifnot("ptr_GMO() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, .mopar=mopar, .pow=pow, ...){
+    stopifnot("Generalized Marshall-Olkin parameter should be positive"=.mopar>0)
+    stopifnot("Generalized Marshall-Olkin power parameter should be positive"=.pow>0)
+    fun(1-(1-u)/( .mopar+(1-.mopar)*(1-u)^.pow )^(1/.pow), ...)
+  }
+
+  math_x <- math(fun)
+  math_y <- paste0(r"--{1-\frac{1-&}{\left( }--", prmtr(nm_mopar) ,r"--{+\left(1-}--", 
+                    prmtr(nm_mopar),  r"--( \right)\left(1-& \right)^)--", prmtr(nm_pow), 
+                    r"--( \right)^\frac{1}{ )--", prmtr(nm_pow), r"--( }})--")
+  math_f <- fn_insert(math_x, math_y)
+
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".mopar"] <- nm_mopar
+  names(formals_)[names(formals_) == ".pow"] <- nm_pow
+  body_ <- do.call(substitute, list(body_, list(.mopar = as.symbol(nm_mopar))))
+  body_ <- do.call(substitute, list(body_, list(.pow = as.symbol(nm_pow))))
+  as_qf(as.function(c(formals_, body_)), math = math_f)
+}
+
 # Topp-Leone (TL) p-transformation
 #' @param tlpar numeric. Default value for MO parameter. Default is 1.
 #' @param nm_tlpar character. Name of the Marchall-Olking parameter. Default `.tlpar`

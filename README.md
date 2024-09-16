@@ -75,7 +75,7 @@ s_exp
 #> {
 #>     -log(1 - u)
 #> }
-#> <bytecode: 0x5e38092b5d40>
+#> <bytecode: 0x5a3cae673de8>
 #> <environment: namespace:gilchrist>
 #> attr(,"class")
 #> [1] "qf"       "function"
@@ -161,7 +161,7 @@ qf_logistic <- s_exp %>%
 function (u, …) { s_fun \<- qtr_scale(fun, nm_scale = nm_scale, scale =
 scale, .invert = .invert) ss_fun \<- qtr_shift(s_fun, nm_shift =
 nm_location, shift = location) ss_fun(u, …) } \<bytecode:
-0x5e380586e5a8\> \<environment: 0x5e380585f338\> attr(,“class”) \[1\]
+0x5a3cacaf6358\> \<environment: 0x5a3cacaf5248\> attr(,“class”) \[1\]
 “qf” “function” attr(,“expects”) \[1\] NA attr(,“returns”) \[1\] NA
 attr(,“math”) \[1\] “{\text{s} }+{\text{.scale} }\left\[\right\]”
 
@@ -719,6 +719,35 @@ qmodiexpexp1(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
 #> [15] 1.4521758
 ```
 
+## Marshall-Olkin and its generalization
+
+Marshall-Olkin is a popular p-transformation of the following form
+
+``` r
+qMO <- s_unif %>%
+  ptr_MO("theta")
+```
+
+``` r
+display(qMO)
+```
+
+$$Q(u)= {\left[\frac{{ {\theta} } u}{1-\left(1-{ {\theta} } \right)u} \right]} $$
+
+Harris (Generalized Marshall Olkin) is an extension of the previous
+transformation (rearranged for convenience)
+
+``` r
+qGMO <- s_unif %>%
+  ptr_GMO("theta", "kappa")
+```
+
+``` r
+display(qGMO)
+```
+
+$$Q(u)= {\left[1-\frac{1-u}{\left( { {\theta} }+\left(1-{ {\theta} } \right)\left(1-u \right)^{ {\kappa} } \right)^\frac{1}{ { {\kappa} } }}\right]} $$
+
 ## Other examples
 
 Dagum distribution seems to be a product of inverse Kumaraswamy and
@@ -778,7 +807,7 @@ $$Q(u)={ {\theta} }\left[\text{exp}(\left[{ {\beta} }\left[{\text{.location} }+\
 qmuhammad(runif(1e3), theta=2, beta=7, alpha=0.7) %>% hist(50)
 ```
 
-<img src="man/figures/README-unnamed-chunk-48-1.png"
+<img src="man/figures/README-unnamed-chunk-52-1.png"
 style="width:100.0%" />
 
 Fréchet is Reciprocate transform of Weibull. Weibull is power transform
@@ -797,7 +826,7 @@ qfrechet <- s_exp %>%
 qfrechet(p_grd, m=0, s=1, alpha=5)%>%plot(p_grd, ., type="l")
 ```
 
-<img src="man/figures/README-unnamed-chunk-49-1.png"
+<img src="man/figures/README-unnamed-chunk-53-1.png"
 style="width:100.0%" />
 
 What other cool transformations do you know? Please let me know!
