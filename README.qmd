@@ -417,7 +417,6 @@ $$
 Q(u)=\left[\ln\left(1-\frac{\ln(1-u)}{\lambda}\right)\right]^{1/\beta}
 $$
 
-
 ```{r}
 #| output: 'asis'
 qchen <- s_exp %>% 
@@ -425,6 +424,21 @@ qchen <- s_exp %>%
   qtr_fun(log1p) %>% 
   qtr_lehmann1("beta")
 display(qchen)
+```
+
+Gompertz distribution is just an exponential Q-transformed with `log1p()` function.
+
+$$
+Q(u)=\frac{1}{b}\ln\left(1-\frac{1}{\eta}\ln(1-u)\right)
+$$
+
+```{r}
+#| output: 'asis'
+qgompertz <- s_exp %>%
+  qtr_scale("eta", .invert = TRUE) %>%
+  qtr_fun(log1p) %>%
+  qtr_scale("b", .invert = TRUE)
+display(qgompertz)
 ```
 
 
@@ -448,6 +462,7 @@ qshashnorm <- s_norm %>%
   qtr_shash(nm_tail="delta", nm_asymm="epsilon")
 display(qshashnorm)
 ```
+
 ```{r}
 qs <- qshashnorm(p_grd, delta=2, epsilon=2)
 plot(p_grd, qs, type="l")
@@ -483,6 +498,7 @@ qupareto <- s_unif %>%
   qtr_epsilon("beta")
 display(qupareto)
 ```
+
 ```{r}
 qs <- qupareto(p_grd, 3, 0.1)
 plot(p_grd, qs, type="l")
@@ -491,10 +507,10 @@ plot(p_grd, qs, type="l")
 
 ### DUS-transformation
 
-Finally, we can apply the DUS-transformation proposed by @kumar2015MethodProposingNew
+Finally, we can apply the DUS-transformation proposed by @kumar2015MethodProposingNew. DUS is a particular case of a more general Alpha-Power transformation (for $\alpha=e$). 
 
 $$
-H(u)=\ln(1-u+eu)
+H(u)=\frac{\ln(1+\alpha u-u)}{\ln(\alpha)}
 $$
 
 The authors used it to transform exponential distribution
@@ -503,11 +519,12 @@ The authors used it to transform exponential distribution
 #| output: 'asis'
 qDUSexp <- s_exp %>%
   qtr_scale("lambda", .invert = TRUE) %>%
-  ptr_DUS()
+  ptr_AP1("e")
 
 qs <- qDUSexp(p_grd, lambda=0.5)
 display(qDUSexp)
 ```
+
 ```{r}
 plot(p_grd, qs, type="l")
 lines(p_grd, qexp(p_grd, 0.5), col=2)
@@ -517,10 +534,10 @@ lines(p_grd, qexp(p_grd, 0.5), col=2)
 
 ### Kavya-Manoharan (KM) p-transformation
 
-This p-transformation proposed in @kavya2021ParsimoniousModelsLifetimes is the reflected and shifted DUS transformation we considered above. It could as well be called DUS Type II transformation
+This p-transformation proposed in @kavya2021ParsimoniousModelsLifetimes is the reflected and shifted DUS transformation we considered above. It could as well be called DUS Type II transformation. Again KM is a special case of a more general Alpha Power Type II (reflected and shifted AP1) transformation with $\alpha=e$
 
 $$
-H(u)=-\ln\left(1-u\frac{e-1}{e}\right)
+H(u)=1-\frac{\ln(u-\alpha u+\alpha)}{\ln(\alpha)}
 $$
 
 The authors apply this p-transformation to Weibuill distribution
@@ -530,9 +547,10 @@ The authors apply this p-transformation to Weibuill distribution
 qf_KMweibull <- s_exp %>% 
   qtr_lehmann1("k") %>% 
   qtr_scale("lambda") %>% 
-  ptr_KM()
+  ptr_AP2("e")
 display(qf_KMweibull)
 ```
+
 ```{r}
 qf_KMweibull(p_grd, lambda=3, k=4)%>%
   plot(p_grd,., type="l")
@@ -560,6 +578,7 @@ qmodiexpexp1 <- function(u, lambda, alpha, beta, delta){
 }
 display(qmodiexpexp)
 ```
+
 ```{r}
 qmodiexpexp(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)
 qmodiexpexp1(p_grd, lambda=3, alpha=2, beta=0.1, delta=5)

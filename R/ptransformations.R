@@ -113,34 +113,48 @@ ptr_half <- function(fun){
   as_qf(f, math = math_f)
 }
 
-# Kavya-Manoharan (KM) p-transformation
+#' Alpha-Power Type 1 p-transformation
+#' 
+#' @param nm_ap character. Name of AP parameter. Default is .ap
+#' @param ap numeric. Fixed value for AP parameter. Default is exp(1), DUS-transformation.
 #' @rdname ptransformations
 #' @export
-ptr_KM <- function(fun){
-  stopifnot("ptr_KM() is expecting a quantile function"=inherits(fun, c("function", "qf")))
-  f <- function(u, ...){
-    em1e <- expm1(1)/exp(1)
-    fun(-log(1-u*em1e), ...)
+ptr_AP1 <- function(fun, nm_ap=".ap", ap=exp(1)){
+  stopifnot("ptr_AP1() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, .ap=ap, ...){
+    fun(log(1+ .ap*u -u)/log(.ap), ...)
   }
   math_x <- math(fun)
-  math_y <- paste0(r"--{-\ln \left(1-&\frac{e-1}{e} \right)}--")
+  math_y <- paste0(r"--(\frac{\ln \left( 1 +)--", prmtr(nm_ap),
+                    r"--(& - & \right)}{\ln( )--", prmtr(nm_ap), r"--( )})--")
   math_f <- fn_insert(math_x, math_y)
 
-  as_qf(f, math = math_f)
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".ap"] <- nm_ap
+  body_ <- do.call(substitute, list(body_, list(.ap = as.symbol(nm_ap))))
+  as_qf(as.function(c(formals_, body_)), math=math_f)
 }
-# Dinesh-Umesh-Sanjay (DUS) p-transformation
+
+#' Alpha-Power Type 2 p-transformation
 #' @rdname ptransformations
 #' @export
-ptr_DUS <- function(fun){
-  stopifnot("ptr_DUS() is expecting a quantile function"=inherits(fun, c("function", "qf")))
-  f <- function(u, ...){
-    fun(log(1-u+exp(1)*u), ...)
+ptr_AP2 <- function(fun, nm_ap=".ap", ap=exp(1)){
+  stopifnot("ptr_AP2() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, .ap=ap, ...){
+    fun(1-log(u- .ap*u +.ap)/log(.ap), ...)
   }
   math_x <- math(fun)
-  math_y <- paste0(r"--{\ln \left( 1 - & + e& \right)}--")
+  math_y <- paste0(r"--(1-\frac{\ln \left( & -)--", prmtr(nm_ap),
+                    r"--(& +)--", prmtr(nm_ap) ,r"--(\right)}{\ln( )--", 
+                    prmtr(nm_ap), r"--( )})--")
   math_f <- fn_insert(math_x, math_y)
 
-  as_qf(f, math = math_f)
+  formals_ <- formals(f)
+  body_ <- body(f)
+  names(formals_)[names(formals_) == ".ap"] <- nm_ap
+  body_ <- do.call(substitute, list(body_, list(.ap = as.symbol(nm_ap))))
+  as_qf(as.function(c(formals_, body_)), math=math_f)
 }
 
 # Marshall-Olkin (MO) p-transformation

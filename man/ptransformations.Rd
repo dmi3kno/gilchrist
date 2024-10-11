@@ -6,8 +6,8 @@
 \alias{ptr_fun}
 \alias{ptr_qf}
 \alias{ptr_half}
-\alias{ptr_KM}
-\alias{ptr_DUS}
+\alias{ptr_AP1}
+\alias{ptr_AP2}
 \alias{ptr_MO}
 \alias{ptr_GMO}
 \alias{ptr_TL}
@@ -26,9 +26,9 @@ ptr_qf(fun, .qf)
 
 ptr_half(fun)
 
-ptr_KM(fun)
+ptr_AP1(fun, nm_ap = ".ap", ap = exp(1))
 
-ptr_DUS(fun)
+ptr_AP2(fun, nm_ap = ".ap", ap = exp(1))
 
 ptr_MO(fun, nm_mopar = ".mopar", mopar = 1)
 
@@ -55,6 +55,10 @@ Should be a valid unique variable name other than "u"}
 \item{.fun}{function without arguments(or with all default arguments) to be applied as Q-transformation}
 
 \item{.qf}{quantile function made with gilchrist (or wrapped basic function able to accept optional arguments through ellipsis) to be applied as p-transformation}
+
+\item{nm_ap}{character. Name of AP parameter. Default is .ap}
+
+\item{ap}{numeric. Fixed value for AP parameter. Default is exp(1), DUS-transformation.}
 
 \item{nm_mopar}{character. Name of the Marchall-Olking parameter. Default \code{.mopar}.
 Should be a valid unique variable name other than "u"}
