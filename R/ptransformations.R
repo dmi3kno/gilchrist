@@ -122,6 +122,7 @@ ptr_half <- function(fun){
 ptr_AP1 <- function(fun, nm_ap=".ap", ap=exp(1)){
   stopifnot("ptr_AP1() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .ap=ap, ...){
+    stopifnot("Expecting positive ap not equal to 1"=(.ap != 1 && .ap>0))
     fun(log(1+ .ap*u -u)/log(.ap), ...)
   }
   math_x <- math(fun)
@@ -142,6 +143,7 @@ ptr_AP1 <- function(fun, nm_ap=".ap", ap=exp(1)){
 ptr_AP2 <- function(fun, nm_ap=".ap", ap=exp(1)){
   stopifnot("ptr_AP2() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .ap=ap, ...){
+    stopifnot("Expecting positive ap not equal to 1"=(.ap != 1 && .ap>0))
     fun(1-log(u- .ap*u +.ap)/log(.ap), ...)
   }
   math_x <- math(fun)
