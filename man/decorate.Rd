@@ -10,7 +10,9 @@ qtr_decorate(
   nm_scale = ".scale",
   location = 0,
   scale = 1,
-  .invert = FALSE
+  .invert = FALSE,
+  pfn_location = NULL,
+  pfn_scale = NULL
 )
 }
 \arguments{
@@ -25,6 +27,8 @@ qtr_decorate(
 \item{scale}{numeric. Fixed value for scale. Default is 1.}
 
 \item{.invert}{logical. Should the scale parameter be inverted (1/.scale) before applying. Default FALSE}
+
+\item{pfn_location, pfn_scale}{parameter transforming functions. Default is none.}
 }
 \value{
 modified function with location and scale parameter. The parameter names specified by the user.

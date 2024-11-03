@@ -16,9 +16,9 @@
 \alias{ptr_modi2}
 \title{p-transformations}
 \usage{
-ptr_lehmann1(fun, nm_pow = ".pow", pow = 1, .invert = TRUE)
+ptr_lehmann1(fun, nm_pow = ".pow", pow = 1, .invert = TRUE, pfn_pow = NULL)
 
-ptr_lehmann2(fun, nm_pow = ".pow", pow = 1, .invert = TRUE)
+ptr_lehmann2(fun, nm_pow = ".pow", pow = 1, .invert = TRUE, pfn_pow = NULL)
 
 ptr_fun(fun, .fun)
 
@@ -26,21 +26,45 @@ ptr_qf(fun, .qf)
 
 ptr_half(fun)
 
-ptr_AP1(fun, nm_ap = ".ap", ap = exp(1))
+ptr_AP1(fun, nm_ap = ".ap", ap = 1, pfn_ap = exp)
 
-ptr_AP2(fun, nm_ap = ".ap", ap = exp(1))
+ptr_AP2(fun, nm_ap = ".ap", ap = 1, pfn_ap = exp)
 
-ptr_MO(fun, nm_mopar = ".mopar", mopar = 1)
+ptr_MO(fun, nm_mopar = ".mopar", mopar = 1, pfn_mopar = NULL)
 
-ptr_GMO(fun, nm_mopar = ".mopar", nm_pow = ".pow", mopar = 1, pow = 1)
+ptr_GMO(
+  fun,
+  nm_mopar = ".mopar",
+  nm_pow = ".pow",
+  mopar = 1,
+  pow = 1,
+  pfn_mopar = NULL,
+  pfn_pow = NULL
+)
 
-ptr_TL(fun, nm_tlpar = ".tlpar", tlpar = 1)
+ptr_TL(fun, nm_tlpar = ".tlpar", tlpar = 1, pfn_tlpar = NULL)
 
 ptr_oddITL(fun)
 
-ptr_modi1(fun, nm_a = ".modialpha", nm_b = ".modibeta", a = 1, b = 1)
+ptr_modi1(
+  fun,
+  nm_a = ".modialpha",
+  nm_b = ".modibeta",
+  a = 1,
+  b = 1,
+  pfn_a = NULL,
+  pfn_b = NULL
+)
 
-ptr_modi2(fun, nm_a = ".modialpha", nm_b = ".modibeta", a = 1, b = 1)
+ptr_modi2(
+  fun,
+  nm_a = ".modialpha",
+  nm_b = ".modibeta",
+  a = 1,
+  b = 1,
+  pfn_a = NULL,
+  pfn_b = NULL
+)
 }
 \arguments{
 \item{fun}{function}
@@ -52,30 +76,42 @@ Should be a valid unique variable name other than "u"}
 
 \item{.invert}{logical. Should the power parameter be inverted (1/.pow) before applying. Default TRUE}
 
+\item{pfn_pow}{function. Parameter transforming function for parameter pow}
+
 \item{.fun}{function without arguments(or with all default arguments) to be applied as Q-transformation}
 
 \item{.qf}{quantile function made with gilchrist (or wrapped basic function able to accept optional arguments through ellipsis) to be applied as p-transformation}
 
 \item{nm_ap}{character. Name of AP parameter. Default is .ap}
 
-\item{ap}{numeric. Fixed value for AP parameter. Default is exp(1), DUS-transformation.}
+\item{ap}{numeric. Fixed value for AP parameter. Default is 1, DUS-transformation.}
+
+\item{pfn_ap}{parameter transforming function. Default is exp()}
 
 \item{nm_mopar}{character. Name of the Marchall-Olking parameter. Default \code{.mopar}.
 Should be a valid unique variable name other than "u"}
 
 \item{mopar}{numeric. Default value for MO parameter. Default is 1.}
 
+\item{pfn_mopar}{parameter transforming function. Default in none.}
+
 \item{nm_tlpar}{character. Name of the Marchall-Olking parameter. Default \code{.tlpar}}
 
 \item{tlpar}{numeric. Default value for MO parameter. Default is 1.}
 
-\item{nm_a}{character.  The name of the Modi parameter \code{alpha}. The default name is \code{.modialpha}.}
+\item{pfn_tlpar}{parameter transforming function. Default is none.}
 
-\item{nm_b}{character.  The name of the Modi parameter \code{beta}. The default name is \code{.modibeta}. Default value is 1.}
+\item{nm_a}{character. The name of the Modi parameter \code{alpha}. The default name is \code{.modialpha}.}
+
+\item{nm_b}{character. The name of the Modi parameter \code{beta}. The default name is \code{.modibeta}. Default value is 1.}
 
 \item{a}{numeric. Default value of the Modi parameter \code{alpha}. Default is 1}
 
 \item{b}{numeric. Default value of the Modi parameter \code{beta}. Default is 2}
+
+\item{pfn_a}{function. Parameter transforming function. Default is none.}
+
+\item{pfn_b}{function. Parameter transforming function. Default is none.}
 }
 \value{
 modified function

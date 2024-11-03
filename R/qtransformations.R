@@ -13,6 +13,7 @@
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
 #' Should be a valid unique variable name other than "u"
 #' @param .invert logical. Should the power parameter be inverted (1/.pow) before applying. Default TRUE
+#' @param pfn_pow function. Parameter transforming function for power argument. Default is none.
 #' @return modified function
 #' @rdname qtransformations
 #' @export
@@ -21,15 +22,15 @@
 #' qf_weibull <- qtr_lehmann1(qf_exp, "k")
 #' qf_weibull(0.5, k = 1/5)
 #' qweibull(0.5, shape = 5)
-qtr_lehmann1 <- function(fun, nm_pow=".pow", pow=1, .invert=TRUE){
+qtr_lehmann1 <- function(fun, nm_pow=".pow", pow=1, .invert=TRUE, pfn_pow=NULL){
   stopifnot("qtr_lehmann1() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .pow=pow, ...){
-    stopifnot("Expecting positive power"=(.pow>=0))
-    if(.invert) .pow <- 1/.pow
+    .pow <- prm_tr(.pow, .invert, pfn_pow)
+    stopifnot("Power parameter should be non-negative"=.pow>=0)
     fun(u,...)^(.pow)
   }
   math_y <- math(fun)
-  math_x <- paste0(r"--(&^{)--", prmtr(nm_pow, .invert) ,r"--(})--")
+  math_x <- paste0(r"--(&^{)--", prm(nm_pow, .invert, pfn_pow) ,r"--(})--")
   math_f <-  fn_insert(math_x, math_y)
 
   formals_ <- formals(f)
@@ -75,16 +76,18 @@ qtr_shift_reciprocate <- function(fun){
 
 #' @param nm_offset character. Name of the offset argument. Default is `.offset`
 #' @param offset numeric. Default value for odd offset. Defaults to 1
+#' @param pfn_offset parameter transforming function for offset argument. Default is none.
 #' @rdname qtransformations
 #' @export
-qtr_odd <- function(fun, nm_offset=".offset", offset=1){
+qtr_odd <- function(fun, nm_offset=".offset", offset=1, pfn_offset=NULL){
   stopifnot("qtr_odd() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .offset=offset, ...){
+    .offset <- prm_tr(.offset, FALSE, pfn_offset)
     fun(u, ...)/(.offset + fun(u, ...))
   }
 
   math_y <- math(fun)
-  math_x <- paste0(r"--(\frac{&}{ )--", prmtr(nm_offset, FALSE), r"--(+ & })--")
+  math_x <- paste0(r"--(\frac{&}{ )--", prm(nm_offset, FALSE, pfn_offset), r"--(+ & })--")
   math_f <-  fn_insert(math_x, math_y)
 
   formals_ <- formals(f)
@@ -99,17 +102,18 @@ qtr_odd <- function(fun, nm_offset=".offset", offset=1){
 #' @export
 #' @examples
 #' qtr_epsilon(qnorm)
-qtr_epsilon <- function(fun, nm_pow=".pow", pow=1){
+qtr_epsilon <- function(fun, nm_pow=".pow", pow=1, pfn_pow=NULL){
   stopifnot("qtr_epsilon() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .pow=pow, ...){
+    .pow <- prm_tr(.pow, TRUE, pfn_pow)
     x <- fun(u,...)
     ((1+x)^(1/.pow)-1)/
       ((1+x)^(1/.pow)+1)
   }
 
   math_y <- math(fun)
-  math_x <- paste0(r"--(\frac{ \left(1+& \right)^)--", prmtr(nm_pow, TRUE), 
-              r"--(-1}{ \left( 1+& \right)^)--", prmtr(nm_pow, TRUE), r"--( +1})--")
+  math_x <- paste0(r"--(\frac{ \left(1+& \right)^)--", prm(nm_pow, TRUE, pfn_pow),
+              r"--(-1}{ \left( 1+& \right)^)--", prm(nm_pow, TRUE, pfn_pow), r"--( +1})--")
   math_f <-  fn_insert(math_x, math_y)
 
   formals_ <- formals(f)
@@ -120,26 +124,30 @@ qtr_epsilon <- function(fun, nm_pow=".pow", pow=1){
 }
 
 #' @param tail numeric. Fixed value for the tail parameter. Default is 1
-#' @param nm_tail character.  The name of the tail thickness parameter. The default name is `.dlt`. 
+#' @param nm_tail character.  The name of the tail thickness parameter. The default name is `.dlt`.
 #' The tail thickness parameter should be positive (default value is 1).
 #' Should be a valid unique variable name other than "u"
 #' The asymmetry parameter can be positive or negative (default value is 0).
-#' @param asymm numeric. Default value for 
-#' @param nm_asymm character.  The name of the asymmetry parameter. The default name is `.eps`. 
+#' @param asymm numeric. Default value for
+#' @param nm_asymm character.  The name of the asymmetry parameter. The default name is `.eps`.
 #' Should be a valid unique variable name other than "u"
+#' @param pfn_tail,pfn_asymm functions. Parameter transforming functions for tail
+#' and asymmetry parameters, respectively. Default is none.
 #' @rdname qtransformations
 #' @export
 #' @examples
 #' qtr_shash(qnorm)
-qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps", tail=1, asymm=0){
+qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps", tail=1, asymm=0, pfn_tail=NULL, pfn_asymm=NULL){
   stopifnot("qtr_shash() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .eps=asymm, .dlt=tail, ...){
-    sinh(1/.dlt*(fun(u,...)- .eps))
+    .dlt <- prm_tr(.dlt, TRUE, pfn_tail)
+    .eps <- prm_tr(.eps, FALSE, pfn_asymm)
+    sinh(.dlt*(fun(u,...)- .eps))
   }
 
   math_y <- math(fun)
-  math_x <- paste0(r"--(\text{sinh}\left( )--", prmtr(nm_tail, TRUE),
-              r"--( \left(& - )--", prmtr(nm_asymm, FALSE), 
+  math_x <- paste0(r"--(\text{sinh}\left( )--", prm(nm_tail, TRUE, pfn_tail),
+              r"--( \left(& - )--", prm(nm_asymm, FALSE, pfn_asymm),
               r"--( \right)\right)  )--")
   math_f <-  fn_insert(math_x, math_y)
 
@@ -152,9 +160,10 @@ qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps", tail=1, asymm=0){
   as_qf(as.function(c(formals_, body_)), math=math_f)
 }
 
-#' @param base numeric. Fixed value of the base parameter. The default value is exp(1) (Eulers constant).
+#' @param base numeric. Fixed value of the base parameter. The default value is 1 (Eulers constant).
 #' @param nm_base character. The name of the base parameter.
 #' Should be a valid unique variable name other than "u"
+#' @param pfn_base function. Parameter transforming function for base argument. Default is exp()
 #' @rdname qtransformations
 #' @export
 #' @examples
@@ -162,15 +171,15 @@ qtr_shash <- function(fun, nm_tail=".dlt", nm_asymm=".eps", tail=1, asymm=0){
 #' qf_lognorm <- qtr_exponentiate(qf_norm)
 #' qf_lognorm(0.2, mu=2, sigma=0.1)
 #' qlnorm(0.2, 2, 0.1)
-qtr_exponentiate <- function(fun, nm_base=".base", base=exp(1), .invert=FALSE){
+qtr_exponentiate <- function(fun, nm_base=".base", base=1, .invert=FALSE, pfn_base=exp){
   stopifnot("qtr_exponentiate() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .base=base, ...){
-    if(.invert) .base <- 1/.base
+    .base <- prm_tr(.base, .invert, pfn_base)
     (.base)^fun(u,...)
   }
 
   math_y <- math(fun)
-  math_x <- paste0(prmtr(nm_base, .invert), r"--(^& )--")
+  math_x <- paste0(prm(nm_base, .invert, pfn_base), r"--(^& )--")
   math_f <-  fn_insert(math_x, math_y)
 
   formals_ <- formals(f)
@@ -190,11 +199,11 @@ qtr_fun <- function(fun, .fun){
   stopifnot("qtr_fun() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, ...)
     .fun(fun(u,...))
-  
+
   math_y <- math(fun)
   math_x <- paste0(r"--(\text{)--", deparse(substitute(.fun)), "}(&)")
   math_f <- fn_insert(math_x, math_y)
-  
+
   as_qf(f, math=math_f)
 }
 
@@ -206,11 +215,11 @@ qtr_qf <- function(fun, .qf){
   stopifnot(".qf in qtr_qf() should be a quantile function"=inherits(.qf, c("function", "qf")))
   f <- function(u, ...)
     .qf(fun(u,...), ...)
-  
+
   math_y <- math(fun)
   math_x <- math(.qf)
   math_f <- fn_insert(math_x, math_y)
-  
+
   as_qf(f, math=math_f)
 }
 

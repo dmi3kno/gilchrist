@@ -1,4 +1,4 @@
-#' Wrapper for producing classed functions. 
+#' Wrapper for producing classed functions.
 #'
 #' Returns function of classes `c("function", "qf")`
 #' Subclass can be added through optional `subclass` argument
@@ -16,6 +16,19 @@ as_qf <- function(fun, subclass=NULL, expects=NA, returns=NA, math=NA){
   attr(fun, "returns") <- returns
   attr(fun, "math") <- math
   fun
+}
+
+#' @param x parameter value
+#' @param .invert logical. Flag for whether parameter should be inverted
+#' @param .fun function. Reference to parameter transforming function
+#' @keywords internal
+prm_tr <- function(x, .invert, .fun){
+  if(!is.null(.fun)){
+    stopifnot("Expecting a single-argument function as a parameter transform"=inherits(.fun, "function"))
+    x=.fun(x)
+  }
+  if(.invert) return(1/x)
+  x
 }
 
 #' Accessors and replacers for function attributes

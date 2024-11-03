@@ -71,11 +71,10 @@ function, so we can inspect it.
 
 ``` r
 s_exp
-#> function (u, ...) 
-#> {
-#>     -log(1 - u)
+#> function(u, ...){
+#>   -log(1-u)
 #> }
-#> <bytecode: 0x5f6d80695c58>
+#> <bytecode: 0x5f52e75f2358>
 #> <environment: namespace:gilchrist>
 #> attr(,"class")
 #> [1] "qf"       "function"
@@ -158,12 +157,13 @@ qf_logistic <- s_exp %>%
   qtr_decorate("mu", "s")
 ```
 
-function (u, …) { s_fun \<- qtr_scale(fun, nm_scale = nm_scale, scale =
-scale, .invert = .invert) ss_fun \<- qtr_shift(s_fun, nm_shift =
-nm_location, shift = location) ss_fun(u, …) } \<bytecode:
-0x5f6d7eb6c108\> \<environment: 0x5f6d7eb6b030\> attr(,“class”) \[1\]
-“qf” “function” attr(,“expects”) \[1\] NA attr(,“returns”) \[1\] NA
-attr(,“math”) \[1\] “{\text{s} }+{\text{.scale} }\left\[\right\]”
+function(u, …){ s_fun \<- qtr_scale(fun, nm_scale=nm_scale, scale=scale,
+.invert=.invert, pfn_scale = pfn_scale) ss_fun \<- qtr_shift(s_fun,
+nm_shift=nm_location, shift=location, pfn_location=pfn_location)
+ss_fun(u,…) } \<bytecode: 0x5f52e5b8ffe8\> \<environment:
+0x5f52e5b9a9d0\> attr(,“class”) \[1\] “qf” “function” attr(,“expects”)
+\[1\] NA attr(,“returns”) \[1\] NA attr(,“math”) \[1\] “{\text{s}
+}+{\text{.scale} }\left\[\right\]”
 
 ``` r
 
@@ -662,7 +662,7 @@ qs <- qDUSexp(p_grd, lambda=0.5)
 display(qDUSexp)
 ```
 
-$$Q(u)=\frac{1}{ {\lambda}}\left[-\ln(1- {\left[\frac{\ln \left( 1 +{\text{e} }u - u \right)}{\ln( {\text{e} } )}\right]} )\right]$$
+$$Q(u)=\frac{1}{ {\lambda}}\left[-\ln(1- {\left[\frac{\ln \left( 1 +{\text{pfn_ap}\left( \text{e}\right)  }u - u \right)}{\ln( {\text{pfn_ap}\left( \text{e}\right)  } )}\right]} )\right]$$
 
 ``` r
 plot(p_grd, qs, type="l")
@@ -694,7 +694,7 @@ qf_KMweibull <- s_exp %>%
 display(qf_KMweibull)
 ```
 
-$$Q(u)={ {\lambda} }\left[\left[-\ln(1- {\left[1-\frac{\ln \left( u -{\text{e} }u +{\text{e} }\right)}{\ln( {\text{e} } )}\right]} )\right]^{\frac{1}{\text{k}}}\right]$$
+$$Q(u)={ {\lambda} }\left[\left[-\ln(1- {\left[1-\frac{\ln \left( u -{\text{pfn_ap}\left( \text{e}\right)  }u +{\text{pfn_ap}\left( \text{e}\right)  }\right)}{\ln( {\text{pfn_ap}\left( \text{e}\right)  } )}\right]} )\right]^{\frac{1}{\text{k}}}\right]$$
 
 ``` r
 qf_KMweibull(p_grd, lambda=3, k=4)%>%

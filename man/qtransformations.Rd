@@ -13,19 +13,33 @@
 \alias{qtr_oddITL}
 \title{Q-transformations}
 \usage{
-qtr_lehmann1(fun, nm_pow = ".pow", pow = 1, .invert = TRUE)
+qtr_lehmann1(fun, nm_pow = ".pow", pow = 1, .invert = TRUE, pfn_pow = NULL)
 
 qtr_reflect_shift(fun)
 
 qtr_shift_reciprocate(fun)
 
-qtr_odd(fun, nm_offset = ".offset", offset = 1)
+qtr_odd(fun, nm_offset = ".offset", offset = 1, pfn_offset = NULL)
 
-qtr_epsilon(fun, nm_pow = ".pow", pow = 1)
+qtr_epsilon(fun, nm_pow = ".pow", pow = 1, pfn_pow = NULL)
 
-qtr_shash(fun, nm_tail = ".dlt", nm_asymm = ".eps", tail = 1, asymm = 0)
+qtr_shash(
+  fun,
+  nm_tail = ".dlt",
+  nm_asymm = ".eps",
+  tail = 1,
+  asymm = 0,
+  pfn_tail = NULL,
+  pfn_asymm = NULL
+)
 
-qtr_exponentiate(fun, nm_base = ".base", base = exp(1), .invert = FALSE)
+qtr_exponentiate(
+  fun,
+  nm_base = ".base",
+  base = 1,
+  .invert = FALSE,
+  pfn_base = exp
+)
 
 qtr_fun(fun, .fun)
 
@@ -43,9 +57,13 @@ Should be a valid unique variable name other than "u"}
 
 \item{.invert}{logical. Should the power parameter be inverted (1/.pow) before applying. Default TRUE}
 
+\item{pfn_pow}{function. Parameter transforming function for power argument. Default is none.}
+
 \item{nm_offset}{character. Name of the offset argument. Default is \code{.offset}}
 
 \item{offset}{numeric. Default value for odd offset. Defaults to 1}
+
+\item{pfn_offset}{parameter transforming function for offset argument. Default is none.}
 
 \item{nm_tail}{character.  The name of the tail thickness parameter. The default name is \code{.dlt}.
 The tail thickness parameter should be positive (default value is 1).
@@ -59,10 +77,15 @@ Should be a valid unique variable name other than "u"}
 
 \item{asymm}{numeric. Default value for}
 
+\item{pfn_tail, pfn_asymm}{functions. Parameter transforming functions for tail
+and asymmetry parameters, respectively. Default is none.}
+
 \item{nm_base}{character. The name of the base parameter.
 Should be a valid unique variable name other than "u"}
 
-\item{base}{numeric. Fixed value of the base parameter. The default value is exp(1) (Eulers constant).}
+\item{base}{numeric. Fixed value of the base parameter. The default value is 1 (Eulers constant).}
+
+\item{pfn_base}{function. Parameter transforming function for base argument. Default is exp()}
 
 \item{.fun}{function without arguments(or with all default arguments) to be applied as Q-transformation}
 

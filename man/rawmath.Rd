@@ -4,7 +4,7 @@
 \alias{vrbl}
 \alias{br}
 \alias{fn_insert}
-\alias{prmtr}
+\alias{prm}
 \alias{display}
 \alias{inline}
 \title{Show raw math}
@@ -15,7 +15,7 @@ br(x, left = "[", right = "]")
 
 fn_insert(x, y, br = TRUE, left = "[", right = "]", pl = "&")
 
-prmtr(x, .invert = FALSE)
+prm(x, .invert = FALSE, .fun = NULL)
 
 display(.qf, prfx = "Q(u)=", pl = "&", u = "u")
 
@@ -35,6 +35,8 @@ inline(.qf, prfx = "Q(u)=", pl = "&", u = "u")
 \item{pl}{character. Single character inidicating the placeholder.}
 
 \item{.invert}{logical. Should the parameter be inverted (1/x). Default is FALSE}
+
+\item{.fun}{parameter transforming function}
 
 \item{prfx}{raw string. Prefix string. Default is Q(u)=}
 

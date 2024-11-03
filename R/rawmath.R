@@ -1,5 +1,5 @@
 #' Show raw math
-#' 
+#'
 #' @param x character. Variable name.
 #' @rdname rawmath
 #' @keywords internal
@@ -32,17 +32,20 @@ br <- function(x, left="[", right="]"){
 #' @rdname rawmath
 #' @keywords internal
 fn_insert <- function(x, y, br=TRUE, left="[", right="]", pl = "&"){
-  if(br) y <- br(y, left=left, right=right) 
+  if(br) y <- br(y, left=left, right=right)
   gsub(pattern=pl, replacement=y, x, fixed=TRUE)
 }
 
 #' @param x raw string. Parameter name. Will be passed `vrbl()`
 #' @param .invert logical. Should the parameter be inverted (1/x). Default is FALSE
+#' @param .fun parameter transforming function
 #' @rdname rawmath
 #' @keywords internal
-prmtr <- function(x, .invert=FALSE){
-  if(.invert) return(paste0(r"--(\frac{1}{)--",vrbl(x), r"--(})--"))
-  paste0(r"--({)--",vrbl(x), r"--( })--")
+prm <- function(x, .invert=FALSE, .fun=NULL){
+  v <- vrbl(x)
+  if(!is.null(.fun)) v <- paste0(r"--(\text{)--", deparse(substitute(.fun)),r"--(}\left( )--",v,r"--(\right) )--")
+  if(.invert) return(paste0(r"--(\frac{1}{)--",v, r"--(})--"))
+  paste0(r"--({)--",v, r"--( })--")
 }
 
 #' @param x raw string. Math string to be displayed

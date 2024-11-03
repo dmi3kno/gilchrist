@@ -17,15 +17,21 @@ qtr_reciprocate(fun)
 
 qtr_add(fun1, fun2)
 
-qtr_mix(fun1, fun2, nm_wt = ".wt", wt = 0.5)
+qtr_mix(fun1, fun2, nm_wt = ".wt", wt = 0.5, pfn_wt = NULL)
 
-qtr_cmix(fun1, fun2, nm_wt = ".wt", wt = 0.5)
+qtr_cmix(fun1, fun2, nm_wt = ".wt", wt = 0.5, pfn_wt = NULL)
 
 qtr_multiply(fun1, fun2)
 
-qtr_shift(fun, nm_shift = ".location", shift = 0)
+qtr_shift(fun, nm_shift = ".location", shift = 0, pfn_location = NULL)
 
-qtr_scale(fun, nm_scale = ".scale", scale = 1, .invert = FALSE)
+qtr_scale(
+  fun,
+  nm_scale = ".scale",
+  scale = 1,
+  .invert = FALSE,
+  pfn_scale = NULL
+)
 }
 \arguments{
 \item{fun, fun1, fun2}{functions}
@@ -34,15 +40,21 @@ qtr_scale(fun, nm_scale = ".scale", scale = 1, .invert = FALSE)
 
 \item{wt}{numeric. Fixed value of weight parameter (for mixing). The default is 0.5.}
 
+\item{pfn_wt}{parameter transforming function.  Default is none.}
+
 \item{nm_shift}{character.  The name of the shift parameter. The default name is \code{.location}. The default value is 0}
 
 \item{shift}{numeric. Fixed value for \code{.location}. The default value is 0}
+
+\item{pfn_location}{parameter transforming function. Default is none.}
 
 \item{nm_scale}{character.  The name of the scale parameter. The default name is \code{.scale}. The default value is 1}
 
 \item{scale}{numeric  Fixed value of the scale parameter. The default value is 1}
 
 \item{.invert}{logical. Should the scale parameter be inverted (1/.scale) before applying. Default FALSE}
+
+\item{pfn_scale}{parameter transforming function. Default is none.}
 }
 \value{
 modified function

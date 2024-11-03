@@ -57,24 +57,26 @@ qtr_add <- function(fun1, fun2){
   }
   math_y1 <- math(fun1)
   math_y2 <- math(fun2)
-  math_f <- paste0(br(math_y1, left=r"--{\langle}--", right=r"--{\rangle}--"), "+", 
+  math_f <- paste0(br(math_y1, left=r"--{\langle}--", right=r"--{\rangle}--"), "+",
                     br(math_y2, left=r"--{\langle}--", right=r"--{\rangle}--"))
   as_qf(f, math = math_f)
 }
 
-#' @param wt numeric. Fixed value of weight parameter (for mixing). The default is 0.5. 
+#' @param wt numeric. Fixed value of weight parameter (for mixing). The default is 0.5.
 #' @param nm_wt character.  The name of the weight parameter (for mixing). The default name is `.wt`. The default value is 0.5
+#' @param pfn_wt parameter transforming function.  Default is none.
 #' @rdname rules
 #' @export
-qtr_mix <- function(fun1, fun2, nm_wt=".wt", wt=0.5){
+qtr_mix <- function(fun1, fun2, nm_wt=".wt", wt=0.5, pfn_wt=NULL){
   f <- function(u, .wt=wt, ...){
+    .wt <-  prm_tr(.wt, FALSE, pfn_wt)
     (.wt)*fun1(u, ...) + (1-.wt)*fun2(u, ...)
   }
 
   math_y1 <- math(fun1)
   math_y2 <- math(fun2)
-  math_f <- paste0(prmtr(nm_wt, FALSE),  br(math_y1, left=r"--{\langle}--", right=r"--{\rangle}--"), 
-        "+(1-",prmtr(nm_wt, FALSE), ")", br(math_y2, left=r"--{\langle}--", right=r"--{\rangle}--"))
+  math_f <- paste0(prm(nm_wt, FALSE, pfn_wt),  br(math_y1, left=r"--{\langle}--", right=r"--{\rangle}--"),
+        "+(1-",prm(nm_wt, FALSE, pfn_wt), ")", br(math_y2, left=r"--{\langle}--", right=r"--{\rangle}--"))
 
   formals_ <- formals(f)
   body_ <- body(f)
@@ -85,15 +87,16 @@ qtr_mix <- function(fun1, fun2, nm_wt=".wt", wt=0.5){
 
 #' @rdname rules
 #' @export
-qtr_cmix <- function(fun1, fun2, nm_wt=".wt", wt=0.5){
+qtr_cmix <- function(fun1, fun2, nm_wt=".wt", wt=0.5, pfn_wt=NULL){
   f <- function(u, .wt=wt, ...){
+    .wt <-  prm_tr(.wt, FALSE, pfn_wt)
     (1-.wt)*fun1(u, ...) + (.wt)*fun2(u, ...)
   }
 
   math_y1 <- math(fun1)
   math_y2 <- math(fun2)
-  math_f <- paste0("(1-", prmtr(nm_wt, FALSE), ")", br(math_y1, left=r"--{\langle}--", right=r"--{\rangle}--"), 
-                          "+", prmtr(nm_wt, FALSE), br(math_y2, left=r"--{\langle}--", right=r"--{\rangle}--"))
+  math_f <- paste0("(1-", prm(nm_wt, FALSE, pfn_wt), ")", br(math_y1, left=r"--{\langle}--", right=r"--{\rangle}--"),
+                     "+", prm(nm_wt, FALSE, pfn_wt), br(math_y2, left=r"--{\langle}--", right=r"--{\rangle}--"))
 
   formals_ <- formals(f)
   body_ <- body(f)
@@ -115,7 +118,7 @@ qtr_multiply <- function(fun1, fun2){
 
   math_y1 <- math(fun1)
   math_y2 <- math(fun2)
-  math_f <- paste0(br(math_y1, left=r"--{\langle}--", right=r"--{\rangle}--"), r"--(\times)--", 
+  math_f <- paste0(br(math_y1, left=r"--{\langle}--", right=r"--{\rangle}--"), r"--(\times)--",
                     br(math_y2, left=r"--{\langle }--", right=r"--{\rangle}--"))
 
   as_qf(f, math = math_f)
@@ -123,14 +126,16 @@ qtr_multiply <- function(fun1, fun2){
 
 #' @param shift numeric. Fixed value for `.location`. The default value is 0
 #' @param nm_shift character.  The name of the shift parameter. The default name is `.location`. The default value is 0
+#' @param pfn_location parameter transforming function. Default is none.
 #' @rdname rules
 #' @export
-qtr_shift <- function(fun, nm_shift=".location", shift=0){
+qtr_shift <- function(fun, nm_shift=".location", shift=0, pfn_location=NULL){
   f <- function(u, .location=shift, ...){
+    .location <-  prm_tr(.location, FALSE, pfn_location)
     (.location)+fun(u, ...)
   }
   math_y <- math(fun)
-  math_f <- paste0(prmtr(nm_shift, FALSE), "+", br(math_y))
+  math_f <- paste0(prm(nm_shift, FALSE, pfn_location), "+", br(math_y))
 
   formals_ <- formals(f)
   body_ <- body(f)
@@ -142,16 +147,17 @@ qtr_shift <- function(fun, nm_shift=".location", shift=0){
 #' @param scale numeric  Fixed value of the scale parameter. The default value is 1
 #' @param nm_scale character.  The name of the scale parameter. The default name is `.scale`. The default value is 1
 #' @param .invert logical. Should the scale parameter be inverted (1/.scale) before applying. Default FALSE
+#' @param pfn_scale parameter transforming function. Default is none.
 #' @rdname rules
 #' @export
-qtr_scale <- function(fun, nm_scale=".scale", scale=1, .invert=FALSE){
+qtr_scale <- function(fun, nm_scale=".scale", scale=1, .invert=FALSE, pfn_scale=NULL){
   f <- function(u, .scale=scale, ...){
-    if(.invert) .scale <- 1/.scale
+    .scale <-  prm_tr(.scale, .invert, pfn_scale)
     (.scale)*fun(u, ...)
   }
 
   math_y <- math(fun)
-  math_f <- paste0(prmtr(nm_scale, .invert), br(math_y))
+  math_f <- paste0(prm(nm_scale, .invert, pfn_scale), br(math_y))
 
   formals_ <- formals(f)
   body_ <- body(f)
@@ -170,6 +176,7 @@ qtr_scale <- function(fun, nm_scale=".scale", scale=1, .invert=FALSE){
 #' @param nm_scale character. The name of the scale parameter. Default name `.scale`. Default value is 1.
 #' @param location numeric. Fixed value for location. Default is 0.
 #' @param scale numeric. Fixed value for scale. Default is 1.
+#' @param pfn_location,pfn_scale parameter transforming functions. Default is none.
 #' @param .invert logical. Should the scale parameter be inverted (1/.scale) before applying. Default FALSE
 #'
 #' @return modified function with location and scale parameter. The parameter names specified by the user.
@@ -179,15 +186,16 @@ qtr_scale <- function(fun, nm_scale=".scale", scale=1, .invert=FALSE){
 
 #' @rdname decorate
 #' @export
-qtr_decorate <- function(fun, nm_location=".location", nm_scale=".scale", location=0, scale=1, .invert=FALSE){
+qtr_decorate <- function(fun, nm_location=".location", nm_scale=".scale", location=0, scale=1, .invert=FALSE, pfn_location=NULL, pfn_scale=NULL){
   f <- function(u, ...){
-    s_fun <- qtr_scale(fun, nm_scale=nm_scale, scale=scale, .invert=.invert)
-    ss_fun <- qtr_shift(s_fun, nm_shift=nm_location, shift=location)
+    s_fun <- qtr_scale(fun, nm_scale=nm_scale, scale=scale, .invert=.invert, pfn_scale = pfn_scale)
+    ss_fun <- qtr_shift(s_fun, nm_shift=nm_location, shift=location, pfn_location=pfn_location)
     ss_fun(u,...)
   }
 
   math_y <- math(fun)
-  math_f <- paste0(prmtr(nm_location, .invert), "+", prmtr(nm_scale, .invert), br(math_y))
+  math_f <- paste0(prm(nm_location, .invert, pfn_location), "+",
+                   prm(nm_scale, .invert, pfn_scale), br(math_y))
 
   as_qf(f, math=math_f)
 }
