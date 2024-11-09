@@ -12,6 +12,7 @@
 \alias{ptr_GMO}
 \alias{ptr_TL}
 \alias{ptr_oddITL}
+\alias{ptr_arcsin}
 \alias{ptr_modi1}
 \alias{ptr_modi2}
 \title{p-transformations}
@@ -45,6 +46,8 @@ ptr_GMO(
 ptr_TL(fun, nm_tlpar = ".tlpar", tlpar = 1, pfn_tlpar = NULL)
 
 ptr_oddITL(fun)
+
+ptr_arcsin(fun)
 
 ptr_modi1(
   fun,
@@ -128,6 +131,7 @@ Some of the typical transformations of QFs, implementing a p-transformation rule
 \item \code{ptr_KM()}: Kavya-Manoharan (KM) transformation. Equal to reflected and shifted DUS trasnformation (U->U). Returns \eqn{-\ln(1-u\frac{e-1}{e})}
 \item \code{ptr_modi1()}: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta}}. Only alpha is mandatory, while beta defaults to 1
 \item \code{ptr_modi2()}: Modi transformation \eqn{\frac{u+u\alpha^\beta}{u+\alpha^\beta})}. Only alpha is mandatory, while beta defaults to 1
+\item \code{ptr_arcsin()}: Arcsine transform \eqn{\frac{2}{\pi}\arcsin{u})}.
 }
 }
 \examples{

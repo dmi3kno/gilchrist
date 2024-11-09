@@ -2,17 +2,18 @@
 #' p-transformations
 #' @description
 #' Some of the typical transformations of QFs, implementing a p-transformation rule.
-#'
-#'    - `ptr_lehmann1()`: Lehman Type I inverse exponentiation. (U->U). Returns \eqn{u^{1/k}}.
-#'    - `ptr_lehmann2()`: Lehman Type II inverse exponentiation. (U->U). Returns \eqn{1-(1-u)^{1/k}}.
-#'    - `ptr_fun()`: p-transform with generic function without additional arguments. (U->U, U->R) \eqn{Q_1(.fun(u))}.
-#'    - `ptr_half()`: p-transform into half-distribution. (U->U) Returns \eqn{Q_1((u+1)/2))}.
-#'    - `ptr_oddITL()`: Odd Inverse Topp-Leone transformation \eqn{\frac{\sqrt{u}}{1-\sqrt{u}}=\frac{u+\sqrt{u}}{1-u}=\frac{\sqrt{u}(1+\sqrt{u})}{1-u}=(u^{-1/2}-1)^{-1} }
-#'    - `ptr_DUS()`: Dinesh-Umesh-Sunjay (DUS) transformation. (U->U) Returns \eqn{\ln(1-u+eu)}.
-#'    - `ptr_KM()`: Kavya-Manoharan (KM) transformation. Equal to reflected and shifted DUS trasnformation (U->U). Returns \eqn{-\ln(1-u\frac{e-1}{e})}
-#'    - `ptr_modi1()`: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta}}. Only alpha is mandatory, while beta defaults to 1
-#'    - `ptr_modi2()`: Modi transformation \eqn{\frac{u+u\alpha^\beta}{u+\alpha^\beta})}. Only alpha is mandatory, while beta defaults to 1
-#'
+#' \itemize{
+#'    \item `ptr_lehmann1()`: Lehman Type I inverse exponentiation. (U->U). Returns \eqn{u^{1/k}}.
+#'    \item `ptr_lehmann2()`: Lehman Type II inverse exponentiation. (U->U). Returns \eqn{1-(1-u)^{1/k}}.
+#'    \item `ptr_fun()`: p-transform with generic function without additional arguments. (U->U, U->R) \eqn{Q_1(.fun(u))}.
+#'    \item `ptr_half()`: p-transform into half-distribution. (U->U) Returns \eqn{Q_1((u+1)/2))}.
+#'    \item `ptr_oddITL()`: Odd Inverse Topp-Leone transformation \eqn{\frac{\sqrt{u}}{1-\sqrt{u}}=\frac{u+\sqrt{u}}{1-u}=\frac{\sqrt{u}(1+\sqrt{u})}{1-u}=(u^{-1/2}-1)^{-1} }
+#'    \item `ptr_DUS()`: Dinesh-Umesh-Sunjay (DUS) transformation. (U->U) Returns \eqn{\ln(1-u+eu)}.
+#'    \item `ptr_KM()`: Kavya-Manoharan (KM) transformation. Equal to reflected and shifted DUS trasnformation (U->U). Returns \eqn{-\ln(1-u\frac{e-1}{e})}
+#'    \item `ptr_modi1()`: Modi transformation \eqn{\frac{u\alpha^\beta}{1-u+\alpha^\beta}}. Only alpha is mandatory, while beta defaults to 1
+#'    \item `ptr_modi2()`: Modi transformation \eqn{\frac{u+u\alpha^\beta}{u+\alpha^\beta})}. Only alpha is mandatory, while beta defaults to 1
+#'    \item `ptr_arcsin()`: Arcsine transform \eqn{\frac{2}{\pi}\arcsin{u})}.
+#'}
 #' @param fun function
 #' @param pow character.  The name of the power parameter. The default name is `.pow`.
 #' @param nm_pow character.  The name of the power parameter. The default name is `.pow`. The default value is 1
@@ -20,6 +21,7 @@
 #' @param .invert logical. Should the power parameter be inverted (1/.pow) before applying. Default TRUE
 #' @param pfn_pow function. Parameter transforming function for parameter pow
 #' @return modified function
+#' @md
 #' @rdname ptransformations
 #' @export
 #' @examples
@@ -261,6 +263,21 @@ ptr_oddITL <- function(fun){
 
   math_x <- math(fun)
   math_y <- paste0(r"--( \frac{\sqrt{&} }{1-\sqrt{&} } )--")
+  math_f <- fn_insert(math_x, math_y)
+
+  as_qf(f, math=math_f)
+}
+
+#' @rdname ptransformations
+#' @export
+ptr_arcsin <- function(fun){
+  stopifnot("ptr_arcsin() is expecting a quantile function"=inherits(fun, c("function", "qf")))
+  f <- function(u, ...){
+    fun( 2/pi*asin(u), ...)
+  }
+
+  math_x <- math(fun)
+  math_y <- paste0(r"--( \frac{2}{\pi}\arcsin\left( & \right) )--")
   math_f <- fn_insert(math_x, math_y)
 
   as_qf(f, math=math_f)
