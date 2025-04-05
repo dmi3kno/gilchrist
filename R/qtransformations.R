@@ -102,18 +102,18 @@ qtr_odd <- function(fun, nm_offset=".offset", offset=1, pfn_offset=NULL){
 #' @export
 #' @examples
 #' qtr_epsilon(qnorm)
-qtr_epsilon <- function(fun, nm_pow=".pow", pow=1, pfn_pow=NULL){
+qtr_epsilon <- function(fun, nm_pow=".pow", pow=1, .invert=TRUE, pfn_pow=NULL){
   stopifnot("qtr_epsilon() is expecting a quantile function"=inherits(fun, c("function", "qf")))
   f <- function(u, .pow=pow, ...){
-    .pow <- prm_tr(.pow, TRUE, pfn_pow)
+    .pow <- prm_tr(.pow, .invert, pfn_pow)
     x <- fun(u,...)
-    ((1+x)^(1/.pow)-1)/
-      ((1+x)^(1/.pow)+1)
+    ((1+x)^(.pow)-1)/
+      ((1+x)^(.pow)+1)
   }
 
   math_y <- math(fun)
-  math_x <- paste0(r"--(\frac{ \left(1+& \right)^)--", prm(nm_pow, TRUE, pfn_pow),
-              r"--(-1}{ \left( 1+& \right)^)--", prm(nm_pow, TRUE, pfn_pow), r"--( +1})--")
+  math_x <- paste0(r"--(\frac{ \left(1+& \right)^)--", prm(nm_pow, .invert, pfn_pow),
+              r"--(-1}{ \left( 1+& \right)^)--", prm(nm_pow, .invert, pfn_pow), r"--( +1})--")
   math_f <-  fn_insert(math_x, math_y)
 
   formals_ <- formals(f)

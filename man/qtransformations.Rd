@@ -21,7 +21,7 @@ qtr_shift_reciprocate(fun)
 
 qtr_odd(fun, nm_offset = ".offset", offset = 1, pfn_offset = NULL)
 
-qtr_epsilon(fun, nm_pow = ".pow", pow = 1, pfn_pow = NULL)
+qtr_epsilon(fun, nm_pow = ".pow", pow = 1, .invert = TRUE, pfn_pow = NULL)
 
 qtr_shash(
   fun,
